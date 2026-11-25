@@ -133,7 +133,15 @@ function match(phrase: string, cands: Candidate[]): Resolved[] {
   const exact = cands.filter((c) => c.alias.some((a) => normalize(a) === phrase) || normalize(c.nombre) === phrase);
   if (exact.length) return dedupe(exact);
   const pw = phrase.split(" ");
-  return dedupe(cands.filter((c) => [c.nombre, ...c.alias].some((a) => { const aw = normalize(a).split(" "); return pw.every((w) => aw.includes(w)); })));
+  const words = (c: Candidate) => [c.nombre, ...c.alias].map((a) => normalize(a).split(" "));
+  const all = dedupe(cands.filter((c) => words(c).some((aw) => pw.every((w) => aw.includes(w)))));
+  if (all.length) return all;
+  // Último recurso: el objeto que comparta más palabras con lo escrito
+  // ("piedras de carburo" -> el bote de carburo). Si empatan, se pregunta.
+  const score = (c: Candidate) => Math.max(...words(c).map((aw) => pw.filter((w) => !FILLER.has(w) && aw.includes(w)).length));
+  const scored = cands.map((c) => ({ c, n: score(c) })).filter((x) => x.n > 0);
+  const best = Math.max(0, ...scored.map((x) => x.n));
+  return dedupe(scored.filter((x) => x.n === best).map((x) => x.c));
 }
 
 function dedupe(c: Resolved[]): Resolved[] {

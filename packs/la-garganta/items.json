@@ -3,10 +3,13 @@
   { "id": "cantimplora", "nombre": "la cantimplora", "alias": ["cantimplora", "agua"], "tipo": "herramienta", "desc_base": "Una cantimplora de lata con agua del manantial de casa. Sirve para beber y para el carburo." },
   { "id": "casco_cuero", "nombre": "el casco de cuero", "alias": ["casco", "casco de cuero"], "tipo": "herramienta", "slot": "cabeza", "stats": { "defensa": 1 }, "desc_base": "Cuero cocido y endurecido. Ha parado más de una piedra." },
 
-  { "id": "lampara_vacia", "nombre": "la lámpara de carburo apagada", "alias": ["lampara", "lámpara", "lampara de carburo", "carburero"], "tipo": "herramienta", "palpable": true, "desc_base": "Tu lámpara de carburo, fría y sin carga. El depósito suena hueco." },
-  { "id": "carburo", "nombre": "un bote de carburo", "alias": ["carburo", "bote", "bote de carburo"], "tipo": "material", "palpable": true, "desc_base": "Un bote de hojalata con piedras de carburo. Huelen a ajo podrido." },
-  { "id": "lampara_cargada", "nombre": "la lámpara cargada", "alias": ["lampara", "lámpara", "lampara cargada", "carburero"], "tipo": "herramienta", "desc_base": "La lámpara con el carburo dentro. Le falta el agua para que suelte gas." },
-  { "id": "lampara_encendida", "nombre": "la lámpara encendida", "alias": ["lampara", "lámpara", "luz", "carburero"], "tipo": "herramienta", "poderes": ["luz"], "desc_base": "La llama silba, blanca y viva. Mientras arda, no estás del todo solo." },
+  { "id": "lampara_vacia", "nombre": "la lámpara de carburo apagada", "alias": ["lampara", "lámpara", "lampara de carburo", "carburero"], "tipo": "herramienta", "palpable": true, "desc_base": "Tu lámpara de carburo, fría y sin carga. El depósito suena hueco.",
+    "usos": [ { "texto": "Rascas el chispero, pero no prende: el depósito está vacío. Necesita carburo." } ] },
+  { "id": "carburo", "nombre": "un bote de carburo", "alias": ["carburo", "bote", "bote de carburo", "piedras", "piedras de carburo", "piedra", "piedra de carburo"], "tipo": "material", "palpable": true, "desc_base": "Un bote de hojalata con piedras de carburo. Huelen a ajo podrido." },
+  { "id": "lampara_cargada", "nombre": "la lámpara cargada", "alias": ["lampara", "lámpara", "lampara cargada", "carburero"], "tipo": "herramienta", "desc_base": "La lámpara con el carburo dentro. Le falta el agua para que suelte gas.",
+    "usos": [ { "texto": "Rascas el chispero. Nada: sin agua, el carburo no suelta gas." } ] },
+  { "id": "lampara_encendida", "nombre": "la lámpara encendida", "alias": ["lampara", "lámpara", "luz", "carburero"], "tipo": "herramienta", "poderes": ["luz"], "desc_base": "La llama silba, blanca y viva. Mientras arda, no estás del todo solo.",
+    "usos": [ { "texto": "Ya está encendida. Mejor no la toques mucho." } ] },
   { "id": "pico", "nombre": "el pico", "alias": ["pico", "piqueta"], "tipo": "arma", "slot": "mano", "stats": { "ataque": 2 }, "palpable": true, "desc_base": "Tu pico de picador. El mango está pulido de tantos años de manos." },
 
   { "id": "lampara_xuan", "nombre": "una lámpara caída", "alias": ["lampara caida", "lámpara caída", "lampara de xuan", "lámpara de Xuan"], "tipo": "pista", "fijo": true, "desc_base": "Una lámpara de carburo tirada en el suelo, abollada.", "examinar": "En la base, grabado a punta de navaja: «X. FDEZ». Es la de Xuan. Nadie sale a la calle sin su lámpara: la descuentan del jornal.", "al_examinar": ["flag:pista_lampara"] },

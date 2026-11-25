@@ -132,3 +132,20 @@ describe("usar y combinar sin coger antes", () => {
     expect(g.state.equipo.mano).toBe("pico");
   });
 });
+
+describe("frases reales de Rob", () => {
+  it("«usar piedras de carburo con lámpara de carburo» carga la lámpara", async () => {
+    const g = await newGame();
+    await play(g, ["coger lampara", "coger carburo", "usar piedras de carburo con lámpara de carburo"]);
+    expect(g.state.inventario).toContain("lampara_cargada");
+  });
+  it("«encender lámpara» da una pista según el estado", async () => {
+    const g = await newGame();
+    expect(await play(g, ["coger lampara", "encender lámpara de carburo"])).toContain("Necesita carburo");
+    expect(await play(g, ["combinar lampara con carburo", "encender lampara"])).toContain("sin agua");
+  });
+  it("«equipar lámpara» explica que basta con llevarla", async () => {
+    const g = await newGame();
+    expect(await play(g, ["coger lampara", "equipar lámpara de carburo"])).toContain("basta con llevarla");
+  });
+});

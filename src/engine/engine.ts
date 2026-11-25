@@ -230,7 +230,7 @@ function equip(t: Turn, ref: Ref) {
   if (!t.s.inventario.includes(ref.id)) return t.err("Ya lo llevas puesto.");
   const it = t.pack.item(ref.id);
   if (it.tipo === "injerto") return t.err("Eso no se equipa: se injerta.");
-  if (!it.slot) return t.err(`No sabes cómo ponerte ${it.nombre}.`);
+  if (!it.slot) return t.err(it.tipo === "herramienta" ? `No hace falta equipar ${it.nombre}: basta con llevarla encima.` : `No sabes cómo ponerte ${it.nombre}.`);
   const slot = it.slot as EquipSlot;
   const prev = t.s.equipo[slot];
   if (prev) t.s.inventario.push(prev);
