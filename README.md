@@ -1,0 +1,39 @@
+# La Garganta
+
+Aventura conversacional con IA (MVP). Pozo Santa Bárbara, Asturias, 1923: se va la luz, la cuadrilla se ha ido... o eso parece.
+
+Arquitectura: ver el documento «Aventura conversacional con IA — Arquitectura MVP» en el proyecto de Claude. Regla de oro: **solo el motor escribe en el estado**; los LLM leen y proponen.
+
+## Uso
+
+```bash
+npm install
+npm run play                 # jugar en la terminal con la IA falsa (sin tokens)
+npm run play -- --seed 42    # partida reproducible
+npm run validate             # valida el pack (Zod + referencias cruzadas)
+npm test                     # tests, incluidas partidas completas a los finales
+npm run typecheck
+```
+
+## Estructura
+
+| Carpeta | Qué hay |
+|---|---|
+| `packs/la-garganta/` | El pack: única fuente de verdad (salas, objetos, recetas, NPC, enemigo, finales) |
+| `src/engine/` | Motor determinista sin IA: esquemas Zod, parser en español, reglas, combate con semilla, diálogo (lado motor) |
+| `src/ai/` | Contratos con los LLM, IA falsa y validación de la prosa generada |
+| `src/session/` | Une parser, motor e IA; lo usarán la CLI y el Durable Object |
+| `src/cli/` | Jugar y validar desde la terminal |
+| `src/worker/` | (pendiente) Cloudflare Worker + Durable Object por partida |
+| `web/` | (pendiente) Frontend de terminal retro |
+
+## Mini-lenguaje del pack
+
+Condiciones (todas deben cumplirse): `flag:x`, `!flag:x`, `tiene:item`, `poder:p`, `injerto:slot|item`, `en:sala`, `visitada:sala`, `muerto:enemigo`, `grupo:cuadrilla=sigue|sigue_recelo`, `corrupcion>=25`, `vida<=0`, `confianza>=3`.
+
+Efectos: `flag:x`, `!flag:x`, `corrupcion+10`, `corrupcion-5`, `vida+5`, `dar:item`, `quitar:item`, `aparece:item`, `ir:sala`.
+
+## Notas de diseño
+
+- La prosa de cada sala (la genera el narrador una vez por partida) solo describe tono y hechos; la lista de objetos, personajes y salidas la añade siempre el motor. Así la IA no puede inventar nada interactuable.
+- La cuadrilla no tiene diálogo libre: su reacción depende de la corrupción (bandas en `quest.json`) y se recalcula en cada injerto mientras te sigue.

@@ -1,0 +1,161 @@
+// Parser clásico en español, sin IA. Solo resuelve nombres contra lo que el
+// jugador tiene al alcance (sala, inventario, equipo, injertos).
+import type { Direction } from "./schema.js";
+import { normalize } from "./normalize.js";
+
+export type RefKind = "item" | "npc" | "enemigo" | "grupo";
+export interface Ref { kind: RefKind; id: string }
+export interface Candidate extends Ref { nombre: string; alias: string[]; consumible?: boolean }
+
+export type Command =
+  | { verbo: "ir"; dir: Direction }
+  | { verbo: "mirar" }
+  | { verbo: "inventario" }
+  | { verbo: "estado" }
+  | { verbo: "ayuda" }
+  | { verbo: "huir" }
+  | { verbo: "rezar" | "escuchar" | "esperar" }
+  | { verbo: "examinar" | "coger" | "dejar" | "equipar" | "desequipar" | "consumir" | "injertar" | "atacar" | "hablar"; obj: Ref }
+  | { verbo: "usar"; obj: Ref; con?: Ref }
+  | { verbo: "combinar"; objs: Ref[] };
+
+export type ParseResult = { ok: true; cmd: Command } | { ok: false; texto: string };
+
+const DIRS: Record<string, Direction> = {
+  n: "norte", norte: "norte", s: "sur", sur: "sur", e: "este", este: "este", o: "oeste", oeste: "oeste",
+  subir: "subir", sube: "subir", arriba: "subir", bajar: "bajar", baja: "bajar", abajo: "bajar",
+  entrar: "entrar", entra: "entrar", dentro: "entrar", salir: "salir", sal: "salir", fuera: "salir",
+};
+
+const VERBS: Record<string, string> = {
+  ir: "ir", ve: "ir", anda: "ir", camina: "ir", avanzar: "ir",
+  mirar: "mirar", m: "mirar", l: "mirar", ver: "mirar",
+  examinar: "examinar", examina: "examinar", x: "examinar", inspeccionar: "examinar", inspecciona: "examinar", leer: "examinar", lee: "examinar",
+  coger: "coger", coge: "coger", tomar: "tomar", toma: "tomar", recoger: "coger", recoge: "coger", agarrar: "coger", agarra: "coger", pillar: "coger",
+  dejar: "dejar", deja: "dejar", soltar: "dejar", suelta: "dejar", tirar: "dejar", tira: "dejar",
+  inventario: "inventario", i: "inventario", inv: "inventario",
+  estado: "estado", diagnostico: "estado",
+  ayuda: "ayuda", "?": "ayuda", comandos: "ayuda",
+  equipar: "equipar", equipa: "equipar", ponerse: "equipar", ponte: "equipar", poner: "equipar", empuñar: "equipar", empuña: "equipar",
+  desequipar: "desequipar", desequipa: "desequipar", quitarse: "desequipar", quitate: "desequipar", quitar: "desequipar", guardar: "desequipar", guarda: "desequipar",
+  usar: "usar", usa: "usar", utilizar: "usar", utiliza: "usar", encender: "usar", enciende: "usar",
+  consumir: "consumir", consume: "consumir", comer: "consumir", come: "consumir", beber: "consumir", bebe: "consumir",
+  combinar: "combinar", combina: "combinar", craftear: "combinar", mezclar: "combinar", mezcla: "combinar", juntar: "combinar", junta: "combinar",
+  hablar: "hablar", habla: "hablar", saludar: "hablar", saluda: "hablar",
+  atacar: "atacar", ataca: "atacar", golpear: "atacar", golpea: "atacar", pegar: "atacar", pega: "atacar", matar: "atacar", mata: "atacar", luchar: "atacar", lucha: "atacar",
+  injertar: "injertar", injerta: "injertar", implantar: "injertar", implanta: "injertar", injertarse: "injertar",
+  rezar: "rezar", reza: "rezar", orar: "rezar", ora: "rezar",
+  escuchar: "escuchar", escucha: "escuchar", oir: "escuchar",
+  esperar: "esperar", espera: "esperar", z: "esperar",
+  huir: "huir", huye: "huir", escapar: "huir", escapa: "huir",
+};
+
+const FILLER = new Set(["a", "al", "hacia", "por", "con", "en", "de", "mi", "tu", "su"]);
+
+export function parse(input: string, scope: Candidate[], catalog: Candidate[] = []): ParseResult {
+  const words = normalize(input).split(" ").filter(Boolean);
+  if (!words.length) return { ok: false, texto: "¿Perdón?" };
+  const [w0, ...rest] = words as [string, ...string[]];
+
+  // Dirección a secas: "n", "bajar"
+  if (rest.length === 0 && DIRS[w0] && !(w0 in VERBS && VERBS[w0] !== "ir")) return { ok: true, cmd: { verbo: "ir", dir: DIRS[w0]! } };
+  const verb = VERBS[w0];
+  if (!verb) return { ok: false, texto: "No entiendo eso." };
+
+  switch (verb) {
+    case "ir": {
+      const d = rest.filter((w) => !FILLER.has(w)).map((w) => DIRS[w]).find(Boolean);
+      return d ? { ok: true, cmd: { verbo: "ir", dir: d } } : { ok: false, texto: "¿Hacia dónde?" };
+    }
+    case "mirar":
+      if (rest.length === 0) return { ok: true, cmd: { verbo: "mirar" } };
+      return one("examinar", rest, scope, catalog);
+    case "inventario": case "estado": case "ayuda": case "huir": case "rezar": case "escuchar": case "esperar":
+      return { ok: true, cmd: { verbo: verb } as Command };
+    case "tomar": {
+      const r = resolve(rest, scope, catalog, "¿Qué quieres tomar?");
+      if (!r.ok) return r;
+      return { ok: true, cmd: { verbo: r.ref.consumible ? "consumir" : "coger", obj: strip(r.ref) } };
+    }
+    case "hablar": case "examinar": case "coger": case "dejar": case "equipar": case "desequipar": case "consumir": case "atacar": case "injertar": {
+      // "injertar pulmon en pecho": se ignora el destino; el slot lo define el objeto
+      const words = verb === "injertar" ? cutAt(rest, "en") : rest;
+      return one(verb, words, scope, catalog);
+    }
+    case "usar": {
+      const [a, b] = splitOn(rest, ["con", "en", "sobre"]);
+      const ra = resolve(a, scope, catalog, "¿Qué quieres usar?");
+      if (!ra.ok) return ra;
+      if (!b.length) return { ok: true, cmd: { verbo: "usar", obj: strip(ra.ref) } };
+      const rb = resolve(b, scope, catalog, "¿Con qué?");
+      if (!rb.ok) return rb;
+      return { ok: true, cmd: { verbo: "usar", obj: strip(ra.ref), con: strip(rb.ref) } };
+    }
+    case "combinar": {
+      const parts = splitAll(rest, ["con", "y"]);
+      if (parts.length < 2) return { ok: false, texto: "¿Combinar qué con qué?" };
+      const refs: Ref[] = [];
+      for (const p of parts) {
+        const r = resolve(p, scope, catalog, "¿Combinar qué?");
+        if (!r.ok) return r;
+        refs.push(strip(r.ref));
+      }
+      return { ok: true, cmd: { verbo: "combinar", objs: refs } };
+    }
+  }
+  return { ok: false, texto: "No entiendo eso." };
+}
+
+type Resolved = Candidate;
+
+function one(verbo: string, words: string[], scope: Candidate[], catalog: Candidate[]): ParseResult {
+  const r = resolve(words, scope, catalog, `¿Qué quieres ${verbo}?`);
+  if (!r.ok) return r;
+  return { ok: true, cmd: { verbo, obj: strip(r.ref) } as Command };
+}
+
+const strip = (c: Candidate): Ref => ({ kind: c.kind, id: c.id });
+
+function resolve(words: string[], scope: Candidate[], catalog: Candidate[], ask: string): { ok: true; ref: Resolved } | { ok: false; texto: string } {
+  const phrase = words.filter((w) => !FILLER.has(w)).join(" ");
+  if (!phrase) return { ok: false, texto: ask };
+  const matches = match(phrase, scope);
+  if (matches.length === 1) return { ok: true, ref: matches[0]! };
+  if (matches.length > 1) {
+    const names = matches.map((m) => m.nombre);
+    return { ok: false, texto: `¿Cuál: ${names.slice(0, -1).join(", ")} o ${names.at(-1)}?` };
+  }
+  if (match(phrase, catalog).length) return { ok: false, texto: "No ves eso por aquí." };
+  return { ok: false, texto: "No sé a qué te refieres." };
+}
+
+function match(phrase: string, cands: Candidate[]): Resolved[] {
+  const exact = cands.filter((c) => c.alias.some((a) => normalize(a) === phrase) || normalize(c.nombre) === phrase);
+  if (exact.length) return dedupe(exact);
+  const pw = phrase.split(" ");
+  return dedupe(cands.filter((c) => [c.nombre, ...c.alias].some((a) => { const aw = normalize(a).split(" "); return pw.every((w) => aw.includes(w)); })));
+}
+
+function dedupe(c: Resolved[]): Resolved[] {
+  const seen = new Set<string>();
+  return c.filter((x) => (seen.has(x.kind + x.id) ? false : (seen.add(x.kind + x.id), true)));
+}
+
+function cutAt(words: string[], sep: string): string[] {
+  const i = words.indexOf(sep);
+  return i < 0 ? words : words.slice(0, i);
+}
+
+function splitOn(words: string[], seps: string[]): [string[], string[]] {
+  const i = words.findIndex((w) => seps.includes(w));
+  return i < 0 ? [words, []] : [words.slice(0, i), words.slice(i + 1)];
+}
+
+function splitAll(words: string[], seps: string[]): string[][] {
+  const out: string[][] = [[]];
+  for (const w of words) {
+    if (seps.includes(w)) out.push([]);
+    else out[out.length - 1]!.push(w);
+  }
+  return out.filter((p) => p.length);
+}

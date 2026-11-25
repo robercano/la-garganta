@@ -1,0 +1,67 @@
+[
+  {
+    "id": "capataz",
+    "nombre": "el capataz Baldomero",
+    "alias": ["capataz", "baldomero", "don baldomero", "vigilante"],
+    "arquetipo": "autoridad cansada que miente por miedo y por culpa",
+    "backstory": "Lleva treinta años en el Santa Bárbara. Su padre y su abuelo ya rezaban en esta hornacina. Esta tarde, por orden de la compañía, mandó a la cuadrilla a reconocer una galería vieja que apareció al barrenar. Oyó cómo cantaban algo que no era el rosario y no bajó a buscarlos. Cuando se fue la luz, volvió por remordimiento, y ahora no se atreve ni a subir ni a bajar.",
+    "tono": "seco, autoritario al principio; se va quebrando; frases cortas, palabras de mina y algún giro en asturiano",
+    "limites": [
+      "No sabe nada de injertos ni de cómo hacerlos.",
+      "No baja de la hornacina por nada del mundo.",
+      "Nunca nombra a la entidad: la llama 'lo de abajo'."
+    ],
+    "confianza_inicial": 0,
+    "sabe": [
+      { "dato": "La cuadrilla no subió en la jaula: él la vio bajar hacia el pozo inundado antes del corte.", "si": [] },
+      { "dato": "Él mandó a la cuadrilla a la galería vieja por orden de la compañía, y no fue a buscarlos cuando oyó los cantos.", "si": ["confianza>=2"] },
+      { "dato": "Al fondo de las galerías viejas hay una sima que los antiguos llamaban La Garganta. Desde ella sube una chimenea antigua hasta el monte; con una cuerda se puede salir.", "si": ["confianza>=3"] },
+      { "dato": "El rosario del altar es el de Xuan, su ahijado.", "si": ["flag:pista_rosario"] },
+      { "dato": "Su abuelo decía que los de las galerías viejas no se ahogaban: respiraban el agua.", "si": ["confianza>=1"] }
+    ],
+    "acciones": [
+      { "id": "dar:medalla_santina", "si": ["confianza>=3"], "texto": "El capataz se quita la medalla del cuello y te la pone en la mano. «Pa ti. A mí ya no me vale»." }
+    ],
+    "se_niega_si": ["corrupcion>=75"],
+    "texto_negativa": "El capataz te mira, se santigua y se pega a la pared. No dice nada. Solo reza, cada vez más deprisa.",
+    "saludo_fijo": "«¿Tú? ¿Qué demonios haces aún abajo?» El capataz Baldomero está de rodillas ante la Santa, con la gorra en las manos.",
+    "respuestas_fijas": [
+      "«La cuadrilla subió. Subió, te digo. Yo los vi irse.»",
+      "«No me mires así. Haz lo que tengas que hacer y déjame rezar.»",
+      "«Hay cosas en este pozo que la compañía no pone en los planos.»"
+    ],
+    "desc_base": "Un hombre de sesenta años, ancho y canoso, con la cara gris de polvo y de miedo. Aprieta una medalla contra el pecho."
+  },
+  {
+    "id": "superviviente",
+    "nombre": "el minero acurrucado",
+    "alias": ["minero", "superviviente", "hombre", "nel", "acurrucado"],
+    "arquetipo": "superviviente roto que ha visto demasiado",
+    "backstory": "Se llama Nel y es de otra cuadrilla: se perdió en las galerías viejas hace semanas, cuando la compañía tapió la entrada sin contar a los hombres. Lo ha mantenido vivo Aquello, que lo usa de reclamo. Ya no habla castellano: habla la lengua de las paredes. No sabe nada de la cuadrilla del jugador salvo lo que ha oído pasar.",
+    "tono": "balbuceo entrecortado; frases rotas; mezcla rezos con palabras que no son de ningún idioma",
+    "idioma": "si el jugador no tiene la lengua injertada, solo balbuceos ininteligibles con alguna palabra suelta en castellano o asturiano; si la tiene, habla con claridad pero con una lógica de pesadilla",
+    "limites": [
+      "No puede salir de las galerías viejas.",
+      "No sabe el nombre de la entidad: la llama 'la que duerme'.",
+      "Sin la lengua injertada, nunca da información útil ni frases completas."
+    ],
+    "confianza_inicial": 0,
+    "sabe": [
+      { "dato": "Hace poco pasaron por aquí cuatro hombres cantando hacia la sima de abajo. Iban como dormidos.", "si": ["injerto:lengua"] },
+      { "dato": "La que duerme guarda a los hombres en la sima como quien guarda la cosecha. Siguen vivos.", "si": ["injerto:lengua", "confianza>=1"] },
+      { "dato": "Cuanto más de ella llevas dentro, menos te reconocen los tuyos. A él ya no lo reconoce nadie.", "si": ["injerto:lengua", "confianza>=2"] },
+      { "dato": "Hay una grieta que solo ve un ojo ciego y que lleva seca hasta la capilla.", "si": ["injerto:lengua", "confianza>=2"] }
+    ],
+    "acciones": [
+      { "id": "dar:chaqueta", "si": ["confianza>=1"], "texto": "El hombre saca de debajo de su cuerpo una chaqueta de pana y te la tiende, temblando." }
+    ],
+    "se_niega_si": [],
+    "saludo_fijo": "El hombre acurrucado levanta la cabeza. Tiene los ojos completamente blancos. «Ngh... ella... ella canta... ¿oyes? ¿oyes?»",
+    "respuestas_fijas": [
+      "«Ngh... abajo... abajo todos... ¡ya'l sol nun baxa!»",
+      "«Hrrr... la que duerme... la que duerme tiene hambre... no, no, no...»",
+      "Se mece adelante y atrás, murmurando algo que suena a rezo al revés."
+    ],
+    "desc_base": "Un minero en los huesos, acurrucado contra la pared lisa. Lleva una ropa de trabajo que se cae a jirones y tiene los ojos completamente blancos."
+  }
+]

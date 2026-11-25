@@ -1,0 +1,22 @@
+{
+  "name": "la-garganta",
+  "version": "1.0.0",
+  "description": "Aventura conversacional con IA — MVP",
+  "scripts": {
+    "play": "tsx src/cli/play.ts",
+    "validate": "tsx src/cli/validate.ts",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.10",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.2"
+  },
+  "private": true,
+  "type": "module"
+}

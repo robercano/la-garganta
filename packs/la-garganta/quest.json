@@ -1,0 +1,57 @@
+{
+  "titulo": "La Garganta",
+  "intro": "Pozo Santa Bárbara, valle del Nalón, noviembre de 1923. Ha sonado la sirena del relevo y la cuadrilla se ha ido yendo galería arriba, entre toses y bromas, hacia la jaula. Tú te has quedado a terminar de entibar el frente: dos cuadros más y a casa. Entonces la luz eléctrica parpadea, zumba y se muere. Tu lámpara de carburo, que llevabas medio vacía, da un último resoplido y se apaga también.",
+  "inicio": {
+    "sala": "frente_trabajo",
+    "inventario": ["navaja", "cantimplora"],
+    "equipo": { "cabeza": "casco_cuero" },
+    "vida": 12,
+    "ataque": 1,
+    "defensa": 0,
+    "corrupcion": 0
+  },
+  "umbrales": [
+    { "valor": 25, "texto": "Algo en ti se ha asentado. Cuando tragas saliva, sabe a carbón y a hierro, y no te importa tanto como debería." },
+    { "valor": 50, "texto": "La mina respira. Lo notas en las costillas: un vaivén lento, enorme, que acompasa el tuyo." },
+    { "valor": 75, "texto": "Las paredes hablan. No en castellano, ni en bable. Lo peor es que empiezas a entenderlas." },
+    { "valor": 100, "texto": "Ya no hay un tú y una mina. Hay una sola cosa que sueña." }
+  ],
+  "injertar": {
+    "requiere": ["tiene:navaja"],
+    "texto_sin_instrumento": "Necesitarías algo con filo para abrirte la carne. Y valor. Sobre todo valor."
+  },
+  "grupo": {
+    "id": "cuadrilla",
+    "nombre": "la cuadrilla",
+    "alias": ["cuadrilla", "mineros", "companeros", "compañeros", "xuan", "los mios", "los míos"],
+    "sala": "garganta",
+    "bandas": [
+      { "max": 24, "estado": "sigue", "sigue": true, "texto": "Entre la niebla del fondo hay bultos que se mueven. Son ellos: Xuan, Manolón, el Rubio, el viejo Telva. Te ven y uno solloza tu nombre. Están ateridos, con las uñas negras de escarbar, pero vivos. «¡Sabíamos que no nos dejarías aquí!» Se ponen detrás de ti, dispuestos a seguirte." },
+      { "max": 49, "estado": "sigue_recelo", "sigue": true, "texto": "Entre la niebla del fondo hay bultos que se mueven. Son ellos. Te reconocen... y algo en sus caras se tuerce al verte. Nadie te mira a los ojos. «Vamos contigo», dice Xuan al fin, «pero tú vas delante»." },
+      { "max": 74, "estado": "huida", "sigue": false, "texto": "Entre la niebla del fondo hay bultos que se mueven. Son ellos. Alzas la lámpara y te ven entero. Alguien grita «¡La güestia! ¡Ye ún d'ellos!», y la cuadrilla echa a correr galería adentro, hacia lo más hondo. Sus pasos se pierden. No vuelven." },
+      { "max": 99, "estado": "hostil", "sigue": false, "hostil": true, "texto": "Entre la niebla del fondo hay bultos que se mueven. Son ellos, y te ven. No gritan. Cogen los picos con la calma de quien ya ha decidido. «Eso no ye él», dice Xuan. «Eso ye lo que lo mató». Vienen a por ti." }
+    ],
+    "recomprobar_al_injertar": true,
+    "ataque_hostil": 3,
+    "texto_ataque_hostil": "Un pico te alcanza en el costado; otro silba junto a tu cabeza.",
+    "atacar": {
+      "estado": "muerta",
+      "efectos": ["corrupcion+10"],
+      "texto": "Lo haces. Con las manos que ya no son del todo tuyas. Cuando acabas, la sima se queda en silencio y algo, muy abajo, se relame."
+    },
+    "desc": {
+      "sigue": "La cuadrilla va detrás de ti, pegada a tu luz. Xuan no suelta el rosario.",
+      "sigue_recelo": "La cuadrilla te sigue a tres pasos. Cuchichean. Cuando te giras, se callan.",
+      "hostil": "Cuatro hombres con picos, cerrando el semicírculo. Tus amigos.",
+      "huida": "Ya no están.",
+      "muerta": "No mires."
+    }
+  },
+  "finales": [
+    { "id": "fusion", "tipo": "neutral", "si": ["corrupcion>=100"], "texto": "Te tumbas sobre la roca tibia y la roca te recibe. Bajas despacio, como quien se mete en un río, hasta donde duerme Aquello. No mueres. Dentro de cien años, los mineros de Turón rezarán sin saberlo a algo que tiene tu cara. FIN." },
+    { "id": "muerte", "tipo": "derrota", "si": ["vida<=0"], "texto": "Te encontrarán en primavera, cuando desagüen el pozo. O no. FIN." },
+    { "id": "con_cuadrilla", "tipo": "victoria", "si": ["flag:escapado", "grupo:cuadrilla=sigue|sigue_recelo"], "texto": "Salís de uno en uno por la chimenea vieja, a un monte que huele a helecho mojado. Amanece sobre el valle. Xuan llora; el viejo Telva reza. Nadie va a contar en el economato lo que habéis visto ahí abajo. Pero ninguno vuelve a bajar al Santa Bárbara. FIN." },
+    { "id": "solo", "tipo": "neutral", "si": ["flag:escapado", "grupo:cuadrilla=huida|atrapada"], "texto": "Sales solo por la chimenea vieja. Arriba amanece. En la casa de aseo te preguntan por los tuyos y no sabes qué contestar. Por las noches, cuando apoyas la oreja en la almohada, todavía los oyes correr. FIN." },
+    { "id": "solo_oscuro", "tipo": "neutral", "si": ["flag:escapado", "grupo:cuadrilla=hostil|muerta"], "texto": "Sales solo, y no te das prisa. Arriba la luz del día te escuece los ojos nuevos. En el pueblo dirán que la cuadrilla se perdió en el apagón de noviembre. Tú sabes que no se perdió. Tú sabes dónde está cada uno. FIN." }
+  ]
+}

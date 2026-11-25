@@ -1,0 +1,95 @@
+[
+  {
+    "id": "frente_trabajo",
+    "nombre": "El frente de trabajo",
+    "tono": "estrecho, caluroso, recién abandonado; olor a sudor, a pólvora de barrenos y a madera de entibo",
+    "hechos": ["la capa de carbón brilla húmeda en la pared", "los cuadros de entibo recién puestos crujen", "en el suelo quedan colillas y una fiambrera vacía de la cuadrilla", "el cable de la luz cuelga muerto del techo", "al fondo se oye gotear"],
+    "desc_base": "El tajo donde has picado todo el día. La veta de carbón brilla húmeda, los entibos nuevos crujen bajo el peso del monte y aún huele a la cuadrilla: tabaco, sudor, sidra.",
+    "oscura": true,
+    "objetos": ["lampara_vacia", "carburo", "pico"],
+    "salidas": {
+      "subir": { "a": "tunel_servicio", "si": ["flag:corriente"], "bloqueo": "La galería principal lleva a la jaula del pozo maestro, y sin corriente la jaula no se mueve. Gritas hacia arriba. Nada. Queda el túnel de servicio, al este." },
+      "este": { "a": "tunel_servicio", "si": ["poder:luz"], "bloqueo": "Tanteas hacia la boca del túnel de servicio, pero a ciegas te partirías la crisma en el primer pozo. Necesitas luz." }
+    }
+  },
+  {
+    "id": "tunel_servicio",
+    "nombre": "El túnel de servicio",
+    "tono": "angosto, viejo, abandonado por la compañía; madera podrida y raíles oxidados",
+    "hechos": ["unos raíles de vagoneta oxidados se pierden en la oscuridad", "el túnel debería subir hacia la bocamina", "arriba hay un derrumbe reciente con las piedras aún calientes", "una bajada estrecha se hunde hacia el este, hacia abajo", "huele a humedad y a cera de vela"],
+    "desc_base": "Un túnel viejo de mantenimiento, con raíles de vagoneta comidos por el óxido. Debería subir hacia la bocamina; en lugar de eso, un derrumbe reciente lo tapona y solo queda una bajada estrecha.",
+    "oscura": true,
+    "objetos": ["lampara_xuan", "cuerda", "trapo"],
+    "salidas": {
+      "oeste": { "a": "frente_trabajo" },
+      "subir": { "a": "frente_trabajo", "si": ["flag:camino_imposible"], "bloqueo": "El túnel sube unos metros y muere en el derrumbe. Las piedras están calientes, como si algo las hubiera empujado desde fuera. Por aquí no se sale." },
+      "bajar": { "a": "hornacina" }
+    },
+    "al_entrar": [
+      { "id": "canto", "si": ["poder:luz"], "efectos": [], "texto": "Desde abajo, muy abajo, te llega un canto. Parece el rosario de la Santina, pero las palabras no son esas." }
+    ],
+    "cambios": { "pista_lampara": "La lámpara de Xuan sigue ahí tirada, y ahora sabes de quién es." }
+  },
+  {
+    "id": "hornacina",
+    "nombre": "La hornacina de Santa Bárbara",
+    "tono": "capilla minera excavada en la roca; recogida, devota y equivocada",
+    "hechos": ["una imagen de Santa Bárbara preside un altar de roca", "hay velas encendidas que nadie debería haber encendido", "las paredes están cubiertas de exvotos: piernas, manos y pulmones de cera", "algunas inscripciones en la roca son mucho más antiguas que la mina", "un pozo de bajada se abre al fondo"],
+    "desc_base": "Una capilla excavada en la roca, como las que hay en todos los pozos. Santa Bárbara preside el altar entre velas encendidas. Las paredes están llenas de exvotos de cera: piernas, manos, pulmones. Algunos no tienen forma de nada humano.",
+    "objetos": ["santa", "rosario", "orujo"],
+    "npcs": ["capataz"],
+    "salidas": {
+      "subir": { "a": "tunel_servicio" },
+      "bajar": { "a": "pozo_inundado" },
+      "este": { "a": "galerias_viejas", "visible_si": ["poder:ver_oculto"], "texto": "Te metes por la grieta que solo ve tu ojo nuevo." }
+    },
+    "acciones": [
+      { "verbo": "rezar", "una_vez": true, "efectos": ["corrupcion-5"], "texto": "Te arrodillas ante la Santa y rezas el «Santa Bárbara bendita» como te enseñó tu abuela. Por un momento, las velas arden más derechas.", "texto_repetido": "Rezas otra vez. Esta vez la Santa no te mira." }
+    ]
+  },
+  {
+    "id": "pozo_inundado",
+    "nombre": "El pozo inundado",
+    "tono": "cavernoso, frío, con agua negra quieta; eco largo",
+    "hechos": ["el suelo acaba en una laguna de agua negra y quieta", "al norte la galería se hunde bajo el agua hasta el techo", "hay huesos de mula en la orilla, mondados", "el agua huele a hierro", "unas escaleras de mano suben hacia la hornacina"],
+    "desc_base": "Una sala amplia donde la galería se hunde en una laguna de agua negra. Al norte el agua llega hasta el techo. En la orilla hay huesos de mula, mondados.",
+    "oscura": true,
+    "enemigos": ["cuelebre"],
+    "salidas": {
+      "subir": { "a": "hornacina" },
+      "norte": { "a": "galerias_viejas", "si": ["poder:respirar"], "bloqueo": "El agua negra cubre la galería hasta el techo. Nadie aguanta tanto sin respirar. Nadie humano.", "texto": "Te hundes en el agua negra y respiras. El pulmón nuevo bebe el agua como si fuera aire." }
+    },
+    "cambios": { "cuelebre_muerto": "El cuerpo del cuélebre flota en la laguna, enorme, panza arriba." }
+  },
+  {
+    "id": "galerias_viejas",
+    "nombre": "Las galerías viejas",
+    "tono": "galerías demasiado lisas y demasiado antiguas; nadie las excavó; aire cargado de grisú",
+    "hechos": ["las paredes son lisas como el interior de una garganta", "el aire pica y huele a grisú", "un hombre está acurrucado en un rincón, balbuceando", "hay restos de una procesión: cadáveres con velas apagadas en las manos", "un pozo de bajada exhala gas desde el fondo"],
+    "desc_base": "Galerías que no salen en ningún plano de la compañía: lisas, curvas, como por dentro de un animal. El aire pica de grisú. Hay restos de una procesión de difuntos con velas apagadas en las manos.",
+    "oscura": true,
+    "objetos": ["ojo_topo", "brazo_cosa", "lengua_guestia", "escombros"],
+    "npcs": ["superviviente"],
+    "salidas": {
+      "sur": { "a": "pozo_inundado", "si": ["poder:respirar"], "bloqueo": "Para volver tendrías que cruzar el agua otra vez." },
+      "oeste": { "a": "hornacina", "visible_si": ["poder:ver_oculto"], "texto": "Te deslizas por una grieta que antes no veías y sales, seco, junto al altar de la Santa." },
+      "bajar": { "a": "garganta", "si": ["poder:respirar"], "bloqueo": "Del pozo de bajada sale tanto grisú que te lloran los ojos. Dos bocanadas ahí abajo y no vuelves a subir." }
+    },
+    "cambios": { "hueco_abierto": "Donde estaba el derrumbe se abre ahora un hueco con un altar diminuto." }
+  },
+  {
+    "id": "garganta",
+    "nombre": "La Garganta",
+    "tono": "sima inmensa, húmeda, con una luz verdosa que no viene de ninguna parte; sagrado y obsceno a la vez",
+    "hechos": ["es una sima tan honda que no se ve el fondo", "las paredes están cubiertas de una membrana tibia que late", "una luz verdosa sale de la propia roca", "de lo hondo sube una respiración lenta y enorme", "arriba se ve una chimenea antigua, estrecha, que sube hacia el exterior"],
+    "desc_base": "Una sima sin fondo, bañada por una luz verdosa que sale de la propia roca. Las paredes están forradas de una membrana tibia que late. De lo hondo sube una respiración lenta, enorme. Arriba, muy arriba, una chimenea antigua.",
+    "objetos": ["piel_entidad"],
+    "salidas": {
+      "sur": { "a": "galerias_viejas", "si": ["poder:respirar"], "bloqueo": "El gas del pozo te cierra el paso." },
+      "subir": { "si": ["tiene:cuerda"], "efectos": ["flag:escapado"], "bloqueo": "La chimenea vieja es lisa y estrecha. Sin una cuerda no hay forma de subir.", "texto": "Lanzas la cuerda, que se engancha en un saliente, y empiezas a subir." }
+    },
+    "al_entrar": [
+      { "id": "respiracion", "si": [], "efectos": [], "texto": "La respiración de lo hondo se detiene un instante, como si alguien hubiera notado que has llegado." }
+    ]
+  }
+]
