@@ -116,3 +116,19 @@ describe("validación del pack", () => {
     }
   });
 });
+
+describe("usar y combinar sin coger antes", () => {
+  for (const cmd of ["usar lámpara con bote", "usar carburo con lampara", "usar lámpara de carburo con bote de carburo", "combinar lampara con carburo"]) {
+    it(`«${cmd}» coge lo que haga falta y carga la lámpara`, async () => {
+      const g = await newGame();
+      const out = await play(g, [cmd]);
+      expect(out).toContain("Primero coges");
+      expect(g.state.inventario).toContain("lampara_cargada");
+    });
+  }
+  it("también al empuñar algo del suelo", async () => {
+    const g = await newGame();
+    await play(g, ["equipar pico"]);
+    expect(g.state.equipo.mano).toBe("pico");
+  });
+});

@@ -211,8 +211,23 @@ function drop(t: Turn, ref: Ref) {
   t.say(`Dejas ${t.pack.item(ref.id).nombre}.`);
 }
 
+/**
+ * Si el objeto está suelto en la sala y se puede coger, lo coge antes de usarlo
+ * ("(Primero coges el pico.)"), como en las aventuras clásicas.
+ */
+function hold(t: Turn, ref: Ref): boolean {
+  if (ref.kind !== "item") return false;
+  if (carried(t.s).includes(ref.id)) return true;
+  if (!visibleItems(t).includes(ref.id) || t.pack.item(ref.id).fijo) return false;
+  t.roomState.objetos = t.roomState.objetos.filter((o) => o !== ref.id);
+  t.s.inventario.push(ref.id);
+  t.say(`(Primero coges ${t.pack.item(ref.id).nombre}.)`);
+  return true;
+}
+
 function equip(t: Turn, ref: Ref) {
-  if (ref.kind !== "item" || !t.s.inventario.includes(ref.id)) return t.err("No llevas eso.");
+  if (ref.kind !== "item" || !hold(t, ref)) return t.err("No llevas eso.");
+  if (!t.s.inventario.includes(ref.id)) return t.err("Ya lo llevas puesto.");
   const it = t.pack.item(ref.id);
   if (it.tipo === "injerto") return t.err("Eso no se equipa: se injerta.");
   if (!it.slot) return t.err(`No sabes cómo ponerte ${it.nombre}.`);
@@ -234,9 +249,10 @@ function unequip(t: Turn, ref: Ref) {
 }
 
 function consume(t: Turn, ref: Ref) {
-  if (ref.kind !== "item" || !t.s.inventario.includes(ref.id)) return t.err("No llevas eso.");
+  if (ref.kind !== "item") return t.err("Eso no se come ni se bebe.");
   const it = t.pack.item(ref.id);
   if (it.tipo !== "consumible") return t.err("Eso no se come ni se bebe.");
+  if (!hold(t, ref) || !t.s.inventario.includes(ref.id)) return t.err("No llevas eso.");
   t.s.inventario = t.s.inventario.filter((i) => i !== ref.id);
   t.say(`Das cuenta de ${it.nombre}.`);
   applyEffects(t, it.efectos_consumir);
@@ -244,8 +260,10 @@ function consume(t: Turn, ref: Ref) {
 
 function use(t: Turn, ref: Ref, con?: Ref) {
   if (ref.kind !== "item") return t.err("No ocurre nada.");
-  if (!carried(t.s).includes(ref.id)) return t.err(`Primero tendrías que coger ${t.pack.item(ref.id).nombre}.`);
   if (con && con.kind !== "item") return t.err("No ocurre nada.");
+  // "usar X con Y" también vale para combinar si hay receta
+  if (con && findRecipe(t, [ref.id, con.id])) return combine(t, [ref, con]);
+  if (!hold(t, ref)) return t.err(`No puedes coger ${t.pack.item(ref.id).nombre}.`);
   const tryUses = (owner: Item, other?: string) =>
     owner.usos.findIndex((u, i) => u.con === other && !(u.una_vez && t.s.usos_hechos.includes(`${owner.id}:${i}`)) && t.ok(u.si));
   const a = t.pack.item(ref.id);
@@ -255,8 +273,6 @@ function use(t: Turn, ref: Ref, con?: Ref) {
     owner = t.pack.item(con.id);
     idx = tryUses(owner, ref.id);
   }
-  // "usar X con Y" también vale para combinar si hay receta
-  if (idx < 0 && con && t.s.inventario.includes(ref.id) && t.s.inventario.includes(con.id) && findRecipe(t, [ref.id, con.id])) return combine(t, [ref, con]);
   if (idx < 0) return t.err(con ? "No ocurre nada." : `No se te ocurre cómo usar ${a.nombre} aquí.`);
   const u = owner.usos[idx]!;
   if (u.una_vez) t.s.usos_hechos.push(`${owner.id}:${idx}`);
@@ -268,10 +284,10 @@ function use(t: Turn, ref: Ref, con?: Ref) {
 function combine(t: Turn, refs: Ref[]) {
   const ids = refs.map((r) => r.id);
   if (refs.some((r) => r.kind !== "item")) return t.err("No parece que eso combine.");
-  const missing = refs.find((r) => !t.s.inventario.includes(r.id));
-  if (missing) return t.err(`Primero tendrías que coger ${t.pack.item(missing.id).nombre}.`);
   const r = findRecipe(t, ids);
   if (!r) return t.err("No parece que eso combine.");
+  const missing = refs.find((x) => !hold(t, x) || !t.s.inventario.includes(x.id));
+  if (missing) return t.err(`No puedes coger ${t.pack.item(missing.id).nombre}.`);
   for (const e of r.entradas) if (!r.conserva.includes(e)) t.s.inventario = t.s.inventario.filter((i) => i !== e);
   t.s.inventario.push(r.salida);
   t.say(r.texto);
@@ -283,9 +299,11 @@ function findRecipe(t: Turn, ids: string[]) {
 }
 
 function graft(t: Turn, ref: Ref) {
-  if (ref.kind !== "item" || !t.s.inventario.includes(ref.id)) return t.err("No llevas eso.");
+  if (ref.kind !== "item") return t.err("Eso no se puede injertar. Gracias a Dios.");
   const it = t.pack.item(ref.id);
   if (it.tipo !== "injerto") return t.err("Eso no se puede injertar. Gracias a Dios.");
+  if (Object.values(t.s.injertos).includes(ref.id)) return t.err("Eso ya es parte de ti.");
+  if (!hold(t, ref)) return t.err("No llevas eso.");
   if (!t.ok(t.pack.quest.injertar.requiere)) return t.err(t.pack.quest.injertar.texto_sin_instrumento);
   const slot = it.slot as GraftSlot;
   if (t.s.injertos[slot]) return t.err(`Ya tienes algo injertado en ${SLOT_NAMES[slot]}.`);
