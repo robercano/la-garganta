@@ -275,3 +275,39 @@ describe("estado", () => {
     expect(out).toContain("Injertos: ninguno");
   });
 });
+
+describe("atacar con un arma", () => {
+  const toPozo = ["coger lampara", "coger carburo", "combinar lampara con carburo", "combinar lampara con cantimplora", "coger pico", ...TO_HORNACINA, "bajar"];
+  const strikes = (out: string) => (out.match(/\(-\d+ vida\)|falla por poco/g) ?? []).length;
+
+  it("con el arma ya en la mano, el enemigo responde una vez", async () => {
+    const g = await newGame(5);
+    await play(g, [...toPozo, "equipar pico"]); // equipar en combate ya cuesta un golpe
+    const out = await play(g, ["atacar cuelebre con el pico"]);
+    expect(out).not.toContain("aprovecha");
+    expect(strikes(out)).toBe(1);
+  });
+  it("si hay que empuñarla en pleno combate, el enemigo aprovecha y golpea de más", async () => {
+    const g = await newGame(5);
+    await play(g, toPozo);
+    expect(g.state.equipo.mano).toBeUndefined();
+    const out = await play(g, ["atacar al cuélebre con el pico"]);
+    expect(out).toContain("aprovecha mientras cambias de arma");
+    expect(strikes(out)).toBe(2);
+    expect(g.state.equipo.mano).toBe("pico");
+  });
+  it("la navaja sirve de arma débil y se puede cambiar por el pico", async () => {
+    const g = await newGame(5);
+    await play(g, toPozo);
+    await play(g, ["atacar cuelebre con navaja"]);
+    expect(g.state.equipo.mano).toBe("navaja");
+    await play(g, ["atacar cuelebre con pico"]);
+    expect(g.state.equipo.mano).toBe("pico");
+    expect(g.state.inventario).toContain("navaja");
+  });
+  it("no se pelea con cualquier cosa", async () => {
+    const g = await newGame(5);
+    await play(g, toPozo);
+    expect(await play(g, ["atacar cuelebre con la lampara"])).toContain("No vas a pelear con");
+  });
+});

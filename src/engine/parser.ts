@@ -21,7 +21,8 @@ export type Command =
   | { verbo: "ayuda" }
   | { verbo: "huir" }
   | { verbo: "rezar" | "escuchar" | "oler" | "esperar" }
-  | { verbo: "examinar" | "coger" | "dejar" | "equipar" | "desequipar" | "consumir" | "injertar" | "atacar" | "hablar"; obj: Ref }
+  | { verbo: "examinar" | "coger" | "dejar" | "equipar" | "desequipar" | "consumir" | "injertar" | "hablar"; obj: Ref }
+  | { verbo: "atacar"; obj: Ref; con?: Ref }
   | { verbo: "usar"; obj: Ref; con?: Ref }
   | { verbo: "combinar"; objs: Ref[] };
 
@@ -93,7 +94,17 @@ export function parse(input: string, scope: Candidate[], catalog: Candidate[] = 
       if (!r.ok) return r;
       return { ok: true, cmd: { verbo: r.ref.consumible ? "consumir" : "coger", obj: strip(r.ref) } };
     }
-    case "hablar": case "examinar": case "coger": case "dejar": case "equipar": case "desequipar": case "consumir": case "atacar": case "injertar": {
+    case "atacar": {
+      // "atacar al cuélebre con el pico"
+      const [a, b] = splitOn(rest, ["con"]);
+      const ra = resolve(a, scope, catalog, "¿A quién quieres atacar?");
+      if (!ra.ok) return ra;
+      if (!b.length) return { ok: true, cmd: { verbo: "atacar", obj: strip(ra.ref) } };
+      const rb = resolve(b, scope, catalog, "¿Con qué?");
+      if (!rb.ok) return rb;
+      return { ok: true, cmd: { verbo: "atacar", obj: strip(ra.ref), con: strip(rb.ref) } };
+    }
+    case "hablar": case "examinar": case "coger": case "dejar": case "equipar": case "desequipar": case "consumir": case "injertar": {
       // "injertar pulmon en pecho": se ignora el destino; el slot lo define el objeto
       const words = verb === "injertar" ? cutAt(rest, "en") : rest;
       return one(verb, words, scope, catalog);

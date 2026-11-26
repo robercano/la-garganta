@@ -16,7 +16,8 @@ export interface TurnResult {
 }
 
 const FREE_VERBS = new Set(["inventario", "mapa", "estado", "ayuda", "mirar", "examinar"]);
-const COMBAT_VERBS = new Set(["atacar", "huir", "consumir", "usar", "inventario", "mapa", "estado", "ayuda", "mirar", "examinar"]);
+// En combate se puede cambiar de arma, pero cuesta el turno: el enemigo ataca mientras tanto.
+const COMBAT_VERBS = new Set(["atacar", "huir", "consumir", "usar", "equipar", "desequipar", "inventario", "mapa", "estado", "ayuda", "mirar", "examinar"]);
 
 class Turn {
   events: GameEvent[] = [];
@@ -107,7 +108,7 @@ function run(t: Turn, cmd: Command) {
     case "usar": return use(t, cmd.obj, cmd.con);
     case "combinar": return combine(t, cmd.objs);
     case "injertar": return graft(t, cmd.obj);
-    case "atacar": return attackCmd(t, cmd.obj);
+    case "atacar": return attackCmd(t, cmd.obj, cmd.con);
     case "huir": return flee(t);
     case "hablar": return talk(t, cmd.obj);
     case "rezar": case "escuchar": case "oler": case "esperar": return roomAction(t, cmd.verbo);
@@ -385,7 +386,9 @@ function startCombat(t: Turn, enemy: string) {
   t.events.push(ev("combate_inicio", t.pack.enemy(enemy).inicio, enemy));
 }
 
-function attackCmd(t: Turn, ref: Ref) {
+function attackCmd(t: Turn, ref: Ref, con?: Ref) {
+  if (con && !readyWeapon(t, ref, con)) return;
+  if (t.s.vida <= 0) return;
   if (ref.kind === "grupo") return attackGroup(t);
   if (ref.kind === "npc") return t.err("No vas a ponerle la mano encima. Todavía.");
   if (ref.kind !== "enemigo") return t.err("Eso no tiene sentido.");
@@ -403,6 +406,36 @@ function attackCmd(t: Turn, ref: Ref) {
   applyEffects(t, e.al_morir);
 }
 
+/**
+ * «atacar X con Y»: si Y no está ya en la mano, hay que empuñarlo primero.
+ * Eso cuesta tiempo: si hay un enemigo delante, aprovecha para golpear.
+ * Devuelve false si no se puede atacar con Y.
+ */
+function readyWeapon(t: Turn, target: Ref, con: Ref): boolean {
+  if (con.kind !== "item") return (t.err("Eso no es un arma."), false);
+  if (Object.values(t.s.injertos).includes(con.id)) return true; // el brazo injertado ya es tuyo
+  if (t.s.equipo.mano === con.id) return true;
+  const it = t.pack.item(con.id);
+  if (it.slot !== "mano" || !it.stats?.ataque) return (t.err(`No vas a pelear con ${it.nombre}.`), false);
+  if (!hold(t, con)) return (t.err(`No llevas ${it.nombre}.`), false);
+  equip(t, con);
+  const foe = t.s.combate?.enemigo ?? (target.kind === "enemigo" && t.s.enemigos[target.id]?.vivo ? target.id : undefined);
+  if (foe) {
+    if (!t.s.combate) startCombat(t, foe);
+    t.say(`${cap(t.pack.enemy(foe).nombre)} aprovecha mientras cambias de arma.`);
+    enemyStrike(t, foe);
+  }
+  return true;
+}
+
+function enemyStrike(t: Turn, foe: string) {
+  const e = t.pack.enemy(foe);
+  const dmg = Math.max(0, roll(t.s, 0, 2) + e.ataque - defense(t.s, t.pack));
+  if (dmg === 0) return t.events.push(ev("golpe", `${cap(e.nombre)} falla por poco.`));
+  t.s.vida -= dmg;
+  t.events.push(ev("golpe", `${pick(t.s, e.golpes.enemigo)} (-${dmg} vida)`));
+}
+
 function flee(t: Turn) {
   if (!t.s.combate) return t.err("No hay nada de lo que huir. De momento.");
   const back = t.s.sala_anterior;
@@ -414,15 +447,7 @@ function flee(t: Turn) {
 
 function otherTurns(t: Turn, cmd: Command) {
   // El enemigo responde si el combate sigue (huir ya lo ha cerrado).
-  if (t.s.combate && cmd.verbo !== "huir") {
-    const e = t.pack.enemy(t.s.combate.enemigo);
-    const dmg = Math.max(0, roll(t.s, 0, 2) + e.ataque - defense(t.s, t.pack));
-    if (dmg === 0) t.events.push(ev("golpe", `${cap(e.nombre)} falla por poco.`));
-    else {
-      t.s.vida -= dmg;
-      t.events.push(ev("golpe", `${pick(t.s, e.golpes.enemigo)} (-${dmg} vida)`));
-    }
-  }
+  if (t.s.combate && cmd.verbo !== "huir" && t.s.vida > 0) enemyStrike(t, t.s.combate.enemigo);
   const g = t.pack.quest.grupo;
   if (g && t.s.grupo && t.s.sala === g.sala && band(t, t.s.grupo.estado)?.hostil) {
     t.s.vida -= g.ataque_hostil;
@@ -568,7 +593,7 @@ const DEFAULT_ACTIONS = {
 const HELP = [
   "Comandos: norte/sur/este/oeste (n s e o), subir, bajar, mirar, examinar X, coger X, dejar X,",
   "inventario (i), estado, equipar X, desequipar X, usar X [con Y], combinar X con Y, comer/beber X,",
-  "injertar X, atacar X, huir, hablar con X (\"adiós\" para terminar), rezar, escuchar, oler, esperar.",
+  "injertar X, atacar X [con Y], huir, hablar con X (\"adiós\" para terminar), rezar, escuchar, oler, esperar.",
 ].join("\n");
 
 /** Guarda la descripción que el narrador generó para una sala (una vez por partida). */

@@ -6,8 +6,12 @@
       "navaja",
       "cuchillo"
     ],
-    "tipo": "herramienta",
-    "desc_base": "Una navaja de Taramundi con mango de boj. Corta bien. Demasiado bien."
+    "tipo": "arma",
+    "desc_base": "Una navaja de Taramundi con mango de boj. Corta bien. Demasiado bien. Para pelear sirve poco, pero algo es.",
+    "slot": "mano",
+    "stats": {
+      "ataque": 1
+    }
   },
   {
     "id": "cantimplora",
