@@ -346,3 +346,13 @@ describe("la corrupción también es secreta hasta el primer injerto", () => {
     expect(await play(g, ["estado"])).toContain("Corrupción 15/100");
   });
 });
+
+describe("cabecera de sala", () => {
+  it("«Llegas a…» al entrar y «Estás en…» al mirar, con contracción", async () => {
+    const g = await newGame();
+    await play(g, LIGHT);
+    expect(await play(g, ["este"])).toContain("Llegas al túnel de servicio.");
+    expect(await play(g, ["mirar"])).toContain("Estás en el túnel de servicio.");
+    expect(await play(g, ["bajar"])).toContain("Llegas a la hornacina de Santa Bárbara.");
+  });
+});

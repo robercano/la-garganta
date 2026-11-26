@@ -90,7 +90,7 @@ export class GameSession {
         }
         if (prose) this.state = storeRoomDescription(this.state, room.id, prose);
         const extra = this.state.salas[room.id]!.cambios.map((f) => room.cambios[f]!);
-        out.push([`${room.nombre}. ${prose ?? room.desc_base}`, ...extra].join(" "));
+        out.push([`${e.cabecera ?? `${room.nombre}.`} ${prose ?? room.desc_base}`, ...extra].join(" "));
       } else if (e.clave) {
         out.push(await this.ai.narrator.narrate(e, { sala: this.state.sala, tramo: this.stage() }).catch(() => e.texto));
       } else if (e.tipo === "npc_dice") {

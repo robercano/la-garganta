@@ -36,7 +36,7 @@ class Turn {
 export function start(state: GameState, pack: Pack): TurnResult {
   const t = new Turn(structuredClone(state), pack);
   t.say(pack.quest.intro);
-  enterRoom(t, true);
+  enterRoom(t, true, false, "estar");
   return { state: t.s, events: t.events };
 }
 
@@ -131,18 +131,19 @@ function moveTo(t: Turn, to: string) {
   enterRoom(t, true);
 }
 
-function enterRoom(t: Turn, arriving: boolean, looking = false) {
+function enterRoom(t: Turn, arriving: boolean, looking = false, how: "llegar" | "estar" = arriving ? "llegar" : "estar") {
+  const head = roomHeader(t.room.nombre, how);
   const room = t.room;
   const rs = t.roomState;
   rs.explorada = true;
   if (isDark(t)) {
     const touch = visibleItems(t).map((i) => t.pack.item(i).nombre);
-    t.events.push({ ...ev("texto", `${room.nombre}. Oscuridad total: no ves ni tus propias manos.`), detalle: touch.length ? `A tientas notas: ${list(touch)}.` : undefined });
+    t.events.push({ ...ev("texto", `${head} Oscuridad total: no ves ni tus propias manos.`), detalle: touch.length ? `A tientas notas: ${list(touch)}.` : undefined });
   } else {
     const first = !rs.visitada;
     rs.visitada = true;
     const prose = [rs.desc_generada ?? room.desc_base, ...rs.cambios.map((f) => room.cambios[f]!)].join(" ");
-    t.events.push({ ...ev(first ? "sala_nueva" : "sala", `${room.nombre}. ${prose}`, room.id), detalle: roomDetail(t) });
+    t.events.push({ ...ev(first ? "sala_nueva" : "sala", `${head} ${prose}`, room.id), detalle: roomDetail(t), cabecera: head });
   }
   if (!arriving) return;
   for (const trg of room.al_entrar) {
@@ -155,6 +156,13 @@ function enterRoom(t: Turn, arriving: boolean, looking = false) {
   groupReunion(t);
   const foe = room.enemigos.find((e) => t.s.enemigos[e]?.vivo);
   if (foe && !t.s.combate && !looking) startCombat(t, foe);
+}
+
+/** «Llegas al frente de trabajo.» / «Estás en las galerías viejas.» a partir del nombre de la sala. */
+export function roomHeader(nombre: string, how: "llegar" | "estar"): string {
+  const n = nombre.charAt(0).toLowerCase() + nombre.slice(1);
+  if (how === "estar") return `Estás en ${n}.`;
+  return `Llegas ${n.startsWith("el ") ? `al ${n.slice(3)}` : `a ${n}`}.`;
 }
 
 function roomDetail(t: Turn): string {
