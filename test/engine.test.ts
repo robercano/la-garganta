@@ -264,3 +264,14 @@ describe("lo que nombra la descripción de un decorado", () => {
     expect(await play(g, ["coger la santa"])).toContain("Ni en sueños");
   });
 });
+
+describe("estado", () => {
+  it("muestra lo equipado y los injertos", async () => {
+    const g = await newGame();
+    await play(g, LIGHT);
+    const out = await play(g, ["estado"]);
+    expect(out).toMatch(/Equipado: .*el pico \(mano\)/);
+    expect(out).toMatch(/Equipado: .*el casco de cuero \(cabeza\)/);
+    expect(out).toContain("Injertos: ninguno");
+  });
+});

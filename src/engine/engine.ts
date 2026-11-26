@@ -185,7 +185,14 @@ function inventory(t: Turn) {
 
 function status(t: Turn) {
   const s = t.s;
-  t.say(`Vida ${s.vida}/${s.vida_max}. Ataque ${attack(s, t.pack)}. Defensa ${defense(s, t.pack)}. Corrupción ${s.corrupcion}/100.`);
+  const name = (id: string) => t.pack.item(id).nombre;
+  const eq = (Object.entries(s.equipo) as [EquipSlot, string][]).filter(([, v]) => v).map(([k, v]) => `${name(v)} (${k})`);
+  const inj = (Object.entries(s.injertos) as [GraftSlot, string][]).filter(([, v]) => v).map(([k, v]) => `${name(v)} (${SLOT_NAMES[k].replace(/^(el|la) /, "")})`);
+  t.say([
+    `Vida ${s.vida}/${s.vida_max}. Ataque ${attack(s, t.pack)}. Defensa ${defense(s, t.pack)}. Corrupción ${s.corrupcion}/100.`,
+    `Equipado: ${eq.length ? list(eq) : "nada"}.`,
+    `Injertos: ${inj.length ? list(inj) : "ninguno"}.`,
+  ].join("\n"));
 }
 
 function examine(t: Turn, ref: Ref) {
