@@ -98,7 +98,7 @@ function run(t: Turn, cmd: Command) {
     case "inventario": return inventory(t);
     case "mapa": return t.events.push(ev("mapa", renderMap(t.s, t.pack)));
     case "estado": return status(t);
-    case "ayuda": return t.say(HELP);
+    case "ayuda": return t.say(help(t.s));
     case "examinar": return examine(t, cmd.obj);
     case "coger": return take(t, cmd.obj);
     case "dejar": return drop(t, cmd.obj);
@@ -192,7 +192,8 @@ function status(t: Turn) {
   t.say([
     `Vida ${s.vida}/${s.vida_max}. Ataque ${attack(s, t.pack)}. Defensa ${defense(s, t.pack)}. Corrupción ${s.corrupcion}/100.`,
     `Equipado: ${eq.length ? list(eq) : "nada"}.`,
-    `Injertos: ${inj.length ? list(inj) : "ninguno"}.`,
+    // Hasta el primer injerto, el jugador no sabe que existen
+    ...(inj.length ? [`Injertos: ${list(inj)}.`] : []),
   ].join("\n"));
 }
 
@@ -212,6 +213,7 @@ function take(t: Turn, ref: Ref) {
   if (it.fijo && it.al_coger) return t.err(it.al_coger);
   if (it.fijo) return t.err(it.tipo === "escenario" ? `No merece la pena cargar con ${it.nombre}.` : `No puedes llevarte ${it.nombre}.`);
   t.roomState.objetos = t.roomState.objetos.filter((o) => o !== ref.id);
+  if (it.tipo === "injerto" && it.injerta_al_coger) return doGraft(t, it.id); // te atrapa
   t.s.inventario.push(ref.id);
   t.say(`Coges ${it.nombre}.`);
 }
@@ -231,6 +233,7 @@ function hold(t: Turn, ref: Ref): boolean {
   if (ref.kind !== "item") return false;
   if (carried(t.s).includes(ref.id)) return true;
   if (!visibleItems(t).includes(ref.id) || t.pack.item(ref.id).fijo) return false;
+  if (t.pack.item(ref.id).injerta_al_coger) { take(t, ref); return carried(t.s).includes(ref.id); }
   t.roomState.objetos = t.roomState.objetos.filter((o) => o !== ref.id);
   t.s.inventario.push(ref.id);
   t.say(`(Primero coges ${t.pack.item(ref.id).nombre}.)`);
@@ -311,18 +314,29 @@ function findRecipe(t: Turn, ids: string[]) {
 }
 
 function graft(t: Turn, ref: Ref) {
+  if (!graftsKnown(t.s)) return t.err("No entiendo eso."); // el verbo no existe hasta el primer injerto
   if (ref.kind !== "item") return t.err("Eso no se puede injertar. Gracias a Dios.");
   const it = t.pack.item(ref.id);
   if (it.tipo !== "injerto") return t.err("Eso no se puede injertar. Gracias a Dios.");
   if (Object.values(t.s.injertos).includes(ref.id)) return t.err("Eso ya es parte de ti.");
   if (!hold(t, ref)) return t.err("No llevas eso.");
   if (!t.ok(t.pack.quest.injertar.requiere)) return t.err(t.pack.quest.injertar.texto_sin_instrumento);
+  if (t.s.injertos[it.slot as GraftSlot]) return t.err(`Ya tienes algo injertado en ${SLOT_NAMES[it.slot as GraftSlot]}.`);
+  doGraft(t, it.id);
+}
+
+const graftsKnown = (s: GameState) => Object.keys(s.injertos).length > 0;
+
+/** Injerta sin más comprobaciones (las hace quien llama). El primero descubre el verbo «injertar». */
+function doGraft(t: Turn, id: string) {
+  const it = t.pack.item(id);
   const slot = it.slot as GraftSlot;
-  if (t.s.injertos[slot]) return t.err(`Ya tienes algo injertado en ${SLOT_NAMES[slot]}.`);
-  t.s.inventario = t.s.inventario.filter((i) => i !== ref.id);
-  t.s.injertos[slot] = ref.id;
+  const first = !graftsKnown(t.s);
+  t.s.inventario = t.s.inventario.filter((i) => i !== id);
+  t.s.injertos[slot] = id;
   t.say(it.texto_injerto ?? `Te injertas ${it.nombre}.`);
   changeCorruption(t, it.corrupcion ?? 0);
+  if (first) t.say("[Ahora sabes que tu cuerpo acepta partes ajenas. Nuevo comando: injertar X.]");
   if (t.pack.quest.grupo?.recomprobar_al_injertar) groupRecheck(t);
 }
 
@@ -590,10 +604,10 @@ const DEFAULT_ACTIONS = {
   esperar: "Esperas. Nada cambia, salvo el miedo.",
 } as const;
 
-const HELP = [
-  "Comandos: norte/sur/este/oeste (n s e o), subir, bajar, mirar, examinar X, coger X, dejar X,",
+const help = (s: GameState) => [
+  "Comandos: norte/sur/este/oeste (n s e o), subir, bajar, entrar, salir, mirar, mapa, examinar X, coger X, dejar X,",
   "inventario (i), estado, equipar X, desequipar X, usar X [con Y], combinar X con Y, comer/beber X,",
-  "injertar X, atacar X [con Y], huir, hablar con X (\"adiós\" para terminar), rezar, escuchar, oler, esperar.",
+  `${graftsKnown(s) ? "injertar X, " : ""}atacar X [con Y], huir, hablar con X ("adiós" para terminar), rezar, escuchar, oler, esperar.`,
 ].join("\n");
 
 /** Guarda la descripción que el narrador generó para una sala (una vez por partida). */

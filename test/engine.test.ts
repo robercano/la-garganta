@@ -41,9 +41,10 @@ describe("motor", () => {
     const g = await newGame(42);
     await play(g, [...LIGHT, ...TO_HORNACINA, "bajar"]);
     await fight(g, "cuelebre");
-    await play(g, ["coger pulmon", "dejar navaja"]);
-    expect(await play(g, ["injertar pulmon"])).toContain("algo con filo");
-    await play(g, ["coger navaja", "injertar pulmon"]);
+    await play(g, ["coger pulmon", "norte", "coger ojo", "dejar navaja"]);
+    expect(await play(g, ["injertar ojo"])).toContain("algo con filo");
+    await play(g, ["coger navaja", "injertar ojo"]);
+    expect(g.state.injertos.ojo).toBe("ojo_topo");
     expect(await play(g, ["desequipar pulmon"])).toContain("parte de ti");
   });
   it("rezar en la hornacina baja la corrupción una sola vez", async () => {
@@ -272,7 +273,7 @@ describe("estado", () => {
     const out = await play(g, ["estado"]);
     expect(out).toMatch(/Equipado: .*el pico \(mano\)/);
     expect(out).toMatch(/Equipado: .*el casco de cuero \(cabeza\)/);
-    expect(out).toContain("Injertos: ninguno");
+    expect(out).not.toContain("Injertos"); // no se sabe que existen hasta el primero
   });
 });
 
@@ -309,5 +310,26 @@ describe("atacar con un arma", () => {
     const g = await newGame(5);
     await play(g, toPozo);
     expect(await play(g, ["atacar cuelebre con la lampara"])).toContain("No vas a pelear con");
+  });
+});
+
+describe("los injertos son un secreto hasta el primero", () => {
+  it("antes del pulmón, «injertar» no existe ni sale en la ayuda", async () => {
+    const g = await newGame();
+    expect(await play(g, ["ayuda"])).not.toContain("injertar");
+    expect(await play(g, ["injertar lampara"])).toBe("No entiendo eso.");
+  });
+  it("al coger el pulmón, te atrapa y se injerta solo, aunque no lleves navaja", async () => {
+    const g = await newGame(42);
+    await play(g, [...LIGHT, ...TO_HORNACINA, "bajar"]);
+    await fight(g, "cuelebre");
+    await play(g, ["dejar navaja"]);
+    const out = await play(g, ["coger el pulmón"]);
+    expect(out).toContain("se abre paso entre dos costillas");
+    expect(out).toContain("Nuevo comando: injertar X");
+    expect(g.state.injertos.pulmon).toBe("pulmon_cuelebre");
+    expect(g.state.corrupcion).toBe(15);
+    expect(await play(g, ["ayuda"])).toContain("injertar X");
+    expect(await play(g, ["estado"])).toContain("Injertos: el pulmón del cuélebre (pulmón)");
   });
 });

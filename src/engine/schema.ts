@@ -33,6 +33,7 @@ export const ItemSchema = z.object({
   poder_si: z.enum(["inventario", "equipado"]).default("inventario"),
   corrupcion: z.number().int().min(0).max(100).optional(), // solo injertos
   texto_injerto: z.string().optional(), // solo injertos
+  injerta_al_coger: z.boolean().default(false), // solo injertos: al cogerlo se injerta solo, sin instrumento
   efectos_consumir: Effects, // consumibles
   usos: z.array(Uso).default([]),
   desc_base: z.string(),

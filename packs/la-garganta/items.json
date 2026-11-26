@@ -232,7 +232,8 @@
       "respirar"
     ],
     "desc_base": "Un saco translúcido y palpitante, con branquias como encaje. Sigue respirando por su cuenta.",
-    "texto_injerto": "Te abres el costado con la navaja, entre dos costillas. El pulmón del cuélebre se mete solo, como un animal que vuelve a su madriguera. Toses agua negra. Después respiras mejor que en toda tu vida."
+    "texto_injerto": "Alargas la mano hacia el pulmón y el pulmón alarga algo hacia ti. Se te enrosca en la muñeca, trepa por el brazo y, antes de que puedas gritar, se abre paso entre dos costillas como un animal que vuelve a su madriguera. Caes de rodillas. Toses agua negra durante un minuto eterno. Después respiras mejor que en toda tu vida, y eso es lo que más miedo te da.",
+    "injerta_al_coger": true
   },
   {
     "id": "ojo_topo",
