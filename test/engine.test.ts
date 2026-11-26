@@ -333,3 +333,16 @@ describe("los injertos son un secreto hasta el primero", () => {
     expect(await play(g, ["estado"])).toContain("Injertos: el pulmón del cuélebre (pulmón)");
   });
 });
+
+describe("la corrupción también es secreta hasta el primer injerto", () => {
+  it("no sale en estado ni al rezar sin corrupción; sí después del pulmón", async () => {
+    const g = await newGame(42);
+    await play(g, [...LIGHT, ...TO_HORNACINA]);
+    expect(await play(g, ["estado"])).not.toContain("Corrupción");
+    expect(await play(g, ["rezar"])).not.toContain("Corrupción");
+    await play(g, ["bajar"]);
+    await fight(g, "cuelebre");
+    await play(g, ["coger pulmon"]);
+    expect(await play(g, ["estado"])).toContain("Corrupción 15/100");
+  });
+});

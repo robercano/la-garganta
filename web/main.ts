@@ -37,7 +37,8 @@ function status() {
   const s = game.state;
   const room = pack.location(s.sala).nombre;
   const grafts = Object.keys(s.injertos).join(", ") || "ninguno";
-  bar.textContent = `${room} · Vida ${s.vida}/${s.vida_max} · Corrupción ${s.corrupcion}` + (Object.keys(s.injertos).length ? ` · Injertos: ${grafts}` : "");
+  const known = Object.keys(s.injertos).length > 0; // corrupción e injertos: secretos hasta el primer injerto
+  bar.textContent = `${room} · Vida ${s.vida}/${s.vida_max}` + (known ? ` · Corrupción ${s.corrupcion} · Injertos: ${grafts}` : "");
   bar.dataset.corr = String(s.corrupcion >= 75 ? 75 : s.corrupcion >= 50 ? 50 : s.corrupcion >= 25 ? 25 : 0);
   input.placeholder = game.finished ? "escribe «reiniciar»" : game.inDialog ? "dile algo… («adiós» para terminar)" : "¿qué haces?";
 }

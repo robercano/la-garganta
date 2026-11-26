@@ -190,7 +190,7 @@ function status(t: Turn) {
   const eq = (Object.entries(s.equipo) as [EquipSlot, string][]).filter(([, v]) => v).map(([k, v]) => `${name(v)} (${k})`);
   const inj = (Object.entries(s.injertos) as [GraftSlot, string][]).filter(([, v]) => v).map(([k, v]) => `${name(v)} (${SLOT_NAMES[k].replace(/^(el|la) /, "")})`);
   t.say([
-    `Vida ${s.vida}/${s.vida_max}. Ataque ${attack(s, t.pack)}. Defensa ${defense(s, t.pack)}. Corrupción ${s.corrupcion}/100.`,
+    `Vida ${s.vida}/${s.vida_max}. Ataque ${attack(s, t.pack)}. Defensa ${defense(s, t.pack)}.${graftsKnown(s) ? ` Corrupción ${s.corrupcion}/100.` : ""}`,
     `Equipado: ${eq.length ? list(eq) : "nada"}.`,
     // Hasta el primer injerto, el jugador no sabe que existen
     ...(inj.length ? [`Injertos: ${list(inj)}.`] : []),
@@ -548,8 +548,10 @@ function removeItem(t: Turn, id: string) {
 }
 
 function changeCorruption(t: Turn, delta: number) {
-  if (!delta) return;
+  const before = t.s.corrupcion;
   t.s.corrupcion = Math.max(0, Math.min(100, t.s.corrupcion + delta));
+  delta = t.s.corrupcion - before;
+  if (!delta) return; // p. ej. rezar sin corrupción: no se dice nada (ni se delata que existe)
   t.events.push(ev("corrupcion", delta > 0 ? `[Corrupción +${delta} → ${t.s.corrupcion}]` : `[Corrupción ${delta} → ${t.s.corrupcion}]`));
   for (const u of t.pack.quest.umbrales) {
     if (u.valor > t.s.umbral_alcanzado && t.s.corrupcion >= u.valor) {

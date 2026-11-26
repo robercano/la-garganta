@@ -150,7 +150,14 @@
           "corrupcion-5"
         ],
         "texto": "Te arrodillas ante la Santa y rezas el «Santa Bárbara bendita» como te enseñó tu abuela. Por un momento, las velas arden más derechas.",
-        "texto_repetido": "Rezas otra vez. Esta vez la Santa no te mira."
+        "texto_repetido": "Rezas otra vez. Esta vez la Santa no te mira.",
+        "si": [
+          "corrupcion>0"
+        ]
+      },
+      {
+        "verbo": "rezar",
+        "texto": "Te arrodillas ante la Santa y rezas el «Santa Bárbara bendita» como te enseñó tu abuela. Pides por los tuyos. Las velas no se mueven."
       }
     ],
     "mapa": {
