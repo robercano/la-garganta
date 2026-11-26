@@ -102,7 +102,12 @@ function crossCheck(d: PackData): string[] {
   for (const l of d.locations) {
     for (const [dir, s] of Object.entries(l.salidas)) {
       if (s.a) ref(`sala ${l.id} salida ${dir}`, rooms, s.a);
-      if (!s.a && s.efectos.length === 0) p.push(`sala ${l.id} salida ${dir}: sin destino ni efectos`);
+      if (!s.a && s.efectos.length === 0 && s.si.length === 0) p.push(`sala ${l.id} salida ${dir}: sin destino, efectos ni condición (sería una salida que no hace nada)`);
+      if (s.a && l.mapa) {
+        const to = d.locations.find((x) => x.id === s.a)?.mapa;
+        const err = to && mapMismatch(dir, l.mapa, to);
+        if (err) p.push(`sala ${l.id} salida ${dir} → ${s.a}: ${err}`);
+      }
       check(`sala ${l.id} salida ${dir}`, [...s.si, ...s.visible_si, ...s.efectos]);
     }
     for (const o of l.objetos) {
@@ -138,5 +143,30 @@ function crossCheck(d: PackData): string[] {
     check("quest.grupo.atacar", q.grupo.atacar.efectos);
   }
   for (const f of q.finales) check(`final ${f.id}`, f.si);
+  const mapped = d.locations.filter((l) => l.mapa);
+  if (mapped.length && mapped.length !== d.locations.length) p.push("mapa: o todas las salas tienen posición o ninguna");
+  const seen = new Map<string, string>();
+  for (const l of mapped) {
+    const k = `${l.mapa!.nivel}:${l.mapa!.x}:${l.mapa!.y}`;
+    if (seen.has(k)) p.push(`mapa: ${l.id} y ${seen.get(k)} ocupan la misma casilla`);
+    seen.set(k, l.id);
+    if (!q.niveles.some((n) => n.nivel === l.mapa!.nivel)) p.push(`mapa: el nivel ${l.mapa!.nivel} de ${l.id} no tiene nombre en quest.niveles`);
+  }
   return p;
+}
+
+type MapPos = { nivel: number; x: number; y: number };
+
+/** Comprueba que una salida apunta hacia donde está la sala destino en el mapa. */
+function mapMismatch(dir: string, a: MapPos, b: MapPos): string | null {
+  const dx = b.x - a.x, dy = b.y - a.y, dn = b.nivel - a.nivel;
+  switch (dir) {
+    case "norte": return dn === 0 && dx === 0 && dy < 0 ? null : "en el mapa el destino no está al norte en el mismo nivel";
+    case "sur": return dn === 0 && dx === 0 && dy > 0 ? null : "en el mapa el destino no está al sur en el mismo nivel";
+    case "este": return dn === 0 && dy === 0 && dx > 0 ? null : "en el mapa el destino no está al este en el mismo nivel";
+    case "oeste": return dn === 0 && dy === 0 && dx < 0 ? null : "en el mapa el destino no está al oeste en el mismo nivel";
+    case "subir": return dn < 0 ? null : "en el mapa el destino no está en un nivel superior";
+    case "bajar": return dn > 0 ? null : "en el mapa el destino no está en un nivel inferior";
+    default: return null; // entrar/salir: cualquier sitio
+  }
 }

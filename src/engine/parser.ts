@@ -25,7 +25,8 @@ export type ParseResult = { ok: true; cmd: Command } | { ok: false; texto: strin
 const DIRS: Record<string, Direction> = {
   n: "norte", norte: "norte", s: "sur", sur: "sur", e: "este", este: "este", o: "oeste", oeste: "oeste",
   subir: "subir", sube: "subir", arriba: "subir", bajar: "bajar", baja: "bajar", abajo: "bajar",
-  entrar: "entrar", entra: "entrar", dentro: "entrar", salir: "salir", sal: "salir", fuera: "salir",
+  trepar: "subir", trepa: "subir", escalar: "subir", escala: "subir",
+  entrar: "entrar", entra: "entrar", meterse: "entrar", metete: "entrar", dentro: "entrar", salir: "salir", sal: "salir", fuera: "salir",
 };
 
 const VERBS: Record<string, string> = {
@@ -66,8 +67,8 @@ export function parse(input: string, scope: Candidate[], catalog: Candidate[] = 
   if (!words.length) return { ok: false, texto: "¿Perdón?" };
   const [w0, ...rest] = words as [string, ...string[]];
 
-  // Dirección a secas: "n", "bajar"
-  if (rest.length === 0 && DIRS[w0] && !(w0 in VERBS && VERBS[w0] !== "ir")) return { ok: true, cmd: { verbo: "ir", dir: DIRS[w0]! } };
+  // Dirección a secas o con complemento: "n", "bajar", "entrar en la grieta", "salir de la sima"
+  if (DIRS[w0] && !(w0 in VERBS && VERBS[w0] !== "ir")) return { ok: true, cmd: { verbo: "ir", dir: DIRS[w0]! } };
   const verb = VERBS[w0];
   if (!verb) return { ok: false, texto: "No entiendo eso." };
   env.verbo = verb;

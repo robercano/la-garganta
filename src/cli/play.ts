@@ -22,7 +22,7 @@ const wrap = (s: string) =>
     out.push(cur);
     return out.join("\n");
   }).join("\n");
-const print = (lines: string[]) => { for (const l of lines) console.log((l.startsWith("MAPA (") ? l : wrap(l)) + "\n"); };
+const print = (lines: string[]) => { for (const l of lines) console.log((l.startsWith("MAPA") ? l : wrap(l)) + "\n"); };
 
 const pack = loadPackDir(packDir);
 const game = GameSession.create(pack, { narrator: new FakeNarrator(), npcs: new FakeNpcService() }, seed);

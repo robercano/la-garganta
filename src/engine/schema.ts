@@ -102,8 +102,9 @@ export const LocationSchema = z.object({
   al_entrar: z.array(Disparador).default([]), // se disparan una sola vez
   cambios: z.record(Id, z.string()).default({}), // flag -> frase que se añade a la descripción
   tags: z.array(z.string()).default([]),
-  // Posición en el mapa de la terminal (corte vertical: y crece hacia abajo) y nombre corto
-  mapa: z.object({ x: z.number().int().min(0), y: z.number().int().min(0), etiqueta: z.string().max(10) }).optional(),
+  // Posición en el mapa: nivel (1 = el más alto) y casilla en la planta de ese nivel
+  // (x crece hacia el este, y hacia el sur). La validación exige que cuadre con las salidas.
+  mapa: z.object({ nivel: z.number().int().min(1), x: z.number().int().min(0), y: z.number().int().min(0), etiqueta: z.string().max(10) }).optional(),
 }).transform((l) => {
   // Los hechos llegan limpios al narrador; los etiquetados quedan además como percepciones.
   const percepcion: Record<"oir" | "oler", string[]> = { oir: [], oler: [] };
@@ -185,6 +186,7 @@ export const QuestSchema = z.object({
       desc: z.record(Id, z.string()), // estado -> descripción al examinar
     })
     .optional(),
+  niveles: z.array(z.object({ nivel: z.number().int().min(1), nombre: z.string() })).default([]),
   // Percepciones globales que dependen del estado (p. ej. voces en las paredes con corrupción alta)
   ambiente: z.array(z.object({ sentido: Sentido, si: z.array(Cond).min(1), texto: z.string() })).default([]),
   finales: z.array(z.object({ id: Id, tipo: z.enum(["victoria", "derrota", "neutral"]), si: z.array(Cond).min(1), texto: z.string() })).min(1),

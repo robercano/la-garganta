@@ -2,7 +2,7 @@
 // la CLI como el Durable Object. No escribe en el estado: todo pasa por el motor.
 import type { Pack } from "../engine/pack.js";
 import { initialState, type GameState } from "../engine/state.js";
-import { ambientText, apply, catalog, scope, start, storeRoomDescription } from "../engine/engine.js";
+import { ambientText, apply, catalog, mapData, scope, start, storeRoomDescription, type MapData } from "../engine/engine.js";
 import { parse } from "../engine/parser.js";
 import { applyNpcReply, endDialog, npcContext, MAX_PLAYER_CHARS } from "../engine/dialog.js";
 import type { GameEvent } from "../engine/events.js";
@@ -27,6 +27,8 @@ export class GameSession {
   }
 
   get finished() { return !!this.state.final; }
+  /** Datos del mapa para que el frontend lo dibuje (no gasta turno). */
+  map(): MapData | null { return mapData(this.state, this.pack); }
   get inDialog() { return !!this.state.dialogo; }
 
   async start(): Promise<string[]> {

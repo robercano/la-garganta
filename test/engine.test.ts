@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { newGame, play, fight, pack, LIGHT, TO_HORNACINA } from "./helpers.js";
 import { parse } from "../src/engine/parser.js";
-import { scope, catalog, apply } from "../src/engine/engine.js";
+import { scope, catalog, apply, mapData } from "../src/engine/engine.js";
 import { applyNpcReply, npcContext } from "../src/engine/dialog.js";
 import { initialState } from "../src/engine/state.js";
 import { loadPack, PackError } from "../src/engine/pack.js";
@@ -208,23 +208,49 @@ describe("sentidos: escuchar y oler", () => {
 });
 
 describe("mapa", () => {
-  it("muestra solo lo explorado, marca dónde estás y lo intuido con ?", async () => {
+  it("muestra el nivel actual, lo explorado y lo intuido; no gasta turno", async () => {
     const g = await newGame();
-    const m0 = await play(g, ["mapa"]);
-    expect(m0).toContain(">Frente<");
-    expect(m0).not.toContain("Capilla");
+    let m = mapData(g.state, pack)!;
+    expect(m.actual).toBe(1);
+    expect(m.niveles.map((n) => n.nivel)).toEqual([1]);
+    expect(m.niveles[0]!.salas.find((r) => r.id === "frente_trabajo")!.estado).toBe("actual");
+    expect(m.niveles[0]!.salas.find((r) => r.id === "tunel_servicio")!.estado).toBe("intuida");
     await play(g, [...LIGHT, ...TO_HORNACINA]);
-    const m1 = await play(g, ["mapa"]);
-    expect(m1).toContain(">Capilla<");
-    expect(m1).toContain("?"); // el pozo, aún sin pisar
-    expect(m1).not.toContain("Garganta");
-    expect(g.state.turno).toBe(await play(g, ["mapa"]).then(() => g.state.turno)); // no gasta turno
+    m = mapData(g.state, pack)!;
+    expect(m.actual).toBe(2);
+    expect(m.niveles.map((n) => n.nombre)).toEqual(["la galería del frente", "la capilla", "el pozo inundado"]);
+    const capilla = m.niveles[1]!.salas[0]!;
+    expect(capilla).toMatchObject({ estado: "actual", sube: true, baja: true });
+    expect(m.niveles[0]!.tuneles).toEqual([{ a: "frente_trabajo", b: "tunel_servicio" }]);
+    const turno = g.state.turno;
+    expect(await play(g, ["mapa"])).toContain("nivel 2: la capilla");
+    expect(g.state.turno).toBe(turno);
   });
-  it("con el ojo injertado aparece el paso oculto entre capilla y galerías", async () => {
+  it("el pozo y las galerías están en el mismo nivel, unidos de norte a sur", async () => {
     const g = await newGame(42);
     await play(g, [...LIGHT, ...TO_HORNACINA, "bajar"]);
     await fight(g, "cuelebre");
-    await play(g, ["coger pulmon", "injertar pulmon", "norte", "coger ojo", "injertar ojo"]);
-    expect(await play(g, ["mapa"])).toMatch(/Pasos ocultos: .*Capilla/);
+    await play(g, ["coger pulmon", "injertar pulmon", "norte"]);
+    const n3 = mapData(g.state, pack)!.niveles.find((n) => n.nivel === 3)!;
+    const pozo = n3.salas.find((r) => r.id === "pozo_inundado")!, gal = n3.salas.find((r) => r.id === "galerias_viejas")!;
+    expect(pozo.x).toBe(gal.x);
+    expect(pozo.y).toBeGreaterThan(gal.y);
+    expect(n3.tuneles).toHaveLength(1);
+  });
+  it("la grieta oculta se toma con «entrar» y baja de la capilla a las galerías", async () => {
+    const g = await newGame(42);
+    await play(g, [...LIGHT, ...TO_HORNACINA, "bajar"]);
+    await fight(g, "cuelebre");
+    await play(g, ["coger pulmon", "injertar pulmon", "norte", "coger ojo", "injertar ojo", "salir por la grieta"]);
+    expect(g.state.sala).toBe("hornacina");
+    await play(g, ["entrar en la grieta"]);
+    expect(g.state.sala).toBe("galerias_viejas");
+  });
+  it("una salida que contradice el mapa hace fallar el pack", () => {
+    const raw = readPackDir("packs/la-garganta") as any;
+    const pozo = raw.locations.find((l: any) => l.id === "pozo_inundado");
+    pozo.salidas.este = pozo.salidas.norte;
+    delete pozo.salidas.norte;
+    expect(() => loadPack(raw)).toThrow(/no está al este/);
   });
 });

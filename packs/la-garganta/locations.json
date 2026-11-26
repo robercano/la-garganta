@@ -25,7 +25,6 @@
     ],
     "salidas": {
       "subir": {
-        "a": "tunel_servicio",
         "si": [
           "flag:corriente"
         ],
@@ -40,6 +39,7 @@
       }
     },
     "mapa": {
+      "nivel": 1,
       "x": 0,
       "y": 0,
       "etiqueta": "Frente"
@@ -71,7 +71,6 @@
         "a": "frente_trabajo"
       },
       "subir": {
-        "a": "frente_trabajo",
         "si": [
           "flag:camino_imposible"
         ],
@@ -96,6 +95,7 @@
       "pista_lampara": "La lámpara de Xuan sigue ahí tirada, y ahora sabes de quién es."
     },
     "mapa": {
+      "nivel": 1,
       "x": 1,
       "y": 0,
       "etiqueta": "Túnel"
@@ -134,12 +134,12 @@
       "bajar": {
         "a": "pozo_inundado"
       },
-      "este": {
+      "entrar": {
         "a": "galerias_viejas",
         "visible_si": [
           "poder:ver_oculto"
         ],
-        "texto": "Te metes por la grieta que solo ve tu ojo nuevo."
+        "texto": "Te metes por la grieta que solo ve tu ojo nuevo. Baja estrecha y seca, sin agua, hasta las galerías viejas."
       }
     },
     "acciones": [
@@ -154,8 +154,9 @@
       }
     ],
     "mapa": {
-      "x": 1,
-      "y": 1,
+      "nivel": 2,
+      "x": 0,
+      "y": 0,
       "etiqueta": "Capilla"
     }
   },
@@ -197,8 +198,9 @@
       "huesos_mula"
     ],
     "mapa": {
-      "x": 1,
-      "y": 2,
+      "nivel": 3,
+      "x": 0,
+      "y": 1,
       "etiqueta": "Pozo"
     }
   },
@@ -236,27 +238,28 @@
         ],
         "bloqueo": "Para volver tendrías que cruzar el agua otra vez."
       },
-      "oeste": {
-        "a": "hornacina",
-        "visible_si": [
-          "poder:ver_oculto"
-        ],
-        "texto": "Te deslizas por una grieta que antes no veías y sales, seco, junto al altar de la Santa."
-      },
       "bajar": {
         "a": "garganta",
         "si": [
           "poder:respirar"
         ],
         "bloqueo": "Del pozo de bajada sale tanto grisú que te lloran los ojos. Dos bocanadas ahí abajo y no vuelves a subir."
+      },
+      "salir": {
+        "a": "hornacina",
+        "visible_si": [
+          "poder:ver_oculto"
+        ],
+        "texto": "Trepas por la grieta que antes no veías y sales, seco, junto al altar de la Santa."
       }
     },
     "cambios": {
       "hueco_abierto": "Donde estaba el derrumbe se abre ahora un hueco con un altar diminuto."
     },
     "mapa": {
-      "x": 2,
-      "y": 2,
+      "nivel": 3,
+      "x": 0,
+      "y": 0,
       "etiqueta": "Galerías"
     }
   },
@@ -280,13 +283,6 @@
       "luz_verdosa"
     ],
     "salidas": {
-      "sur": {
-        "a": "galerias_viejas",
-        "si": [
-          "poder:respirar"
-        ],
-        "bloqueo": "El gas del pozo te cierra el paso."
-      },
       "subir": {
         "si": [
           "tiene:cuerda"
@@ -296,6 +292,13 @@
         ],
         "bloqueo": "La chimenea vieja es lisa y estrecha. Sin una cuerda no hay forma de subir.",
         "texto": "Lanzas la cuerda, que se engancha en un saliente, y empiezas a subir."
+      },
+      "salir": {
+        "a": "galerias_viejas",
+        "si": [
+          "poder:respirar"
+        ],
+        "bloqueo": "El gas del pozo te cierra el paso."
       }
     },
     "al_entrar": [
@@ -307,8 +310,9 @@
       }
     ],
     "mapa": {
-      "x": 2,
-      "y": 3,
+      "nivel": 4,
+      "x": 0,
+      "y": 0,
       "etiqueta": "Garganta"
     }
   }

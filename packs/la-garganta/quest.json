@@ -97,6 +97,48 @@
       "muerta": "No mires."
     }
   },
+  "ambiente": [
+    {
+      "sentido": "oir",
+      "si": [
+        "corrupcion>=50",
+        "corrupcion<75"
+      ],
+      "texto": "Y debajo de todo, un latido lento que no es el tuyo."
+    },
+    {
+      "sentido": "oir",
+      "si": [
+        "corrupcion>=75"
+      ],
+      "texto": "Y debajo de todo, las paredes susurrando. Ya entiendes alguna palabra: tu nombre."
+    },
+    {
+      "sentido": "oler",
+      "si": [
+        "corrupcion>=50"
+      ],
+      "texto": "Hay otro olor que no sabes de dónde viene: tú mismo. Hueles a la laguna."
+    }
+  ],
+  "niveles": [
+    {
+      "nivel": 1,
+      "nombre": "la galería del frente"
+    },
+    {
+      "nivel": 2,
+      "nombre": "la capilla"
+    },
+    {
+      "nivel": 3,
+      "nombre": "el pozo inundado"
+    },
+    {
+      "nivel": 4,
+      "nombre": "la sima"
+    }
+  ],
   "finales": [
     {
       "id": "fusion",
@@ -140,30 +182,6 @@
         "grupo:cuadrilla=hostil|muerta"
       ],
       "texto": "Sales solo, y no te das prisa. Arriba la luz del día te escuece los ojos nuevos. En el pueblo dirán que la cuadrilla se perdió en el apagón de noviembre. Tú sabes que no se perdió. Tú sabes dónde está cada uno. FIN."
-    }
-  ],
-  "ambiente": [
-    {
-      "sentido": "oir",
-      "si": [
-        "corrupcion>=50",
-        "corrupcion<75"
-      ],
-      "texto": "Y debajo de todo, un latido lento que no es el tuyo."
-    },
-    {
-      "sentido": "oir",
-      "si": [
-        "corrupcion>=75"
-      ],
-      "texto": "Y debajo de todo, las paredes susurrando. Ya entiendes alguna palabra: tu nombre."
-    },
-    {
-      "sentido": "oler",
-      "si": [
-        "corrupcion>=50"
-      ],
-      "texto": "Hay otro olor que no sabes de dónde viene: tú mismo. Hueles a la laguna."
     }
   ]
 }

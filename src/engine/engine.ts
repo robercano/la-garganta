@@ -582,56 +582,84 @@ export function ambientText(s: GameState, pack: Pack): string {
 
 // ───────────────────────── Mapa ─────────────────────────
 
-/**
- * Mapa en texto de las salas exploradas, como un corte vertical de la mina.
- * Las salas a las que lleva una salida visible pero aún no pisadas salen como «?».
- * Solo se dibujan uniones entre vecinas; las demás se listan debajo.
- */
-export function renderMap(s: GameState, pack: Pack): string {
+export interface MapRoom {
+  id: string;
+  etiqueta: string;
+  x: number;
+  y: number;
+  estado: "actual" | "vista" | "intuida"; // intuida: se ve una salida hacia ella, pero no se ha pisado
+  sube: boolean; // tiene una salida visible a un nivel superior
+  baja: boolean;
+}
+export interface MapLevel {
+  nivel: number;
+  nombre: string;
+  salas: MapRoom[];
+  tuneles: { a: string; b: string }[];
+}
+export interface MapData {
+  actual: number; // nivel donde está el jugador
+  niveles: MapLevel[]; // solo los niveles con algo conocido, de arriba abajo
+}
+
+/** Lo que el jugador sabe del mapa. Lo calcula el motor; el frontend solo lo dibuja. */
+export function mapData(s: GameState, pack: Pack): MapData | null {
   const t = new Turn(s, pack);
-  const placed = pack.data.locations.filter((l) => l.mapa);
-  const known = new Map<string, "visto" | "intuido">();
-  const links: [string, string][] = [];
-  for (const l of placed) if (s.salas[l.id]?.explorada || l.id === s.sala) known.set(l.id, "visto");
-  for (const id of [...known.keys()]) {
-    for (const exit of Object.values(pack.location(id).salidas)) {
-      if (!exit?.a || !t.ok(exit.visible_si) || !pack.location(exit.a).mapa) continue;
-      if (!known.has(exit.a)) known.set(exit.a, "intuido");
-      const key = [id, exit.a].sort() as [string, string];
-      if (!links.some(([a, b]) => a === key[0] && b === key[1])) links.push(key);
+  if (!pack.location(s.sala).mapa) return null;
+  const pos = (id: string) => pack.location(id).mapa!;
+  const state = new Map<string, MapRoom["estado"]>();
+  for (const l of pack.data.locations) if (s.salas[l.id]?.explorada) state.set(l.id, "vista");
+  state.set(s.sala, "actual");
+  const links = new Set<string>();
+  const vertical = new Map<string, { sube: boolean; baja: boolean }>();
+  for (const id of [...state.keys()]) {
+    const v = { sube: false, baja: false };
+    for (const [dir, exit] of Object.entries(pack.location(id).salidas)) {
+      if (!exit || !t.ok(exit.visible_si)) continue;
+      // Una salida sin destino solo cuenta si hace algo (la chimenea de escape), no si es un callejón
+      if (!exit.a) { if (exit.efectos.length && dir === "subir") v.sube = true; if (exit.efectos.length && dir === "bajar") v.baja = true; continue; }
+      if (!state.has(exit.a)) state.set(exit.a, "intuida");
+      const dn = pos(exit.a).nivel - pos(id).nivel;
+      if (dn < 0) v.sube = true;
+      else if (dn > 0) v.baja = true;
+      else links.add([id, exit.a].sort().join("|"));
     }
+    vertical.set(id, v);
   }
-  if (!known.size) return "Aún no sabes dónde estás.";
+  const byLevel = new Map<number, MapLevel>();
+  for (const [id, estado] of state) {
+    const m = pos(id);
+    if (!byLevel.has(m.nivel)) byLevel.set(m.nivel, { nivel: m.nivel, nombre: pack.quest.niveles.find((n) => n.nivel === m.nivel)?.nombre ?? "", salas: [], tuneles: [] });
+    const v = vertical.get(id) ?? { sube: false, baja: false };
+    byLevel.get(m.nivel)!.salas.push({ id, etiqueta: m.etiqueta, x: m.x, y: m.y, estado, ...v });
+  }
+  for (const k of links) {
+    const [a, b] = k.split("|") as [string, string];
+    byLevel.get(pos(a).nivel)?.tuneles.push({ a, b });
+  }
+  return { actual: pos(s.sala).nivel, niveles: [...byLevel.values()].sort((a, b) => a.nivel - b.nivel) };
+}
 
-  const W = Math.max(...placed.map((l) => l.mapa!.etiqueta.length)) + 2; // ancho de celda
-  const G = 3; // hueco entre columnas
-  const maxX = Math.max(...placed.map((l) => l.mapa!.x));
-  const maxY = Math.max(...[...known.keys()].map((id) => pack.location(id).mapa!.y));
-  const cols = (maxX + 1) * W + maxX * G;
-  const rows: string[][] = Array.from({ length: maxY * 2 + 1 }, () => Array(cols).fill(" "));
+/** Versión en texto del nivel actual, para la terminal de desarrollo. */
+export function renderMap(s: GameState, pack: Pack): string {
+  const data = mapData(s, pack);
+  const lvl = data?.niveles.find((n) => n.nivel === data.actual);
+  if (!data || !lvl) return "Aún no sabes dónde estás.";
+  const label = (r: MapRoom) => (r.estado === "intuida" ? "?" : `${r.estado === "actual" ? "*" : ""}${r.etiqueta}${r.sube ? "↑" : ""}${r.baja ? "↓" : ""}`);
+  const W = Math.max(...lvl.salas.map((r) => label(r).length)) + 2;
+  const G = 3;
+  const maxX = Math.max(...lvl.salas.map((r) => r.x)), maxY = Math.max(...lvl.salas.map((r) => r.y));
+  const minX = Math.min(...lvl.salas.map((r) => r.x)), minY = Math.min(...lvl.salas.map((r) => r.y));
+  const cols = (maxX - minX + 1) * W + (maxX - minX) * G;
+  const rows: string[][] = Array.from({ length: (maxY - minY) * 2 + 1 }, () => Array(cols).fill(" "));
   const put = (r: number, c: number, txt: string) => { for (let i = 0; i < txt.length; i++) if (rows[r] && c + i < cols) rows[r]![c + i] = txt[i]!; };
-  const colStart = (x: number) => x * (W + G);
-  const center = (x: number) => colStart(x) + Math.floor((W - 1) / 2);
-
-  for (const [id, kind] of known) {
-    const m = pack.location(id).mapa!;
-    const label = kind === "intuido" ? "?" : id === s.sala ? `>${m.etiqueta}<` : m.etiqueta;
-    put(m.y * 2, colStart(m.x) + Math.floor((W - label.length) / 2), label);
+  const col = (x: number) => (x - minX) * (W + G);
+  for (const r of lvl.salas) put((r.y - minY) * 2, col(r.x) + Math.floor((W - label(r).length) / 2), label(r));
+  const at = new Map(lvl.salas.map((r) => [r.id, r]));
+  for (const { a, b } of lvl.tuneles) {
+    const ra = at.get(a)!, rb = at.get(b)!;
+    if (ra.y === rb.y) put((ra.y - minY) * 2, col(Math.min(ra.x, rb.x)) + W, "─".repeat(G));
+    else if (ra.x === rb.x) put((Math.min(ra.y, rb.y) - minY) * 2 + 1, col(ra.x) + Math.floor((W - 1) / 2), "│");
   }
-  const far: string[] = [];
-  for (const [a, b] of links) {
-    const ma = pack.location(a).mapa!, mb = pack.location(b).mapa!;
-    if (ma.y === mb.y && Math.abs(ma.x - mb.x) === 1) put(ma.y * 2, colStart(Math.min(ma.x, mb.x)) + W, "─".repeat(G));
-    else if (ma.x === mb.x && Math.abs(ma.y - mb.y) === 1) put(Math.min(ma.y, mb.y) * 2 + 1, center(ma.x), "│");
-    else if (known.get(a) === "visto" && known.get(b) === "visto") far.push(`${ma.etiqueta} ↔ ${mb.etiqueta}`);
-  }
-  const body = rows.map((r) => r.join("").trimEnd()).join("\n");
-  return [
-    "MAPA (↑ superficie · ↓ lo hondo)",
-    "",
-    body,
-    "",
-    ...(far.length ? [`Pasos ocultos: ${far.join(", ")}.`] : []),
-    ">Sala< estás aquí · ? sin explorar",
-  ].join("\n");
+  return [`MAPA · nivel ${lvl.nivel}: ${lvl.nombre} (norte arriba)`, "", ...rows.map((r) => r.join("").trimEnd()), "", "* estás aquí · ↑↓ cambia de nivel · ? sin explorar"].join("\n");
 }
