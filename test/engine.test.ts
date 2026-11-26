@@ -254,3 +254,13 @@ describe("mapa", () => {
     expect(() => loadPack(raw)).toThrow(/no está al este/);
   });
 });
+
+describe("lo que nombra la descripción de un decorado", () => {
+  it("«coger ojo» en la capilla se refiere a los exvotos y da mal fario", async () => {
+    const g = await newGame();
+    await play(g, [...LIGHT, ...TO_HORNACINA, "examinar exvotos"]);
+    expect(await play(g, ["coger ojo"])).toContain("mal fario");
+    expect(await play(g, ["examinar los órganos"])).toContain("demasiados lóbulos");
+    expect(await play(g, ["coger la santa"])).toContain("Ni en sueños");
+  });
+});

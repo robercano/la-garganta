@@ -39,6 +39,7 @@ export const ItemSchema = z.object({
   examinar: z.string().optional(), // detalle al examinar
   al_examinar: Effects, // p. ej. marcar una pista como vista
   fijo: z.boolean().default(false), // no se puede coger
+  al_coger: z.string().optional(), // respuesta propia si se intenta coger algo fijo
   listar: z.boolean().optional(), // el decorado (tipo escenario) no sale en «Ves: ...» salvo que se marque
   palpable: z.boolean().default(false), // se encuentra aunque la sala esté a oscuras
   oir: z.string().optional(), // lo que se oye de él al «escuchar» (si está en la sala)

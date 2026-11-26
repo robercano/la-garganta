@@ -170,7 +170,8 @@
     ],
     "tipo": "escenario",
     "fijo": true,
-    "desc_base": "Una Santa Bárbara de madera policromada, con la torre en la mano. Alguien le ha pintado los ojos de negro hace poco."
+    "desc_base": "Una Santa Bárbara de madera policromada, con la torre en la mano. Alguien le ha pintado los ojos de negro hace poco.",
+    "al_coger": "¿Llevarte a la Santa? Ni en sueños. Ella es la que tiene que sacarte de aquí."
   },
   {
     "id": "rosario",
@@ -476,7 +477,8 @@
     ],
     "tipo": "escenario",
     "fijo": true,
-    "desc_base": "Velas de sebo recién encendidas. Las ha encendido alguien que sigue aquí abajo."
+    "desc_base": "Velas de sebo recién encendidas. Las ha encendido alguien que sigue aquí abajo.",
+    "al_coger": "Coger una vela del altar es robarle la luz a la Santa. Tienes tu lámpara."
   },
   {
     "id": "exvotos",
@@ -489,7 +491,8 @@
     ],
     "tipo": "escenario",
     "fijo": true,
-    "desc_base": "Piernas, manos y pulmones de cera, ofrendas por accidentes y silicosis. Entre ellos hay otros que no reconoces: órganos con demasiados lóbulos, un ojo sin pupila."
+    "desc_base": "Piernas, manos y pulmones de cera, ofrendas por accidentes y silicosis. Entre ellos hay otros que no reconoces: órganos con demasiados lóbulos, un ojo sin pupila.",
+    "al_coger": "Alargas la mano y la retiras a medio camino. Lo que se le ofrece a la Santa no se toca: trae mal fario, decía tu madre. Y algo te dice que el fario de estos exvotos sería peor que ninguno."
   },
   {
     "id": "inscripciones",

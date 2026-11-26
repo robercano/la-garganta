@@ -5,7 +5,12 @@ import { normalize } from "./normalize.js";
 
 export type RefKind = "item" | "npc" | "enemigo" | "grupo";
 export interface Ref { kind: RefKind; id: string }
-export interface Candidate extends Ref { nombre: string; alias: string[]; consumible?: boolean }
+export interface Candidate extends Ref {
+  nombre: string;
+  alias: string[];
+  consumible?: boolean;
+  texto?: string; // descripción del decorado: lo que nombra se resuelve a él («el ojo» de los exvotos)
+}
 
 export type Command =
   | { verbo: "ir"; dir: Direction }
@@ -136,6 +141,11 @@ function resolve(words: string[], scope: Candidate[], catalog: Candidate[], ask:
     const names = matches.map((m) => m.nombre);
     return { ok: false, texto: `¿Cuál: ${names.slice(0, -1).join(", ")} o ${names.at(-1)}?` };
   }
+  // Algo que se menciona en la descripción de un decorado presente es parte de ese decorado
+  const inDecor = scope.filter((c) => c.texto && ambientNoun(phrase, c.texto));
+  const exact = inDecor.filter((c) => ambientNoun(phrase, c.texto!, true));
+  const pick = inDecor.length === 1 ? inDecor : exact.length === 1 ? exact : [];
+  if (pick.length === 1) return { ok: true, ref: pick[0]! };
   if (match(phrase, catalog).length) return { ok: false, texto: "No ves eso por aquí." };
   const deco = ambientNoun(phrase, env.ambient);
   if (deco) return { ok: false, texto: decorText(env.verbo, deco) };
@@ -186,16 +196,16 @@ function splitAll(words: string[], seps: string[]): string[][] {
 let env = { ambient: "", verbo: "" };
 
 const ART = new Set(["el", "la", "los", "las", "un", "una", "unos", "unas"]);
-const NOT_NOUNS = new Set(["como", "pero", "para", "desde", "hacia", "entre", "sobre", "todo", "toda", "todos", "nadie", "algo", "aqui", "alli", "ahora", "solo", "muy", "mas", "tras"]);
+const NOT_NOUNS = new Set(["como", "pero", "para", "desde", "hacia", "entre", "sobre", "todo", "toda", "todos", "nadie", "algo", "aqui", "alli", "ahora", "solo", "muy", "mas", "tras", "que", "sin", "asi", "ahi", "aun", "ese", "esa", "eso", "este", "esta", "esto", "hay"]);
 
 /** Busca en el texto de la sala la palabra que el jugador ha nombrado y la devuelve con su artículo. */
-export function ambientNoun(phrase: string, ambient: string): string | null {
+export function ambientNoun(phrase: string, ambient: string, exactOnly = false): string | null {
   if (!ambient) return null;
   const words = ambient.split(/[\s,.;:()«»"]+/).filter(Boolean);
   const norm = words.map((w) => normalizeWord(w));
-  const wanted = phrase.split(" ").filter((w) => w.length >= 4 && !NOT_NOUNS.has(w) && !FILLER.has(w));
+  const wanted = phrase.split(" ").filter((w) => w.length >= 3 && !NOT_NOUNS.has(w) && !FILLER.has(w));
   for (const w of wanted) {
-    const i = norm.findIndex((n) => n === w || n === `${w}s` || `${n}s` === w || n === `${w}es`);
+    const i = norm.findIndex((n) => n === w || (!exactOnly && (n === `${w}s` || `${n}s` === w || n === `${w}es`)));
     if (i < 0) continue;
     const prev = words[i - 1]?.toLowerCase();
     return prev && ART.has(prev) ? `${prev} ${words[i]}` : words[i]!.toLowerCase();

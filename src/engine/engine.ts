@@ -66,7 +66,7 @@ export function scope(s: GameState, pack: Pack): Candidate[] {
   const t = new Turn(s, pack);
   const addItem = (id: string) => {
     const it = pack.item(id);
-    out.push({ kind: "item", id, nombre: it.nombre, alias: it.alias, consumible: it.tipo === "consumible" });
+    out.push({ kind: "item", id, nombre: it.nombre, alias: it.alias, consumible: it.tipo === "consumible", texto: it.tipo === "escenario" ? [it.desc_base, it.examinar].filter(Boolean).join(" ") : undefined });
   };
   for (const id of carried(s)) addItem(id);
   for (const id of visibleItems(t)) addItem(id);
@@ -201,6 +201,7 @@ function take(t: Turn, ref: Ref) {
   if (ref.kind !== "item") return t.err("Eso no se puede coger.");
   if (carried(t.s).includes(ref.id)) return t.err("Ya lo llevas.");
   const it = t.pack.item(ref.id);
+  if (it.fijo && it.al_coger) return t.err(it.al_coger);
   if (it.fijo) return t.err(it.tipo === "escenario" ? `No merece la pena cargar con ${it.nombre}.` : `No puedes llevarte ${it.nombre}.`);
   t.roomState.objetos = t.roomState.objetos.filter((o) => o !== ref.id);
   t.s.inventario.push(ref.id);
