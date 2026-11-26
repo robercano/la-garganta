@@ -33,6 +33,8 @@ Condiciones (todas deben cumplirse): `flag:x`, `!flag:x`, `tiene:item`, `poder:p
 
 Efectos: `flag:x`, `!flag:x`, `corrupcion+10`, `corrupcion-5`, `vida+5`, `dar:item`, `quitar:item`, `aparece:item`, `ir:sala`.
 
+Sentidos («escuchar» y «oler»): un hecho de sala puede empezar por `[oir]` u `[oler]` (el narrador lo recibe sin la etiqueta); un disparador `al_entrar` puede llevar `"sentido": "oir"` para que su texto se siga oyendo; objetos, NPC y enemigos pueden tener `oir`/`oler`; y `quest.ambiente` añade percepciones con condición (p. ej. con corrupción alta).
+
 ## Notas de diseño
 
 - La prosa de cada sala (la genera el narrador una vez por partida) solo describe tono y hechos; la lista de objetos, personajes y salidas la añade siempre el motor. Así la IA no puede inventar nada interactuable.

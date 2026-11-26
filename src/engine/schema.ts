@@ -41,6 +41,8 @@ export const ItemSchema = z.object({
   fijo: z.boolean().default(false), // no se puede coger
   listar: z.boolean().optional(), // el decorado (tipo escenario) no sale en «Ves: ...» salvo que se marque
   palpable: z.boolean().default(false), // se encuentra aunque la sala esté a oscuras
+  oir: z.string().optional(), // lo que se oye de él al «escuchar» (si está en la sala)
+  oler: z.string().optional(),
   visible_si: Conds,
   tags: z.array(z.string()).default([]),
 });
@@ -63,7 +65,7 @@ const Salida = z.object({
 });
 
 const AccionSala = z.object({
-  verbo: z.enum(["rezar", "escuchar", "esperar"]),
+  verbo: z.enum(["rezar", "escuchar", "oler", "esperar"]),
   si: Conds,
   efectos: Effects,
   texto: z.string(),
@@ -71,18 +73,25 @@ const AccionSala = z.object({
   texto_repetido: z.string().optional(),
 });
 
+const Sentido = z.enum(["oir", "oler"]);
+
 const Disparador = z.object({
   id: Id,
   si: Conds,
   efectos: Effects,
   texto: z.string(),
+  sentido: Sentido.optional(), // si es algo que se oye o se huele, queda para «escuchar»/«oler»
 });
+
+// Un hecho puede llevar una etiqueta de sentido al principio: "[oir] al fondo se oye gotear".
+const HECHO_TAG = /^\[(oir|oír|oler)\]\s*/i;
+const Hecho = z.string().regex(/^(?!\[)\S|^\[(oir|oír|oler)\]\s*\S/i, "hecho vacío o etiqueta no válida (usa [oir] u [oler] seguido del texto)");
 
 export const LocationSchema = z.object({
   id: Id,
   nombre: z.string(),
   tono: z.string(),
-  hechos: z.array(z.string()).min(1),
+  hechos: z.array(Hecho).min(1),
   desc_base: z.string(),
   oscura: z.boolean().default(false),
   salidas: z.partialRecord(z.enum(DIRECTIONS), Salida).default({}),
@@ -93,6 +102,17 @@ export const LocationSchema = z.object({
   al_entrar: z.array(Disparador).default([]), // se disparan una sola vez
   cambios: z.record(Id, z.string()).default({}), // flag -> frase que se añade a la descripción
   tags: z.array(z.string()).default([]),
+}).transform((l) => {
+  // Los hechos llegan limpios al narrador; los etiquetados quedan además como percepciones.
+  const percepcion: Record<"oir" | "oler", string[]> = { oir: [], oler: [] };
+  const hechos = l.hechos.map((h) => {
+    const m = h.match(HECHO_TAG);
+    if (!m) return h;
+    const texto = h.slice(m[0].length);
+    percepcion[m[1]!.toLowerCase().startsWith("ol") ? "oler" : "oir"].push(texto);
+    return texto;
+  });
+  return { ...l, hechos, percepcion };
 });
 
 export const NpcSchema = z.object({
@@ -110,6 +130,8 @@ export const NpcSchema = z.object({
   se_niega_si: Conds,
   texto_negativa: z.string().default("No quiere hablar contigo."),
   saludo_fijo: z.string(), // texto sin IA (IA falsa y fallback)
+  oir: z.string().optional(),
+  oler: z.string().optional(),
   respuestas_fijas: z.array(z.string()).min(1), // IA falsa y fallback
   desc_base: z.string(),
 });
@@ -127,6 +149,8 @@ export const EnemySchema = z.object({
   golpes: z.object({ jugador: z.array(z.string()).min(1), enemigo: z.array(z.string()).min(1), fallo: z.array(z.string()).min(1) }),
   inicio: z.string(),
   muerte: z.string(),
+  oir: z.string().optional(),
+  oler: z.string().optional(),
 });
 
 const Banda = z.object({ max: z.number().int(), estado: Id, texto: z.string(), sigue: z.boolean(), hostil: z.boolean().default(false) });
@@ -159,6 +183,8 @@ export const QuestSchema = z.object({
       desc: z.record(Id, z.string()), // estado -> descripción al examinar
     })
     .optional(),
+  // Percepciones globales que dependen del estado (p. ej. voces en las paredes con corrupción alta)
+  ambiente: z.array(z.object({ sentido: Sentido, si: z.array(Cond).min(1), texto: z.string() })).default([]),
   finales: z.array(z.object({ id: Id, tipo: z.enum(["victoria", "derrota", "neutral"]), si: z.array(Cond).min(1), texto: z.string() })).min(1),
 });
 
@@ -173,6 +199,8 @@ export const PackSchema = z.object({
   enemies: z.array(EnemySchema),
 });
 
+export const SENSES = ["oir", "oler"] as const;
+export type Sense = (typeof SENSES)[number];
 export type PackInput = z.input<typeof PackSchema>;
 export type PackData = z.output<typeof PackSchema>;
 export type Item = z.output<typeof ItemSchema>;

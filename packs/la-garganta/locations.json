@@ -8,7 +8,8 @@
       "los cuadros de entibo recién puestos crujen",
       "en el suelo quedan colillas y una fiambrera vacía de la cuadrilla",
       "el cable de la luz cuelga muerto del techo",
-      "al fondo se oye gotear"
+      "[oir] al fondo se oye gotear, lento, como un reloj",
+      "[oler] huele a sudor, a tabaco de picadura y a pólvora de los barrenos"
     ],
     "desc_base": "El tajo donde has picado todo el día. La veta de carbón brilla húmeda, los entibos nuevos crujen bajo el peso del monte y aún huele a la cuadrilla: tabaco, sudor, sidra.",
     "oscura": true,
@@ -48,7 +49,8 @@
       "el túnel debería subir hacia la bocamina",
       "arriba hay un derrumbe reciente con las piedras aún calientes",
       "una bajada estrecha se hunde hacia el este, hacia abajo",
-      "huele a humedad y a cera de vela"
+      "[oler] huele a humedad y, muy débil, a cera de vela",
+      "[oir] la madera podrida del entibo cruje de vez en cuando"
     ],
     "desc_base": "Un túnel viejo de mantenimiento, con raíles de vagoneta comidos por el óxido. Debería subir hacia la bocamina; en lugar de eso, un derrumbe reciente lo tapona y solo queda una bajada estrecha.",
     "oscura": true,
@@ -81,7 +83,8 @@
           "poder:luz"
         ],
         "efectos": [],
-        "texto": "Desde abajo, muy abajo, te llega un canto. Parece el rosario de la Santina, pero las palabras no son esas."
+        "texto": "Desde abajo, muy abajo, te llega un canto. Parece el rosario de la Santina, pero las palabras no son esas.",
+        "sentido": "oir"
       }
     ],
     "cambios": {
@@ -97,7 +100,9 @@
       "hay velas encendidas que nadie debería haber encendido",
       "las paredes están cubiertas de exvotos: piernas, manos y pulmones de cera",
       "algunas inscripciones en la roca son mucho más antiguas que la mina",
-      "un pozo de bajada se abre al fondo"
+      "un pozo de bajada se abre al fondo",
+      "[oir] las velas chisporrotean y el capataz reza entre dientes",
+      "[oler] huele a sebo quemado y a incienso barato"
     ],
     "desc_base": "Una capilla excavada en la roca, como las que hay en todos los pozos. Santa Bárbara preside el altar entre velas encendidas. Las paredes están llenas de exvotos de cera: piernas, manos, pulmones. Algunos no tienen forma de nada humano.",
     "objetos": [
@@ -147,8 +152,9 @@
       "el suelo acaba en una laguna de agua negra y quieta",
       "al norte la galería se hunde bajo el agua hasta el techo",
       "hay huesos de mula en la orilla, mondados",
-      "el agua huele a hierro",
-      "unas escaleras de mano suben hacia la hornacina"
+      "[oler] el agua huele a hierro, como la sangre",
+      "unas escaleras de mano suben hacia la hornacina",
+      "[oir] el eco devuelve cada goteo multiplicado"
     ],
     "desc_base": "Una sala amplia donde la galería se hunde en una laguna de agua negra. Al norte el agua llega hasta el techo. En la orilla hay huesos de mula, mondados.",
     "oscura": true,
@@ -185,7 +191,8 @@
       "el aire pica y huele a grisú",
       "un hombre está acurrucado en un rincón, balbuceando",
       "hay restos de una procesión: cadáveres con velas apagadas en las manos",
-      "un pozo de bajada exhala gas desde el fondo"
+      "[oir] del pozo de bajada sube un silbido de gas y, debajo, algo parecido a una respiración",
+      "[oler] el aire pica de grisú y huele a cera fría"
     ],
     "desc_base": "Galerías que no salen en ningún plano de la compañía: lisas, curvas, como por dentro de un animal. El aire pica de grisú. Hay restos de una procesión de difuntos con velas apagadas en las manos.",
     "oscura": true,
@@ -236,8 +243,9 @@
       "es una sima tan honda que no se ve el fondo",
       "las paredes están cubiertas de una membrana tibia que late",
       "una luz verdosa sale de la propia roca",
-      "de lo hondo sube una respiración lenta y enorme",
-      "arriba se ve una chimenea antigua, estrecha, que sube hacia el exterior"
+      "[oir] de lo hondo sube una respiración lenta y enorme",
+      "arriba se ve una chimenea antigua, estrecha, que sube hacia el exterior",
+      "[oler] huele a carne tibia y a tierra recién removida"
     ],
     "desc_base": "Una sima sin fondo, bañada por una luz verdosa que sale de la propia roca. Las paredes están forradas de una membrana tibia que late. De lo hondo sube una respiración lenta, enorme. Arriba, muy arriba, una chimenea antigua.",
     "objetos": [

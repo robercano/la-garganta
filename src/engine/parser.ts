@@ -14,7 +14,7 @@ export type Command =
   | { verbo: "estado" }
   | { verbo: "ayuda" }
   | { verbo: "huir" }
-  | { verbo: "rezar" | "escuchar" | "esperar" }
+  | { verbo: "rezar" | "escuchar" | "oler" | "esperar" }
   | { verbo: "examinar" | "coger" | "dejar" | "equipar" | "desequipar" | "consumir" | "injertar" | "atacar" | "hablar"; obj: Ref }
   | { verbo: "usar"; obj: Ref; con?: Ref }
   | { verbo: "combinar"; objs: Ref[] };
@@ -45,7 +45,8 @@ const VERBS: Record<string, string> = {
   atacar: "atacar", ataca: "atacar", golpear: "atacar", golpea: "atacar", pegar: "atacar", pega: "atacar", matar: "atacar", mata: "atacar", luchar: "atacar", lucha: "atacar",
   injertar: "injertar", injerta: "injertar", implantar: "injertar", implanta: "injertar", injertarse: "injertar",
   rezar: "rezar", reza: "rezar", orar: "rezar", ora: "rezar",
-  escuchar: "escuchar", escucha: "escuchar", oir: "escuchar",
+  escuchar: "escuchar", escucha: "escuchar", oir: "escuchar", oye: "escuchar",
+  oler: "oler", huele: "oler", olfatear: "oler", olfatea: "oler", olisquear: "oler", olisquea: "oler",
   esperar: "esperar", espera: "esperar", z: "esperar",
   huir: "huir", huye: "huir", escapar: "huir", escapa: "huir",
 };
@@ -77,7 +78,7 @@ export function parse(input: string, scope: Candidate[], catalog: Candidate[] = 
     case "mirar":
       if (rest.length === 0) return { ok: true, cmd: { verbo: "mirar" } };
       return one("examinar", rest, scope, catalog);
-    case "inventario": case "estado": case "ayuda": case "huir": case "rezar": case "escuchar": case "esperar":
+    case "inventario": case "estado": case "ayuda": case "huir": case "rezar": case "escuchar": case "oler": case "esperar":
       return { ok: true, cmd: { verbo: verb } as Command };
     case "tomar": {
       const r = resolve(rest, scope, catalog, "¿Qué quieres tomar?");

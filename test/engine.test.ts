@@ -173,3 +173,36 @@ describe("decorado: lo que el texto nombra no da respuestas genéricas", () => {
     expect(await play(g, ["coger fiambrera"])).toBe("No ves eso por aquí.");
   });
 });
+
+describe("sentidos: escuchar y oler", () => {
+  it("el canto del túnel se sigue oyendo al escuchar", async () => {
+    const g = await newGame();
+    await play(g, [...LIGHT, "este"]);
+    const out = await play(g, ["escuchar"]);
+    expect(out).toContain("rosario de la Santina");
+    expect(out).toContain("cruje");
+  });
+  it("el narrador recibe los hechos sin etiqueta", () => {
+    const h = pack.location("frente_trabajo").hechos.join(" ");
+    expect(h).not.toContain("[oir]");
+    expect(pack.location("frente_trabajo").percepcion.oir[0]).toContain("gotear");
+  });
+  it("se oye y se huele al enemigo y a los NPC presentes, también a oscuras", async () => {
+    const g = await newGame();
+    expect(await play(g, ["escuchar"])).toContain("gotear");
+    await play(g, [...LIGHT, ...TO_HORNACINA]);
+    expect(await play(g, ["oler"])).toContain("orujo y a miedo");
+  });
+  it("con corrupción alta aparecen percepciones nuevas", async () => {
+    const g = await newGame();
+    g.state = { ...g.state, corrupcion: 80 };
+    expect(await play(g, ["escuchar"])).toContain("tu nombre");
+  });
+  it("una etiqueta de sentido mal escrita falla al cargar el pack", () => {
+    const raw = readPackDir("packs/la-garganta") as any;
+    raw.locations[0].hechos.push("[olfato] huele raro");
+    expect(() => loadPack(raw)).toThrow(PackError);
+    raw.locations[0].hechos.splice(-1, 1, "[oir]");
+    expect(() => loadPack(raw)).toThrow(PackError);
+  });
+});

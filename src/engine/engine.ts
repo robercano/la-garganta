@@ -109,7 +109,7 @@ function run(t: Turn, cmd: Command) {
     case "atacar": return attackCmd(t, cmd.obj);
     case "huir": return flee(t);
     case "hablar": return talk(t, cmd.obj);
-    case "rezar": case "escuchar": case "esperar": return roomAction(t, cmd.verbo);
+    case "rezar": case "escuchar": case "oler": case "esperar": return roomAction(t, cmd.verbo);
   }
 }
 
@@ -145,6 +145,7 @@ function enterRoom(t: Turn, arriving: boolean, looking = false) {
   for (const trg of room.al_entrar) {
     if (rs.disparados.includes(trg.id) || !t.ok(trg.si)) continue;
     rs.disparados.push(trg.id);
+    if (trg.sentido) rs.percibido[trg.sentido].push(trg.texto);
     t.say(trg.texto);
     applyEffects(t, trg.efectos);
   }
@@ -323,7 +324,7 @@ function talk(t: Turn, ref: Ref) {
   t.events.push(ev("dialogo_inicio", npc.saludo_fijo, npc.id));
 }
 
-function roomAction(t: Turn, verbo: "rezar" | "escuchar" | "esperar") {
+function roomAction(t: Turn, verbo: "rezar" | "escuchar" | "oler" | "esperar") {
   const rs = t.roomState;
   const acts = t.room.acciones.filter((a) => a.verbo === verbo);
   for (const [i, a] of acts.entries()) {
@@ -337,8 +338,35 @@ function roomAction(t: Turn, verbo: "rezar" | "escuchar" | "esperar") {
     t.say(a.texto);
     return applyEffects(t, a.efectos);
   }
+  if (verbo === "escuchar" || verbo === "oler") {
+    const lines = perceive(t, verbo === "escuchar" ? "oir" : "oler");
+    if (lines.length) return t.say(lines.map(sentence).join(" "));
+  }
   t.say(DEFAULT_ACTIONS[verbo]);
 }
+
+/**
+ * Todo lo que se puede oír u oler aquí y ahora: hechos etiquetados de la sala,
+ * disparadores con sentido que ya han ocurrido, y objetos, NPC y enemigos presentes.
+ */
+function perceive(t: Turn, sense: "oir" | "oler"): string[] {
+  const room = t.room;
+  const rs = t.roomState;
+  const out = [...room.percepcion[sense], ...rs.percibido[sense]];
+  for (const id of rs.objetos) {
+    const it = t.pack.item(id);
+    if (it[sense] && t.ok(it.visible_si)) out.push(it[sense]!);
+  }
+  for (const n of room.npcs) if (t.s.npcs[n]?.vivo && t.pack.npc(n)[sense]) out.push(t.pack.npc(n)[sense]!);
+  for (const e of room.enemigos) if (t.s.enemigos[e]?.vivo && t.pack.enemy(e)[sense]) out.push(t.pack.enemy(e)[sense]!);
+  for (const a of t.pack.quest.ambiente) if (a.sentido === sense && t.ok(a.si)) out.push(a.texto);
+  return out;
+}
+
+const sentence = (s: string) => {
+  const c = s.charAt(0).toUpperCase() + s.slice(1);
+  return /[.!?…»]$/.test(c) ? c : `${c}.`;
+};
 
 // ───────────────────────── Combate ─────────────────────────
 
@@ -522,14 +550,15 @@ void GRAFT_SLOTS;
 
 const DEFAULT_ACTIONS = {
   rezar: "Rezas en voz baja. La mina no contesta.",
-  escuchar: "Solo oyes el goteo y tu propia respiración.",
+  escuchar: "Solo oyes tu propia respiración.",
+  oler: "Huele a mina: polvo de carbón, humedad y sudor viejo.",
   esperar: "Esperas. Nada cambia, salvo el miedo.",
 } as const;
 
 const HELP = [
   "Comandos: norte/sur/este/oeste (n s e o), subir, bajar, mirar, examinar X, coger X, dejar X,",
   "inventario (i), estado, equipar X, desequipar X, usar X [con Y], combinar X con Y, comer/beber X,",
-  "injertar X, atacar X, huir, hablar con X (\"adiós\" para terminar), rezar, escuchar, esperar.",
+  "injertar X, atacar X, huir, hablar con X (\"adiós\" para terminar), rezar, escuchar, oler, esperar.",
 ].join("\n");
 
 /** Guarda la descripción que el narrador generó para una sala (una vez por partida). */

@@ -9,6 +9,7 @@ export interface RoomState {
   objetos: string[];
   disparados: string[];
   acciones_hechas: string[];
+  percibido: Record<"oir" | "oler", string[]>; // textos de disparadores con sentido que ya han sonado
 }
 
 export interface NpcState {
@@ -51,7 +52,7 @@ export function initialState(pack: Pack, seed: number): GameState {
   const q = pack.quest;
   const salas: Record<string, RoomState> = {};
   for (const l of pack.data.locations) {
-    salas[l.id] = { visitada: false, cambios: [], objetos: [...l.objetos], disparados: [], acciones_hechas: [] };
+    salas[l.id] = { visitada: false, cambios: [], objetos: [...l.objetos], disparados: [], acciones_hechas: [], percibido: { oir: [], oler: [] } };
   }
   const npcs: Record<string, NpcState> = {};
   for (const n of pack.data.npcs) {

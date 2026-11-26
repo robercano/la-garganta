@@ -2,19 +2,43 @@
   {
     "id": "cuelebre",
     "nombre": "el cuélebre",
-    "alias": ["cuelebre", "cuélebre", "serpiente", "bicho", "monstruo"],
+    "alias": [
+      "cuelebre",
+      "cuélebre",
+      "serpiente",
+      "bicho",
+      "monstruo"
+    ],
     "vida": 10,
     "ataque": 2,
     "defensa": 1,
     "desc_base": "Una serpiente gruesa como un tronco de castaño, con escamas de pizarra y una corona de branquias que se abre y se cierra. Los ojos son de mula: los de las mulas que se comió.",
-    "botin": ["pulmon_cuelebre"],
-    "al_morir": ["flag:cuelebre_muerto"],
+    "botin": [
+      "pulmon_cuelebre"
+    ],
+    "al_morir": [
+      "flag:cuelebre_muerto"
+    ],
     "inicio": "El agua negra se abomba. Algo enorme y escamoso sale de la laguna sin hacer ruido y te corta el paso hacia la escalera. Es el cuélebre de los cuentos de tu abuela, pero los cuentos se quedaban cortos.",
     "muerte": "El cuélebre se retuerce, suelta un silbido que es casi una palabra y se derrumba en la orilla. Por el tajo de su costado asoma, todavía latiendo, un pulmón translúcido.",
     "golpes": {
-      "jugador": ["El pico se hunde entre dos escamas.", "Le aciertas en la corona de branquias y silba de dolor.", "Le abres un tajo en el lomo; sangra algo espeso y negro."],
-      "enemigo": ["El cuélebre te golpea con la cola y te tira contra la roca.", "Te muerde el hombro con dientes como clavos de entibo.", "Te enrosca un segundo y oyes crujir tus costillas."],
-      "fallo": ["El pico resbala en las escamas.", "El cuélebre se aparta con una rapidez obscena.", "Golpeas el agua. Solo el agua."]
-    }
+      "jugador": [
+        "El pico se hunde entre dos escamas.",
+        "Le aciertas en la corona de branquias y silba de dolor.",
+        "Le abres un tajo en el lomo; sangra algo espeso y negro."
+      ],
+      "enemigo": [
+        "El cuélebre te golpea con la cola y te tira contra la roca.",
+        "Te muerde el hombro con dientes como clavos de entibo.",
+        "Te enrosca un segundo y oyes crujir tus costillas."
+      ],
+      "fallo": [
+        "El pico resbala en las escamas.",
+        "El cuélebre se aparta con una rapidez obscena.",
+        "Golpeas el agua. Solo el agua."
+      ]
+    },
+    "oir": "Algo enorme respira bajo el agua, y el agua burbujea al compás.",
+    "oler": "Un hedor a pescado podrido y a mula muerta sube de la laguna."
   }
 ]
