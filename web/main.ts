@@ -46,6 +46,8 @@ async function newGame(seed: number, replay: string[] = []) {
   out.innerHTML = "";
   game = GameSession.create(pack, { narrator: new FakeNarrator(), npcs: new FakeNpcService() }, seed);
   save = { seed, cmds: [] };
+  history = [...replay].filter((c, i, a) => c !== a[i - 1]); // al recargar, el historial es la partida guardada
+  histPos = -1;
   print([`=== ${pack.quest.titulo.toUpperCase()} ===`, `Semilla ${seed} · «ayuda» para ver comandos · «reiniciar» para empezar de nuevo`], "sys");
   print(await game.start());
   // La partida se guarda como semilla + comandos y se reproduce: el motor es determinista.
@@ -74,9 +76,32 @@ async function send(cmd: string) {
   status();
 }
 
+// ───────────── Historial de comandos (flechas ↑ ↓) ─────────────
+let history: string[] = [];
+let histPos = -1; // -1: escribiendo una línea nueva
+let draft = "";
+
+function remember(c: string) {
+  if (c && history[history.length - 1] !== c) history.push(c);
+  histPos = -1;
+  draft = "";
+}
+
+input.addEventListener("keydown", (e) => {
+  if (e.key !== "ArrowUp" && e.key !== "ArrowDown") return;
+  if (!history.length) return;
+  e.preventDefault();
+  if (histPos === -1) draft = input.value;
+  if (e.key === "ArrowUp") histPos = histPos === -1 ? history.length - 1 : Math.max(0, histPos - 1);
+  else histPos = histPos === -1 ? -1 : histPos + 1 >= history.length ? -1 : histPos + 1;
+  input.value = histPos === -1 ? draft : history[histPos]!;
+  requestAnimationFrame(() => input.setSelectionRange(input.value.length, input.value.length));
+});
+
 form.addEventListener("submit", (e) => {
   e.preventDefault();
   const v = input.value;
+  remember(v.trim());
   input.value = "";
   void send(v);
 });
