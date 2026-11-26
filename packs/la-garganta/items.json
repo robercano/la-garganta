@@ -250,7 +250,7 @@
       "luz",
       "ver_oculto"
     ],
-    "desc_base": "El cadáver de un topo del tamaño de un perro, sin ojos en la cara. El ojo lo tiene en el paladar: blanco, sin pupila, aún húmedo.",
+    "desc_base": "Un ojo blanco, sin pupila, del tamaño de una nuez. Todavía está húmedo y, a veces, parece que se mueve.",
     "texto_injerto": "No te lo pienses. Te sacas el ojo izquierdo con la navaja y encajas el del topo en la cuenca. Durante un minuto solo hay dolor. Luego, la oscuridad deja de ser oscura."
   },
   {
@@ -284,7 +284,7 @@
         "texto": "Hundes el brazo nuevo en el derrumbe y apartas las piedras como si fueran paja. Detrás hay una hornacina antigua."
       }
     ],
-    "desc_base": "Algo murió aplastado bajo un costero. Solo asoma un brazo: largo, con demasiadas articulaciones y uñas de piedra.",
+    "desc_base": "Un brazo largo, con demasiadas articulaciones y uñas de piedra. Aún está tibio.",
     "texto_injerto": "El brazo se suelda al tuyo por el codo, hueso con hueso. Cuando cierras el puño, la roca de la pared se agrieta."
   },
   {
@@ -300,7 +300,7 @@
     "poderes": [
       "entender"
     ],
-    "desc_base": "Entre los restos de una procesión de cadáveres con velas apagadas, una lengua negra se mueve sola, rezando.",
+    "desc_base": "Una lengua humana, negra, que sigue moviéndose sola como si rezara.",
     "texto_injerto": "Te cortas la punta de la lengua y pones la otra encima. Se enraíza. De pronto el balbuceo de las paredes tiene gramática."
   },
   {
@@ -573,7 +573,8 @@
     ],
     "tipo": "escenario",
     "fijo": true,
-    "desc_base": "Una docena de cuerpos en fila, de rodillas, con velas apagadas en las manos. Llevan ropa de mina de otras épocas. La güestia, la procesión de los muertos, pero aquí abajo no reza a ningún santo."
+    "desc_base": "Una docena de cuerpos en fila, de rodillas, con velas apagadas en las manos. Llevan ropa de mina de otras épocas. La güestia, la procesión de los muertos, pero aquí abajo no reza a ningún santo.",
+    "examinar": "Al primero de la fila le han arrancado la lengua de cuajo. Las marcas de los dientes parecen clavos de entibo."
   },
   {
     "id": "pozo_gas",
@@ -623,5 +624,84 @@
     "tipo": "escenario",
     "fijo": true,
     "desc_base": "La luz sale de la propia roca, verdosa, enfermiza. No da calor. Late."
+  },
+  {
+    "id": "cadaver_topo",
+    "nombre": "el cadáver de un topo enorme",
+    "alias": [
+      "topo",
+      "cadaver",
+      "cadaver de topo",
+      "topo ciego"
+    ],
+    "tipo": "escenario",
+    "fijo": true,
+    "desc_base": "Un topo del tamaño de un perro, muerto hace poco. No tiene ojos en la cara.",
+    "examinar": "Le abres la boca con asco. El ojo lo tiene en el paladar: blanco, sin pupila, aún húmedo. Con algo de filo podrías sacarlo.",
+    "usos": [
+      {
+        "con": "navaja",
+        "una_vez": true,
+        "efectos": [
+          "dar:ojo_topo"
+        ],
+        "texto": "Hundes la navaja en el paladar y haces palanca. El ojo sale con un chasquido húmedo y se queda mirándote desde la palma de tu mano."
+      }
+    ],
+    "listar": true
+  },
+  {
+    "id": "cosa_aplastada",
+    "nombre": "algo aplastado bajo un costero",
+    "alias": [
+      "cosa",
+      "costero",
+      "aplastado",
+      "bicho",
+      "cosa aplastada"
+    ],
+    "tipo": "escenario",
+    "fijo": true,
+    "desc_base": "Algo murió aplastado bajo un costero de roca. No sabrías decir qué era.",
+    "examinar": "Solo asoma un brazo: largo, con demasiadas articulaciones y uñas de piedra. Está tibio. Se podría cortar por el codo, si tuvieras estómago.",
+    "usos": [
+      {
+        "con": "navaja",
+        "una_vez": true,
+        "efectos": [
+          "dar:brazo_cosa"
+        ],
+        "texto": "Serrar el codo te lleva un rato largo. El brazo se suelta de golpe y sus dedos se cierran solos alrededor de tu muñeca, como saludando."
+      }
+    ],
+    "listar": true
+  },
+  {
+    "id": "cuerpo_cuelebre",
+    "nombre": "el cuerpo del cuélebre",
+    "alias": [
+      "cuelebre",
+      "cuerpo",
+      "serpiente",
+      "tripa",
+      "estomago",
+      "vientre",
+      "panza",
+      "cadaver del cuelebre"
+    ],
+    "tipo": "escenario",
+    "fijo": true,
+    "desc_base": "El cuélebre flota panza arriba junto a la orilla, enorme incluso muerto.",
+    "examinar": "Tiene la tripa hinchada, como si se hubiera tragado algo hace poco. Algo que todavía se mueve ahí dentro.",
+    "usos": [
+      {
+        "con": "navaja",
+        "una_vez": true,
+        "efectos": [
+          "dar:lengua_guestia"
+        ],
+        "texto": "Le abres la tripa de un tajo largo. Entre agua negra y huesos de mula aparece algo que se mueve: una lengua humana, negra, que sigue rezando."
+      }
+    ]
   }
 ]

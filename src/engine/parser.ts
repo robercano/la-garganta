@@ -23,6 +23,7 @@ export type Command =
   | { verbo: "rezar" | "escuchar" | "oler" | "esperar" }
   | { verbo: "examinar" | "coger" | "dejar" | "equipar" | "desequipar" | "consumir" | "injertar" | "hablar"; obj: Ref }
   | { verbo: "atacar"; obj: Ref; con?: Ref }
+  | { verbo: "cortar"; obj: Ref } // siempre con la navaja (u otro filo que defina el pack)
   | { verbo: "usar"; obj: Ref; con?: Ref }
   | { verbo: "combinar"; objs: Ref[] };
 
@@ -52,6 +53,8 @@ const VERBS: Record<string, string> = {
   combinar: "combinar", combina: "combinar", craftear: "combinar", mezclar: "combinar", mezcla: "combinar", juntar: "combinar", junta: "combinar",
   hablar: "hablar", habla: "hablar", saludar: "hablar", saluda: "hablar",
   atacar: "atacar", ataca: "atacar", golpear: "atacar", golpea: "atacar", pegar: "atacar", pega: "atacar", matar: "atacar", mata: "atacar", luchar: "atacar", lucha: "atacar",
+  cortar: "cortar", corta: "cortar", abrir: "cortar", abre: "cortar", rajar: "cortar", raja: "cortar", destripar: "cortar", destripa: "cortar",
+  arrancar: "cortar", arranca: "cortar", extraer: "cortar", extrae: "cortar", sacar: "cortar", saca: "cortar", serrar: "cortar", sierra: "cortar",
   injertar: "injertar", injerta: "injertar", implantar: "injertar", implanta: "injertar", injertarse: "injertar",
   rezar: "rezar", reza: "rezar", orar: "rezar", ora: "rezar",
   escuchar: "escuchar", escucha: "escuchar", oir: "escuchar", oye: "escuchar",
@@ -104,9 +107,9 @@ export function parse(input: string, scope: Candidate[], catalog: Candidate[] = 
       if (!rb.ok) return rb;
       return { ok: true, cmd: { verbo: "atacar", obj: strip(ra.ref), con: strip(rb.ref) } };
     }
-    case "hablar": case "examinar": case "coger": case "dejar": case "equipar": case "desequipar": case "consumir": case "injertar": {
-      // "injertar pulmon en pecho": se ignora el destino; el slot lo define el objeto
-      const words = verb === "injertar" ? cutAt(rest, "en") : rest;
+    case "hablar": case "examinar": case "coger": case "dejar": case "equipar": case "desequipar": case "consumir": case "injertar": case "cortar": {
+      // "injertar pulmon en pecho": se ignora el destino; "cortar topo con la navaja": la herramienta la pone el motor
+      const words = verb === "injertar" ? cutAt(rest, "en") : verb === "cortar" ? cutAt(rest, "con") : rest;
       return one(verb, words, scope, catalog);
     }
     case "usar": {
@@ -172,7 +175,8 @@ function match(phrase: string, cands: Candidate[]): Resolved[] {
   if (all.length) return all;
   // Último recurso: el objeto que comparta más palabras con lo escrito
   // ("piedras de carburo" -> el bote de carburo). Si empatan, se pregunta.
-  const score = (c: Candidate) => Math.max(...words(c).map((aw) => pw.filter((w) => !FILLER.has(w) && aw.includes(w)).length));
+  // cuenta las palabras escritas que aparecen en cualquiera de sus nombres («tripa del cuélebre» → el cuerpo)
+  const score = (c: Candidate) => { const all = new Set(words(c).flat()); return pw.filter((w) => !FILLER.has(w) && all.has(w)).length; };
   const scored = cands.map((c) => ({ c, n: score(c) })).filter((x) => x.n > 0);
   const best = Math.max(0, ...scored.map((x) => x.n));
   return dedupe(scored.filter((x) => x.n === best).map((x) => x.c));

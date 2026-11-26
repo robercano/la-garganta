@@ -109,6 +109,7 @@ function run(t: Turn, cmd: Command) {
     case "combinar": return combine(t, cmd.objs);
     case "injertar": return graft(t, cmd.obj);
     case "atacar": return attackCmd(t, cmd.obj, cmd.con);
+    case "cortar": return cut(t, cmd.obj);
     case "huir": return flee(t);
     case "hablar": return talk(t, cmd.obj);
     case "rezar": case "escuchar": case "oler": case "esperar": return roomAction(t, cmd.verbo);
@@ -314,6 +315,19 @@ function combine(t: Turn, refs: Ref[]) {
   for (const e of r.entradas) if (!r.conserva.includes(e)) t.s.inventario = t.s.inventario.filter((i) => i !== e);
   t.s.inventario.push(r.salida);
   t.say(r.texto);
+}
+
+/** «cortar X» = usar la navaja con X. Lo que se puede sacar lo define el pack con usos «con: navaja». */
+const BLADE = "navaja";
+function cut(t: Turn, ref: Ref) {
+  if (ref.kind === "enemigo") return t.err("Primero tendrías que matarlo.");
+  if (ref.kind !== "item") return t.err("No vas a hacer eso.");
+  if (!t.pack.hasItem(BLADE) || !hold(t, { kind: "item", id: BLADE })) return t.err("Necesitarías algo con filo.");
+  const it = t.pack.item(ref.id);
+  const fromIt = it.usos.some((u, i) => u.con === BLADE && !(u.una_vez && t.s.usos_hechos.includes(`${it.id}:${i}`)));
+  const fromBlade = t.pack.item(BLADE).usos.some((u) => u.con === ref.id);
+  if (!fromIt && !fromBlade) return t.err(it.usos.some((u) => u.con === BLADE) ? "Ya no queda nada que sacar de ahí." : `No hay nada que sacar de ${it.nombre}.`);
+  use(t, { kind: "item", id: BLADE }, ref);
 }
 
 function findRecipe(t: Turn, ids: string[]) {
@@ -617,7 +631,7 @@ const DEFAULT_ACTIONS = {
 const help = (s: GameState) => [
   "Comandos: norte/sur/este/oeste (n s e o), subir, bajar, entrar, salir, mirar, mapa, examinar X, coger X, dejar X,",
   "inventario (i), estado, equipar X, desequipar X, usar X [con Y], combinar X con Y, comer/beber X,",
-  `${graftsKnown(s) ? "injertar X, " : ""}atacar X [con Y], huir, hablar con X ("adiós" para terminar), rezar, escuchar, oler, esperar.`,
+  `cortar X, ${graftsKnown(s) ? "injertar X, " : ""}atacar X [con Y], huir, hablar con X ("adiós" para terminar), rezar, escuchar, oler, esperar.`,
 ].join("\n");
 
 /** Guarda la descripción que el narrador generó para una sala (una vez por partida). */

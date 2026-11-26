@@ -226,9 +226,8 @@
     "desc_base": "Galerías que no salen en ningún plano de la compañía: lisas, curvas, como por dentro de un animal. El aire pica de grisú. Hay restos de una procesión de difuntos con velas apagadas en las manos.",
     "oscura": true,
     "objetos": [
-      "ojo_topo",
-      "brazo_cosa",
-      "lengua_guestia",
+      "cadaver_topo",
+      "cosa_aplastada",
       "escombros",
       "paredes_lisas",
       "procesion",

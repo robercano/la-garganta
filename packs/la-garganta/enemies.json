@@ -17,7 +17,8 @@
       "pulmon_cuelebre"
     ],
     "al_morir": [
-      "flag:cuelebre_muerto"
+      "flag:cuelebre_muerto",
+      "aparece:cuerpo_cuelebre"
     ],
     "inicio": "El agua negra se abomba. Algo enorme y escamoso sale de la laguna sin hacer ruido y te corta el paso hacia la escalera. Es el cuélebre de los cuentos de tu abuela, pero los cuentos se quedaban cortos.",
     "muerte": "El cuélebre se retuerce, suelta un silbido que es casi una palabra y se derrumba en la orilla. Por el tajo de su costado asoma, todavía latiendo, un pulmón translúcido.",

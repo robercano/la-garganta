@@ -41,7 +41,7 @@ describe("motor", () => {
     const g = await newGame(42);
     await play(g, [...LIGHT, ...TO_HORNACINA, "bajar"]);
     await fight(g, "cuelebre");
-    await play(g, ["coger pulmon", "norte", "coger ojo", "dejar navaja"]);
+    await play(g, ["coger pulmon", "norte", "cortar topo", "dejar navaja"]);
     expect(await play(g, ["injertar ojo"])).toContain("algo con filo");
     await play(g, ["coger navaja", "injertar ojo"]);
     expect(g.state.injertos.ojo).toBe("ojo_topo");
@@ -242,7 +242,7 @@ describe("mapa", () => {
     const g = await newGame(42);
     await play(g, [...LIGHT, ...TO_HORNACINA, "bajar"]);
     await fight(g, "cuelebre");
-    await play(g, ["coger pulmon", "injertar pulmon", "norte", "coger ojo", "injertar ojo", "salir por la grieta"]);
+    await play(g, ["coger pulmon", "injertar pulmon", "norte", "cortar topo", "injertar ojo", "salir por la grieta"]);
     expect(g.state.sala).toBe("hornacina");
     await play(g, ["entrar en la grieta"]);
     expect(g.state.sala).toBe("galerias_viejas");
@@ -354,5 +354,43 @@ describe("cabecera de sala", () => {
     expect(await play(g, ["este"])).toContain("Llegas al túnel de servicio.");
     expect(await play(g, ["mirar"])).toContain("Estás en el túnel de servicio.");
     expect(await play(g, ["bajar"])).toContain("Llegas a la hornacina de Santa Bárbara.");
+  });
+});
+
+describe("las piezas están escondidas", () => {
+  async function toGalerias() {
+    const g = await newGame(42);
+    await play(g, [...LIGHT, ...TO_HORNACINA, "bajar"]);
+    await fight(g, "cuelebre");
+    await play(g, ["coger pulmon"]);
+    return g;
+  }
+  it("en las galerías se ven los cuerpos, no las piezas", async () => {
+    const g = await toGalerias();
+    const out = await play(g, ["norte"]);
+    expect(out).toContain("el cadáver de un topo enorme");
+    expect(out).not.toMatch(/Ves:.*(ojo|brazo|lengua)/);
+  });
+  it("examinar el topo descubre el ojo y la navaja lo saca", async () => {
+    const g = await toGalerias();
+    await play(g, ["norte"]);
+    expect(await play(g, ["examinar topo"])).toContain("El ojo lo tiene en el paladar");
+    expect(await play(g, ["sacar el ojo"])).toContain("chasquido húmedo");
+    expect(g.state.inventario).toContain("ojo_topo");
+    expect(await play(g, ["cortar topo"])).toBe("Ya no queda nada que sacar de ahí.");
+  });
+  it("sin navaja no se corta nada", async () => {
+    const g = await toGalerias();
+    await play(g, ["dejar navaja", "norte"]);
+    expect(await play(g, ["cortar cosa"])).toBe("Necesitarías algo con filo.");
+  });
+  it("la lengua está en la tripa del cuélebre, con pistas en la procesión", async () => {
+    const g = await toGalerias();
+    await play(g, ["norte"]);
+    expect(await play(g, ["examinar procesion"])).toContain("clavos de entibo");
+    await play(g, ["sur"]);
+    expect(await play(g, ["examinar cuelebre"])).toContain("tripa hinchada");
+    expect(await play(g, ["abrir la tripa del cuelebre con la navaja"])).toContain("sigue rezando");
+    expect(g.state.inventario).toContain("lengua_guestia");
   });
 });
