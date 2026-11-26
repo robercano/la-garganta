@@ -102,6 +102,8 @@ export const LocationSchema = z.object({
   al_entrar: z.array(Disparador).default([]), // se disparan una sola vez
   cambios: z.record(Id, z.string()).default({}), // flag -> frase que se añade a la descripción
   tags: z.array(z.string()).default([]),
+  // Posición en el mapa de la terminal (corte vertical: y crece hacia abajo) y nombre corto
+  mapa: z.object({ x: z.number().int().min(0), y: z.number().int().min(0), etiqueta: z.string().max(10) }).optional(),
 }).transform((l) => {
   // Los hechos llegan limpios al narrador; los etiquetados quedan además como percepciones.
   const percepcion: Record<"oir" | "oler", string[]> = { oir: [], oler: [] };

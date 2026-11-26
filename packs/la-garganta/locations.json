@@ -38,6 +38,11 @@
         ],
         "bloqueo": "Tanteas hacia la boca del túnel de servicio, pero a ciegas te partirías la crisma en el primer pozo. Necesitas luz."
       }
+    },
+    "mapa": {
+      "x": 0,
+      "y": 0,
+      "etiqueta": "Frente"
     }
   },
   {
@@ -89,6 +94,11 @@
     ],
     "cambios": {
       "pista_lampara": "La lámpara de Xuan sigue ahí tirada, y ahora sabes de quién es."
+    },
+    "mapa": {
+      "x": 1,
+      "y": 0,
+      "etiqueta": "Túnel"
     }
   },
   {
@@ -142,7 +152,12 @@
         "texto": "Te arrodillas ante la Santa y rezas el «Santa Bárbara bendita» como te enseñó tu abuela. Por un momento, las velas arden más derechas.",
         "texto_repetido": "Rezas otra vez. Esta vez la Santa no te mira."
       }
-    ]
+    ],
+    "mapa": {
+      "x": 1,
+      "y": 1,
+      "etiqueta": "Capilla"
+    }
   },
   {
     "id": "pozo_inundado",
@@ -180,7 +195,12 @@
     "objetos": [
       "laguna",
       "huesos_mula"
-    ]
+    ],
+    "mapa": {
+      "x": 1,
+      "y": 2,
+      "etiqueta": "Pozo"
+    }
   },
   {
     "id": "galerias_viejas",
@@ -233,6 +253,11 @@
     },
     "cambios": {
       "hueco_abierto": "Donde estaba el derrumbe se abre ahora un hueco con un altar diminuto."
+    },
+    "mapa": {
+      "x": 2,
+      "y": 2,
+      "etiqueta": "Galerías"
     }
   },
   {
@@ -280,6 +305,11 @@
         "efectos": [],
         "texto": "La respiración de lo hondo se detiene un instante, como si alguien hubiera notado que has llegado."
       }
-    ]
+    ],
+    "mapa": {
+      "x": 2,
+      "y": 3,
+      "etiqueta": "Garganta"
+    }
   }
 ]

@@ -26,6 +26,7 @@ function print(lines: string[], cls = "") {
   for (const l of lines) {
     const p = document.createElement("p");
     if (cls) p.className = cls;
+    else if (l.startsWith("MAPA (")) p.className = "map";
     p.textContent = l;
     out.appendChild(p);
   }

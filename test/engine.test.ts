@@ -206,3 +206,25 @@ describe("sentidos: escuchar y oler", () => {
     expect(() => loadPack(raw)).toThrow(PackError);
   });
 });
+
+describe("mapa", () => {
+  it("muestra solo lo explorado, marca dónde estás y lo intuido con ?", async () => {
+    const g = await newGame();
+    const m0 = await play(g, ["mapa"]);
+    expect(m0).toContain(">Frente<");
+    expect(m0).not.toContain("Capilla");
+    await play(g, [...LIGHT, ...TO_HORNACINA]);
+    const m1 = await play(g, ["mapa"]);
+    expect(m1).toContain(">Capilla<");
+    expect(m1).toContain("?"); // el pozo, aún sin pisar
+    expect(m1).not.toContain("Garganta");
+    expect(g.state.turno).toBe(await play(g, ["mapa"]).then(() => g.state.turno)); // no gasta turno
+  });
+  it("con el ojo injertado aparece el paso oculto entre capilla y galerías", async () => {
+    const g = await newGame(42);
+    await play(g, [...LIGHT, ...TO_HORNACINA, "bajar"]);
+    await fight(g, "cuelebre");
+    await play(g, ["coger pulmon", "injertar pulmon", "norte", "coger ojo", "injertar ojo"]);
+    expect(await play(g, ["mapa"])).toMatch(/Pasos ocultos: .*Capilla/);
+  });
+});

@@ -3,7 +3,8 @@ import type { EquipSlot, GraftSlot } from "./schema.js";
 import type { Pack } from "./pack.js";
 
 export interface RoomState {
-  visitada: boolean;
+  visitada: boolean; // vista con luz (ya tiene descripción)
+  explorada?: boolean; // pisada alguna vez, aunque fuera a oscuras (para el mapa)
   desc_generada?: string; // la escribe el narrador una vez por partida
   cambios: string[]; // flags que han cambiado la sala (frases sueltas del pack)
   objetos: string[];

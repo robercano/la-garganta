@@ -15,8 +15,8 @@ export interface TurnResult {
   events: GameEvent[];
 }
 
-const FREE_VERBS = new Set(["inventario", "estado", "ayuda", "mirar", "examinar"]);
-const COMBAT_VERBS = new Set(["atacar", "huir", "consumir", "usar", "inventario", "estado", "ayuda", "mirar", "examinar"]);
+const FREE_VERBS = new Set(["inventario", "mapa", "estado", "ayuda", "mirar", "examinar"]);
+const COMBAT_VERBS = new Set(["atacar", "huir", "consumir", "usar", "inventario", "mapa", "estado", "ayuda", "mirar", "examinar"]);
 
 class Turn {
   events: GameEvent[] = [];
@@ -95,6 +95,7 @@ function run(t: Turn, cmd: Command) {
     case "ir": return go(t, cmd.dir);
     case "mirar": return enterRoom(t, false, true);
     case "inventario": return inventory(t);
+    case "mapa": return t.events.push(ev("mapa", renderMap(t.s, t.pack)));
     case "estado": return status(t);
     case "ayuda": return t.say(HELP);
     case "examinar": return examine(t, cmd.obj);
@@ -132,6 +133,7 @@ function moveTo(t: Turn, to: string) {
 function enterRoom(t: Turn, arriving: boolean, looking = false) {
   const room = t.room;
   const rs = t.roomState;
+  rs.explorada = true;
   if (isDark(t)) {
     const touch = visibleItems(t).map((i) => t.pack.item(i).nombre);
     t.events.push({ ...ev("texto", `${room.nombre}. Oscuridad total: no ves ni tus propias manos.`), detalle: touch.length ? `A tientas notas: ${list(touch)}.` : undefined });
@@ -576,4 +578,60 @@ export function ambientText(s: GameState, pack: Pack): string {
   const room = t.room;
   const rs = t.roomState;
   return [rs.desc_generada ?? "", room.desc_base, ...room.hechos, ...rs.cambios.map((f) => room.cambios[f] ?? "")].join(" ");
+}
+
+// ───────────────────────── Mapa ─────────────────────────
+
+/**
+ * Mapa en texto de las salas exploradas, como un corte vertical de la mina.
+ * Las salas a las que lleva una salida visible pero aún no pisadas salen como «?».
+ * Solo se dibujan uniones entre vecinas; las demás se listan debajo.
+ */
+export function renderMap(s: GameState, pack: Pack): string {
+  const t = new Turn(s, pack);
+  const placed = pack.data.locations.filter((l) => l.mapa);
+  const known = new Map<string, "visto" | "intuido">();
+  const links: [string, string][] = [];
+  for (const l of placed) if (s.salas[l.id]?.explorada || l.id === s.sala) known.set(l.id, "visto");
+  for (const id of [...known.keys()]) {
+    for (const exit of Object.values(pack.location(id).salidas)) {
+      if (!exit?.a || !t.ok(exit.visible_si) || !pack.location(exit.a).mapa) continue;
+      if (!known.has(exit.a)) known.set(exit.a, "intuido");
+      const key = [id, exit.a].sort() as [string, string];
+      if (!links.some(([a, b]) => a === key[0] && b === key[1])) links.push(key);
+    }
+  }
+  if (!known.size) return "Aún no sabes dónde estás.";
+
+  const W = Math.max(...placed.map((l) => l.mapa!.etiqueta.length)) + 2; // ancho de celda
+  const G = 3; // hueco entre columnas
+  const maxX = Math.max(...placed.map((l) => l.mapa!.x));
+  const maxY = Math.max(...[...known.keys()].map((id) => pack.location(id).mapa!.y));
+  const cols = (maxX + 1) * W + maxX * G;
+  const rows: string[][] = Array.from({ length: maxY * 2 + 1 }, () => Array(cols).fill(" "));
+  const put = (r: number, c: number, txt: string) => { for (let i = 0; i < txt.length; i++) if (rows[r] && c + i < cols) rows[r]![c + i] = txt[i]!; };
+  const colStart = (x: number) => x * (W + G);
+  const center = (x: number) => colStart(x) + Math.floor((W - 1) / 2);
+
+  for (const [id, kind] of known) {
+    const m = pack.location(id).mapa!;
+    const label = kind === "intuido" ? "?" : id === s.sala ? `>${m.etiqueta}<` : m.etiqueta;
+    put(m.y * 2, colStart(m.x) + Math.floor((W - label.length) / 2), label);
+  }
+  const far: string[] = [];
+  for (const [a, b] of links) {
+    const ma = pack.location(a).mapa!, mb = pack.location(b).mapa!;
+    if (ma.y === mb.y && Math.abs(ma.x - mb.x) === 1) put(ma.y * 2, colStart(Math.min(ma.x, mb.x)) + W, "─".repeat(G));
+    else if (ma.x === mb.x && Math.abs(ma.y - mb.y) === 1) put(Math.min(ma.y, mb.y) * 2 + 1, center(ma.x), "│");
+    else if (known.get(a) === "visto" && known.get(b) === "visto") far.push(`${ma.etiqueta} ↔ ${mb.etiqueta}`);
+  }
+  const body = rows.map((r) => r.join("").trimEnd()).join("\n");
+  return [
+    "MAPA (↑ superficie · ↓ lo hondo)",
+    "",
+    body,
+    "",
+    ...(far.length ? [`Pasos ocultos: ${far.join(", ")}.`] : []),
+    ">Sala< estás aquí · ? sin explorar",
+  ].join("\n");
 }

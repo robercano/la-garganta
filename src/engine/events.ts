@@ -15,7 +15,8 @@ export type EventType =
   | "dialogo_inicio"
   | "npc_dice"
   | "dialogo_fin"
-  | "final";
+  | "final"
+  | "mapa"; // texto preformateado: no se reparte en líneas
 
 export interface GameEvent {
   tipo: EventType;
