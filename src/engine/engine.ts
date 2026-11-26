@@ -155,7 +155,7 @@ function enterRoom(t: Turn, arriving: boolean, looking = false) {
 
 function roomDetail(t: Turn): string {
   const parts: string[] = [];
-  const items = visibleItems(t).map((i) => t.pack.item(i).nombre);
+  const items = visibleItems(t).map((i) => t.pack.item(i)).filter((it) => it.tipo !== "escenario" || it.listar).map((it) => it.nombre);
   const npcs = t.room.npcs.filter((n) => t.s.npcs[n]?.vivo).map((n) => t.pack.npc(n).nombre);
   const foes = t.room.enemigos.filter((e) => t.s.enemigos[e]?.vivo).map((e) => t.pack.enemy(e).nombre);
   if (items.length) parts.push(`Ves: ${list(items)}.`);
@@ -198,7 +198,7 @@ function take(t: Turn, ref: Ref) {
   if (ref.kind !== "item") return t.err("Eso no se puede coger.");
   if (carried(t.s).includes(ref.id)) return t.err("Ya lo llevas.");
   const it = t.pack.item(ref.id);
-  if (it.fijo) return t.err(`No puedes llevarte ${it.nombre}.`);
+  if (it.fijo) return t.err(it.tipo === "escenario" ? `No merece la pena cargar con ${it.nombre}.` : `No puedes llevarte ${it.nombre}.`);
   t.roomState.objetos = t.roomState.objetos.filter((o) => o !== ref.id);
   t.s.inventario.push(ref.id);
   t.say(`Coges ${it.nombre}.`);
@@ -538,4 +538,13 @@ export function storeRoomDescription(state: GameState, roomId: string, prose: st
   const rs = s.salas[roomId];
   if (rs && !rs.desc_generada) rs.desc_generada = prose;
   return s;
+}
+
+/** Texto de la sala que el jugador tiene delante (vacío a oscuras), para reconocer el decorado. */
+export function ambientText(s: GameState, pack: Pack): string {
+  const t = new Turn(s, pack);
+  if (isDark(t)) return "";
+  const room = t.room;
+  const rs = t.roomState;
+  return [rs.desc_generada ?? "", room.desc_base, ...room.hechos, ...rs.cambios.map((f) => room.cambios[f] ?? "")].join(" ");
 }

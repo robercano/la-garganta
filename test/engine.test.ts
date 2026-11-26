@@ -149,3 +149,27 @@ describe("frases reales de Rob", () => {
     expect(await play(g, ["coger lampara", "equipar lámpara de carburo"])).toContain("basta con llevarla");
   });
 });
+
+describe("decorado: lo que el texto nombra no da respuestas genéricas", () => {
+  it("la fiambrera tiene descripción propia y no se lleva", async () => {
+    const g = await newGame();
+    await play(g, LIGHT);
+    expect(await play(g, ["examinar fiambrera"])).toContain("Manolón");
+    expect(await play(g, ["coger la fiambrera"])).toContain("No merece la pena cargar con una fiambrera vacía");
+  });
+  it("el decorado no aparece en la lista de objetos", async () => {
+    const g = await newGame();
+    const out = await play(g, LIGHT.slice(0, 4));
+    expect(out).not.toMatch(/Ves:.*fiambrera/);
+  });
+  it("lo que solo está en el texto de la sala se reconoce como parte del sitio", async () => {
+    const g = await newGame();
+    await play(g, LIGHT);
+    expect(await play(g, ["examinar la sidra"])).toContain("Te fijas en");
+    expect(await play(g, ["coger pájaro"])).toBe("No sé a qué te refieres.");
+  });
+  it("a oscuras no se reconoce nada que no se pueda tocar", async () => {
+    const g = await newGame();
+    expect(await play(g, ["coger fiambrera"])).toBe("No ves eso por aquí.");
+  });
+});

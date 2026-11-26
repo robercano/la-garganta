@@ -52,7 +52,13 @@ const VERBS: Record<string, string> = {
 
 const FILLER = new Set(["a", "al", "hacia", "por", "con", "en", "de", "mi", "tu", "su"]);
 
-export function parse(input: string, scope: Candidate[], catalog: Candidate[] = []): ParseResult {
+/**
+ * ambient: texto que el jugador está leyendo de la sala (descripción y hechos).
+ * Si nombra algo que aparece ahí pero no es un objeto del pack, el juego lo
+ * reconoce como decorado en vez de decir «No sé a qué te refieres».
+ */
+export function parse(input: string, scope: Candidate[], catalog: Candidate[] = [], ambient = ""): ParseResult {
+  env = { ambient, verbo: "" };
   const words = normalize(input).split(" ").filter(Boolean);
   if (!words.length) return { ok: false, texto: "¿Perdón?" };
   const [w0, ...rest] = words as [string, ...string[]];
@@ -61,6 +67,7 @@ export function parse(input: string, scope: Candidate[], catalog: Candidate[] = 
   if (rest.length === 0 && DIRS[w0] && !(w0 in VERBS && VERBS[w0] !== "ir")) return { ok: true, cmd: { verbo: "ir", dir: DIRS[w0]! } };
   const verb = VERBS[w0];
   if (!verb) return { ok: false, texto: "No entiendo eso." };
+  env.verbo = verb;
 
   switch (verb) {
     case "ir": {
@@ -126,6 +133,8 @@ function resolve(words: string[], scope: Candidate[], catalog: Candidate[], ask:
     return { ok: false, texto: `¿Cuál: ${names.slice(0, -1).join(", ")} o ${names.at(-1)}?` };
   }
   if (match(phrase, catalog).length) return { ok: false, texto: "No ves eso por aquí." };
+  const deco = ambientNoun(phrase, env.ambient);
+  if (deco) return { ok: false, texto: decorText(env.verbo, deco) };
   return { ok: false, texto: "No sé a qué te refieres." };
 }
 
@@ -166,4 +175,43 @@ function splitAll(words: string[], seps: string[]): string[][] {
     else out[out.length - 1]!.push(w);
   }
   return out.filter((p) => p.length);
+}
+
+// ───────────── Decorado: cosas que el texto nombra pero no son objetos ─────────────
+
+let env = { ambient: "", verbo: "" };
+
+const ART = new Set(["el", "la", "los", "las", "un", "una", "unos", "unas"]);
+const NOT_NOUNS = new Set(["como", "pero", "para", "desde", "hacia", "entre", "sobre", "todo", "toda", "todos", "nadie", "algo", "aqui", "alli", "ahora", "solo", "muy", "mas", "tras"]);
+
+/** Busca en el texto de la sala la palabra que el jugador ha nombrado y la devuelve con su artículo. */
+export function ambientNoun(phrase: string, ambient: string): string | null {
+  if (!ambient) return null;
+  const words = ambient.split(/[\s,.;:()«»"]+/).filter(Boolean);
+  const norm = words.map((w) => normalizeWord(w));
+  const wanted = phrase.split(" ").filter((w) => w.length >= 4 && !NOT_NOUNS.has(w) && !FILLER.has(w));
+  for (const w of wanted) {
+    const i = norm.findIndex((n) => n === w || n === `${w}s` || `${n}s` === w || n === `${w}es`);
+    if (i < 0) continue;
+    const prev = words[i - 1]?.toLowerCase();
+    return prev && ART.has(prev) ? `${prev} ${words[i]}` : words[i]!.toLowerCase();
+  }
+  return null;
+}
+
+function normalizeWord(w: string): string {
+  return normalize(w).split(" ")[0] ?? "";
+}
+
+function decorText(verbo: string, cosa: string): string {
+  const Cosa = cosa.charAt(0).toUpperCase() + cosa.slice(1);
+  const plural = /^(los|las|unos|unas) /.test(cosa) || /s$/.test(cosa);
+  const sirve = plural ? "sirven" : "sirve";
+  switch (verbo) {
+    case "examinar": case "mirar": return `Te fijas en ${cosa}. No ves nada que te vaya a servir.`;
+    case "coger": case "tomar": return `No merece la pena cargar con ${cosa}.`;
+    case "atacar": return `Golpear ${cosa} no va a arreglar nada.`;
+    case "hablar": return `${Cosa} no te ${plural ? "van" : "va"} a contestar.`;
+    default: return `${Cosa} no te ${sirve} para eso. Es solo parte del sitio.`;
+  }
 }

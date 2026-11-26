@@ -1,38 +1,619 @@
 [
-  { "id": "navaja", "nombre": "tu navaja", "alias": ["navaja", "cuchillo"], "tipo": "herramienta", "desc_base": "Una navaja de Taramundi con mango de boj. Corta bien. Demasiado bien." },
-  { "id": "cantimplora", "nombre": "la cantimplora", "alias": ["cantimplora", "agua"], "tipo": "herramienta", "desc_base": "Una cantimplora de lata con agua del manantial de casa. Sirve para beber y para el carburo." },
-  { "id": "casco_cuero", "nombre": "el casco de cuero", "alias": ["casco", "casco de cuero"], "tipo": "herramienta", "slot": "cabeza", "stats": { "defensa": 1 }, "desc_base": "Cuero cocido y endurecido. Ha parado más de una piedra." },
-
-  { "id": "lampara_vacia", "nombre": "la lámpara de carburo apagada", "alias": ["lampara", "lámpara", "lampara de carburo", "carburero"], "tipo": "herramienta", "palpable": true, "desc_base": "Tu lámpara de carburo, fría y sin carga. El depósito suena hueco.",
-    "usos": [ { "texto": "Rascas el chispero, pero no prende: el depósito está vacío. Necesita carburo." } ] },
-  { "id": "carburo", "nombre": "un bote de carburo", "alias": ["carburo", "bote", "bote de carburo", "piedras", "piedras de carburo", "piedra", "piedra de carburo"], "tipo": "material", "palpable": true, "desc_base": "Un bote de hojalata con piedras de carburo. Huelen a ajo podrido." },
-  { "id": "lampara_cargada", "nombre": "la lámpara cargada", "alias": ["lampara", "lámpara", "lampara cargada", "carburero"], "tipo": "herramienta", "desc_base": "La lámpara con el carburo dentro. Le falta el agua para que suelte gas.",
-    "usos": [ { "texto": "Rascas el chispero. Nada: sin agua, el carburo no suelta gas." } ] },
-  { "id": "lampara_encendida", "nombre": "la lámpara encendida", "alias": ["lampara", "lámpara", "luz", "carburero"], "tipo": "herramienta", "poderes": ["luz"], "desc_base": "La llama silba, blanca y viva. Mientras arda, no estás del todo solo.",
-    "usos": [ { "texto": "Ya está encendida. Mejor no la toques mucho." } ] },
-  { "id": "pico", "nombre": "el pico", "alias": ["pico", "piqueta"], "tipo": "arma", "slot": "mano", "stats": { "ataque": 2 }, "palpable": true, "desc_base": "Tu pico de picador. El mango está pulido de tantos años de manos." },
-
-  { "id": "lampara_xuan", "nombre": "una lámpara caída", "alias": ["lampara caida", "lámpara caída", "lampara de xuan", "lámpara de Xuan"], "tipo": "pista", "fijo": true, "desc_base": "Una lámpara de carburo tirada en el suelo, abollada.", "examinar": "En la base, grabado a punta de navaja: «X. FDEZ». Es la de Xuan. Nadie sale a la calle sin su lámpara: la descuentan del jornal.", "al_examinar": ["flag:pista_lampara"] },
-  { "id": "cuerda", "nombre": "un rollo de cuerda", "alias": ["cuerda", "soga", "rollo"], "tipo": "herramienta", "desc_base": "Cuerda de cáñamo, de la de bajar material. Veinte brazas, por lo menos." },
-  { "id": "trapo", "nombre": "un trapo", "alias": ["trapo", "pañuelo", "panuelo"], "tipo": "material", "desc_base": "Un pañuelo de fardel, a cuadros, más o menos limpio." },
-
-  { "id": "santa", "nombre": "la imagen de Santa Bárbara", "alias": ["santa", "santa barbara", "imagen", "virgen", "santina"], "tipo": "escenario", "fijo": true, "desc_base": "Una Santa Bárbara de madera policromada, con la torre en la mano. Alguien le ha pintado los ojos de negro hace poco." },
-  { "id": "rosario", "nombre": "un rosario", "alias": ["rosario"], "tipo": "pista", "desc_base": "Un rosario de cuentas de azabache.", "examinar": "Las cuentas están mojadas y la cruz tiene barro fresco. Es el de Xuan: se lo dio su madre el día que bajó por primera vez. Si está aquí, Xuan pasó por aquí. Hacia abajo.", "al_examinar": ["flag:pista_rosario"] },
-  { "id": "orujo", "nombre": "una petaca de orujo", "alias": ["orujo", "petaca", "aguardiente"], "tipo": "consumible", "efectos_consumir": ["vida+2"], "desc_base": "Una petaca de orujo que alguien dejó de ofrenda. Raspa y calienta." },
-  { "id": "venda", "nombre": "una venda empapada en orujo", "alias": ["venda", "vendaje"], "tipo": "consumible", "efectos_consumir": ["vida+6"], "desc_base": "Un trapo empapado en orujo. Escocerá, pero cierra heridas." },
-
-  { "id": "pulmon_cuelebre", "nombre": "el pulmón del cuélebre", "alias": ["pulmon", "pulmón", "pulmon de cuelebre"], "tipo": "injerto", "slot": "pulmon", "corrupcion": 15, "poderes": ["respirar"], "desc_base": "Un saco translúcido y palpitante, con branquias como encaje. Sigue respirando por su cuenta.", "texto_injerto": "Te abres el costado con la navaja, entre dos costillas. El pulmón del cuélebre se mete solo, como un animal que vuelve a su madriguera. Toses agua negra. Después respiras mejor que en toda tu vida." },
-  { "id": "ojo_topo", "nombre": "el ojo del topo ciego", "alias": ["ojo", "ojo de topo", "ojo del topo"], "tipo": "injerto", "slot": "ojo", "corrupcion": 10, "poderes": ["luz", "ver_oculto"], "desc_base": "El cadáver de un topo del tamaño de un perro, sin ojos en la cara. El ojo lo tiene en el paladar: blanco, sin pupila, aún húmedo.", "texto_injerto": "No te lo pienses. Te sacas el ojo izquierdo con la navaja y encajas el del topo en la cuenca. Durante un minuto solo hay dolor. Luego, la oscuridad deja de ser oscura." },
-  { "id": "brazo_cosa", "nombre": "el brazo de la cosa", "alias": ["brazo", "brazo de la cosa", "cosa"], "tipo": "injerto", "slot": "brazo", "corrupcion": 20, "stats": { "ataque": 3 }, "poderes": ["romper"],
-    "usos": [ { "con": "escombros", "si": ["injerto:brazo_cosa"], "efectos": ["quitar:escombros", "aparece:relicario", "flag:hueco_abierto"], "texto": "Hundes el brazo nuevo en el derrumbe y apartas las piedras como si fueran paja. Detrás hay una hornacina antigua." } ],
-    "desc_base": "Algo murió aplastado bajo un costero. Solo asoma un brazo: largo, con demasiadas articulaciones y uñas de piedra.", "texto_injerto": "El brazo se suelda al tuyo por el codo, hueso con hueso. Cuando cierras el puño, la roca de la pared se agrieta." },
-  { "id": "lengua_guestia", "nombre": "la lengua de la güestia", "alias": ["lengua", "lengua de la guestia"], "tipo": "injerto", "slot": "lengua", "corrupcion": 25, "poderes": ["entender"], "desc_base": "Entre los restos de una procesión de cadáveres con velas apagadas, una lengua negra se mueve sola, rezando.", "texto_injerto": "Te cortas la punta de la lengua y pones la otra encima. Se enraíza. De pronto el balbuceo de las paredes tiene gramática." },
-  { "id": "piel_entidad", "nombre": "la piel de Aquello", "alias": ["piel", "membrana", "piel de aquello"], "tipo": "injerto", "slot": "piel", "corrupcion": 35, "stats": { "defensa": 3 }, "desc_base": "Una membrana tibia que se desprende de la pared de la sima. Late al ritmo de algo muy grande.", "texto_injerto": "Te la echas sobre los hombros y la piel de Aquello se cose sola a la tuya. Ya nada puede hacerte daño. Ya nada es del todo tuyo." },
-
-  { "id": "chaqueta", "nombre": "la chaqueta del Rubio", "alias": ["chaqueta", "chaqueta del rubio"], "tipo": "pista", "desc_base": "Una chaqueta de pana con los codos remendados.", "examinar": "Es la del Rubio. En el bolsillo, la ficha de salida sin entregar: nunca pasó por la lampistería.", "al_examinar": ["flag:pista_chaqueta"] },
-  { "id": "escombros", "nombre": "un montón de escombros", "alias": ["escombros", "derrumbe", "piedras"], "tipo": "escenario", "fijo": true, "desc_base": "Un derrumbe tapa un hueco en la pared. Por las rendijas sale un brillo de plata." },
-  { "id": "relicario", "nombre": "un relicario de plata", "alias": ["relicario", "reliquia"], "tipo": "reliquia", "desc_base": "Un relicario de plata ennegrecida con un hueso diminuto dentro y una inscripción: «S. BARBARA ORA PRO NOBIS».",
-    "usos": [ { "texto": "Aprietas el relicario contra el pecho y rezas lo que te sabes. El frío de la plata te limpia por dentro, un poco.", "efectos": ["corrupcion-15"], "consume": true } ] },
-  { "id": "medalla_santina", "nombre": "la medalla de la Santina", "alias": ["medalla", "medalla de la santina"], "tipo": "reliquia", "desc_base": "Una medalla de la Virgen de Covadonga, gastada de tanto besarla.",
-    "usos": [ { "texto": "Besas la medalla como hacía tu madre. Algo que estaba echando raíces en ti se encoge.", "efectos": ["corrupcion-10"], "consume": true } ] }
+  {
+    "id": "navaja",
+    "nombre": "tu navaja",
+    "alias": [
+      "navaja",
+      "cuchillo"
+    ],
+    "tipo": "herramienta",
+    "desc_base": "Una navaja de Taramundi con mango de boj. Corta bien. Demasiado bien."
+  },
+  {
+    "id": "cantimplora",
+    "nombre": "la cantimplora",
+    "alias": [
+      "cantimplora",
+      "agua"
+    ],
+    "tipo": "herramienta",
+    "desc_base": "Una cantimplora de lata con agua del manantial de casa. Sirve para beber y para el carburo."
+  },
+  {
+    "id": "casco_cuero",
+    "nombre": "el casco de cuero",
+    "alias": [
+      "casco",
+      "casco de cuero"
+    ],
+    "tipo": "herramienta",
+    "slot": "cabeza",
+    "stats": {
+      "defensa": 1
+    },
+    "desc_base": "Cuero cocido y endurecido. Ha parado más de una piedra."
+  },
+  {
+    "id": "lampara_vacia",
+    "nombre": "la lámpara de carburo apagada",
+    "alias": [
+      "lampara",
+      "lámpara",
+      "lampara de carburo",
+      "carburero"
+    ],
+    "tipo": "herramienta",
+    "palpable": true,
+    "desc_base": "Tu lámpara de carburo, fría y sin carga. El depósito suena hueco.",
+    "usos": [
+      {
+        "texto": "Rascas el chispero, pero no prende: el depósito está vacío. Necesita carburo."
+      }
+    ]
+  },
+  {
+    "id": "carburo",
+    "nombre": "un bote de carburo",
+    "alias": [
+      "carburo",
+      "bote",
+      "bote de carburo",
+      "piedras",
+      "piedras de carburo",
+      "piedra",
+      "piedra de carburo"
+    ],
+    "tipo": "material",
+    "palpable": true,
+    "desc_base": "Un bote de hojalata con piedras de carburo. Huelen a ajo podrido."
+  },
+  {
+    "id": "lampara_cargada",
+    "nombre": "la lámpara cargada",
+    "alias": [
+      "lampara",
+      "lámpara",
+      "lampara cargada",
+      "carburero"
+    ],
+    "tipo": "herramienta",
+    "desc_base": "La lámpara con el carburo dentro. Le falta el agua para que suelte gas.",
+    "usos": [
+      {
+        "texto": "Rascas el chispero. Nada: sin agua, el carburo no suelta gas."
+      }
+    ]
+  },
+  {
+    "id": "lampara_encendida",
+    "nombre": "la lámpara encendida",
+    "alias": [
+      "lampara",
+      "lámpara",
+      "luz",
+      "carburero"
+    ],
+    "tipo": "herramienta",
+    "poderes": [
+      "luz"
+    ],
+    "desc_base": "La llama silba, blanca y viva. Mientras arda, no estás del todo solo.",
+    "usos": [
+      {
+        "texto": "Ya está encendida. Mejor no la toques mucho."
+      }
+    ]
+  },
+  {
+    "id": "pico",
+    "nombre": "el pico",
+    "alias": [
+      "pico",
+      "piqueta"
+    ],
+    "tipo": "arma",
+    "slot": "mano",
+    "stats": {
+      "ataque": 2
+    },
+    "palpable": true,
+    "desc_base": "Tu pico de picador. El mango está pulido de tantos años de manos."
+  },
+  {
+    "id": "lampara_xuan",
+    "nombre": "una lámpara caída",
+    "alias": [
+      "lampara caida",
+      "lámpara caída",
+      "lampara de xuan",
+      "lámpara de Xuan"
+    ],
+    "tipo": "pista",
+    "fijo": true,
+    "desc_base": "Una lámpara de carburo tirada en el suelo, abollada.",
+    "examinar": "En la base, grabado a punta de navaja: «X. FDEZ». Es la de Xuan. Nadie sale a la calle sin su lámpara: la descuentan del jornal.",
+    "al_examinar": [
+      "flag:pista_lampara"
+    ]
+  },
+  {
+    "id": "cuerda",
+    "nombre": "un rollo de cuerda",
+    "alias": [
+      "cuerda",
+      "soga",
+      "rollo"
+    ],
+    "tipo": "herramienta",
+    "desc_base": "Cuerda de cáñamo, de la de bajar material. Veinte brazas, por lo menos."
+  },
+  {
+    "id": "trapo",
+    "nombre": "un trapo",
+    "alias": [
+      "trapo",
+      "pañuelo",
+      "panuelo"
+    ],
+    "tipo": "material",
+    "desc_base": "Un pañuelo de fardel, a cuadros, más o menos limpio."
+  },
+  {
+    "id": "santa",
+    "nombre": "la imagen de Santa Bárbara",
+    "alias": [
+      "santa",
+      "santa barbara",
+      "imagen",
+      "virgen",
+      "santina"
+    ],
+    "tipo": "escenario",
+    "fijo": true,
+    "desc_base": "Una Santa Bárbara de madera policromada, con la torre en la mano. Alguien le ha pintado los ojos de negro hace poco."
+  },
+  {
+    "id": "rosario",
+    "nombre": "un rosario",
+    "alias": [
+      "rosario"
+    ],
+    "tipo": "pista",
+    "desc_base": "Un rosario de cuentas de azabache.",
+    "examinar": "Las cuentas están mojadas y la cruz tiene barro fresco. Es el de Xuan: se lo dio su madre el día que bajó por primera vez. Si está aquí, Xuan pasó por aquí. Hacia abajo.",
+    "al_examinar": [
+      "flag:pista_rosario"
+    ]
+  },
+  {
+    "id": "orujo",
+    "nombre": "una petaca de orujo",
+    "alias": [
+      "orujo",
+      "petaca",
+      "aguardiente"
+    ],
+    "tipo": "consumible",
+    "efectos_consumir": [
+      "vida+2"
+    ],
+    "desc_base": "Una petaca de orujo que alguien dejó de ofrenda. Raspa y calienta."
+  },
+  {
+    "id": "venda",
+    "nombre": "una venda empapada en orujo",
+    "alias": [
+      "venda",
+      "vendaje"
+    ],
+    "tipo": "consumible",
+    "efectos_consumir": [
+      "vida+6"
+    ],
+    "desc_base": "Un trapo empapado en orujo. Escocerá, pero cierra heridas."
+  },
+  {
+    "id": "pulmon_cuelebre",
+    "nombre": "el pulmón del cuélebre",
+    "alias": [
+      "pulmon",
+      "pulmón",
+      "pulmon de cuelebre"
+    ],
+    "tipo": "injerto",
+    "slot": "pulmon",
+    "corrupcion": 15,
+    "poderes": [
+      "respirar"
+    ],
+    "desc_base": "Un saco translúcido y palpitante, con branquias como encaje. Sigue respirando por su cuenta.",
+    "texto_injerto": "Te abres el costado con la navaja, entre dos costillas. El pulmón del cuélebre se mete solo, como un animal que vuelve a su madriguera. Toses agua negra. Después respiras mejor que en toda tu vida."
+  },
+  {
+    "id": "ojo_topo",
+    "nombre": "el ojo del topo ciego",
+    "alias": [
+      "ojo",
+      "ojo de topo",
+      "ojo del topo"
+    ],
+    "tipo": "injerto",
+    "slot": "ojo",
+    "corrupcion": 10,
+    "poderes": [
+      "luz",
+      "ver_oculto"
+    ],
+    "desc_base": "El cadáver de un topo del tamaño de un perro, sin ojos en la cara. El ojo lo tiene en el paladar: blanco, sin pupila, aún húmedo.",
+    "texto_injerto": "No te lo pienses. Te sacas el ojo izquierdo con la navaja y encajas el del topo en la cuenca. Durante un minuto solo hay dolor. Luego, la oscuridad deja de ser oscura."
+  },
+  {
+    "id": "brazo_cosa",
+    "nombre": "el brazo de la cosa",
+    "alias": [
+      "brazo",
+      "brazo de la cosa",
+      "cosa"
+    ],
+    "tipo": "injerto",
+    "slot": "brazo",
+    "corrupcion": 20,
+    "stats": {
+      "ataque": 3
+    },
+    "poderes": [
+      "romper"
+    ],
+    "usos": [
+      {
+        "con": "escombros",
+        "si": [
+          "injerto:brazo_cosa"
+        ],
+        "efectos": [
+          "quitar:escombros",
+          "aparece:relicario",
+          "flag:hueco_abierto"
+        ],
+        "texto": "Hundes el brazo nuevo en el derrumbe y apartas las piedras como si fueran paja. Detrás hay una hornacina antigua."
+      }
+    ],
+    "desc_base": "Algo murió aplastado bajo un costero. Solo asoma un brazo: largo, con demasiadas articulaciones y uñas de piedra.",
+    "texto_injerto": "El brazo se suelda al tuyo por el codo, hueso con hueso. Cuando cierras el puño, la roca de la pared se agrieta."
+  },
+  {
+    "id": "lengua_guestia",
+    "nombre": "la lengua de la güestia",
+    "alias": [
+      "lengua",
+      "lengua de la guestia"
+    ],
+    "tipo": "injerto",
+    "slot": "lengua",
+    "corrupcion": 25,
+    "poderes": [
+      "entender"
+    ],
+    "desc_base": "Entre los restos de una procesión de cadáveres con velas apagadas, una lengua negra se mueve sola, rezando.",
+    "texto_injerto": "Te cortas la punta de la lengua y pones la otra encima. Se enraíza. De pronto el balbuceo de las paredes tiene gramática."
+  },
+  {
+    "id": "piel_entidad",
+    "nombre": "la piel de Aquello",
+    "alias": [
+      "piel",
+      "membrana",
+      "piel de aquello"
+    ],
+    "tipo": "injerto",
+    "slot": "piel",
+    "corrupcion": 35,
+    "stats": {
+      "defensa": 3
+    },
+    "desc_base": "Una membrana tibia que se desprende de la pared de la sima. Late al ritmo de algo muy grande.",
+    "texto_injerto": "Te la echas sobre los hombros y la piel de Aquello se cose sola a la tuya. Ya nada puede hacerte daño. Ya nada es del todo tuyo."
+  },
+  {
+    "id": "chaqueta",
+    "nombre": "la chaqueta del Rubio",
+    "alias": [
+      "chaqueta",
+      "chaqueta del rubio"
+    ],
+    "tipo": "pista",
+    "desc_base": "Una chaqueta de pana con los codos remendados.",
+    "examinar": "Es la del Rubio. En el bolsillo, la ficha de salida sin entregar: nunca pasó por la lampistería.",
+    "al_examinar": [
+      "flag:pista_chaqueta"
+    ]
+  },
+  {
+    "id": "escombros",
+    "nombre": "un montón de escombros",
+    "alias": [
+      "escombros",
+      "derrumbe",
+      "piedras"
+    ],
+    "tipo": "escenario",
+    "fijo": true,
+    "desc_base": "Un derrumbe tapa un hueco en la pared. Por las rendijas sale un brillo de plata.",
+    "listar": true
+  },
+  {
+    "id": "relicario",
+    "nombre": "un relicario de plata",
+    "alias": [
+      "relicario",
+      "reliquia"
+    ],
+    "tipo": "reliquia",
+    "desc_base": "Un relicario de plata ennegrecida con un hueso diminuto dentro y una inscripción: «S. BARBARA ORA PRO NOBIS».",
+    "usos": [
+      {
+        "texto": "Aprietas el relicario contra el pecho y rezas lo que te sabes. El frío de la plata te limpia por dentro, un poco.",
+        "efectos": [
+          "corrupcion-15"
+        ],
+        "consume": true
+      }
+    ]
+  },
+  {
+    "id": "medalla_santina",
+    "nombre": "la medalla de la Santina",
+    "alias": [
+      "medalla",
+      "medalla de la santina"
+    ],
+    "tipo": "reliquia",
+    "desc_base": "Una medalla de la Virgen de Covadonga, gastada de tanto besarla.",
+    "usos": [
+      {
+        "texto": "Besas la medalla como hacía tu madre. Algo que estaba echando raíces en ti se encoge.",
+        "efectos": [
+          "corrupcion-10"
+        ],
+        "consume": true
+      }
+    ]
+  },
+  {
+    "id": "fiambrera",
+    "nombre": "una fiambrera vacía",
+    "alias": [
+      "fiambrera",
+      "tartera"
+    ],
+    "tipo": "escenario",
+    "fijo": true,
+    "desc_base": "La fiambrera de Manolón, rebañada con pan. Siempre se le olvida. Mañana vendrá a buscarla, si hay mañana."
+  },
+  {
+    "id": "colillas",
+    "nombre": "unas colillas",
+    "alias": [
+      "colillas",
+      "colilla",
+      "cigarros"
+    ],
+    "tipo": "escenario",
+    "fijo": true,
+    "desc_base": "Colillas de picadura, apagadas con el pie. Alguien ha fumado aquí, en el frente, donde está prohibido por el grisú. Como siempre."
+  },
+  {
+    "id": "cable_luz",
+    "nombre": "el cable de la luz",
+    "alias": [
+      "cable",
+      "cable de la luz",
+      "bombilla"
+    ],
+    "tipo": "escenario",
+    "fijo": true,
+    "desc_base": "El cable cuelga muerto. Ni un zumbido. El apagón no es de este tramo: es de toda la mina."
+  },
+  {
+    "id": "entibos",
+    "nombre": "los entibos",
+    "alias": [
+      "entibos",
+      "entibo",
+      "cuadros",
+      "madera"
+    ],
+    "tipo": "escenario",
+    "fijo": true,
+    "desc_base": "Los cuadros de castaño que has puesto esta tarde. Crujen. La madera avisa antes de ceder; esta está avisando."
+  },
+  {
+    "id": "veta",
+    "nombre": "la veta de carbón",
+    "alias": [
+      "veta",
+      "carbon",
+      "capa",
+      "pared",
+      "tajo"
+    ],
+    "tipo": "escenario",
+    "fijo": true,
+    "desc_base": "La capa brilla negra y húmeda. Al pasar la mano notas algo raro: está tibia, como un animal dormido."
+  },
+  {
+    "id": "railes",
+    "nombre": "los raíles",
+    "alias": [
+      "railes",
+      "rieles",
+      "vias",
+      "vagoneta"
+    ],
+    "tipo": "escenario",
+    "fijo": true,
+    "desc_base": "Raíles de vagoneta comidos por el óxido. Hace años que por aquí no pasa nada. Salvo que hay marcas frescas de botas en el polvo, y todas van hacia abajo."
+  },
+  {
+    "id": "derrumbe_tunel",
+    "nombre": "el derrumbe",
+    "alias": [
+      "derrumbe",
+      "escombros",
+      "tapon"
+    ],
+    "tipo": "escenario",
+    "fijo": true,
+    "desc_base": "Piedras recién caídas, todavía calientes. No ha sido el monte asentándose: parecen empujadas desde fuera, como si algo no quisiera que salieras por aquí."
+  },
+  {
+    "id": "velas",
+    "nombre": "las velas",
+    "alias": [
+      "velas",
+      "vela",
+      "cirios"
+    ],
+    "tipo": "escenario",
+    "fijo": true,
+    "desc_base": "Velas de sebo recién encendidas. Las ha encendido alguien que sigue aquí abajo."
+  },
+  {
+    "id": "exvotos",
+    "nombre": "los exvotos",
+    "alias": [
+      "exvotos",
+      "exvoto",
+      "cera",
+      "figuras"
+    ],
+    "tipo": "escenario",
+    "fijo": true,
+    "desc_base": "Piernas, manos y pulmones de cera, ofrendas por accidentes y silicosis. Entre ellos hay otros que no reconoces: órganos con demasiados lóbulos, un ojo sin pupila."
+  },
+  {
+    "id": "inscripciones",
+    "nombre": "las inscripciones",
+    "alias": [
+      "inscripciones",
+      "inscripcion",
+      "grabados",
+      "letras",
+      "simbolos"
+    ],
+    "tipo": "escenario",
+    "fijo": true,
+    "desc_base": "Debajo de los nombres de mineros y fechas hay otros surcos, mucho más viejos. No son letras. Se parecen a las marcas que deja una lengua en la arcilla."
+  },
+  {
+    "id": "altar",
+    "nombre": "el altar",
+    "alias": [
+      "altar",
+      "roca"
+    ],
+    "tipo": "escenario",
+    "fijo": true,
+    "desc_base": "Un altar tallado en la roca viva. Está gastado en el centro, como si generaciones de rodillas hubieran rezado ahí. O algo más pesado."
+  },
+  {
+    "id": "laguna",
+    "nombre": "la laguna",
+    "alias": [
+      "laguna",
+      "lago",
+      "agua negra"
+    ],
+    "tipo": "escenario",
+    "fijo": true,
+    "desc_base": "Agua negra, quieta, que huele a hierro. No refleja la luz de tu lámpara. Se la traga."
+  },
+  {
+    "id": "huesos_mula",
+    "nombre": "los huesos de mula",
+    "alias": [
+      "huesos",
+      "hueso",
+      "mula",
+      "huesos de mula"
+    ],
+    "tipo": "escenario",
+    "fijo": true,
+    "desc_base": "Huesos de mula, mondados y apilados con cuidado. Demasiado cuidado para un animal."
+  },
+  {
+    "id": "paredes_lisas",
+    "nombre": "las paredes lisas",
+    "alias": [
+      "paredes",
+      "pared lisa",
+      "galeria"
+    ],
+    "tipo": "escenario",
+    "fijo": true,
+    "desc_base": "Lisas como el interior de una garganta, sin una sola marca de pico. Si apoyas la mano, juras que notas un pulso."
+  },
+  {
+    "id": "procesion",
+    "nombre": "la procesión de difuntos",
+    "alias": [
+      "procesion",
+      "cadaveres",
+      "difuntos",
+      "muertos",
+      "guestia"
+    ],
+    "tipo": "escenario",
+    "fijo": true,
+    "desc_base": "Una docena de cuerpos en fila, de rodillas, con velas apagadas en las manos. Llevan ropa de mina de otras épocas. La güestia, la procesión de los muertos, pero aquí abajo no reza a ningún santo."
+  },
+  {
+    "id": "pozo_gas",
+    "nombre": "el pozo de bajada",
+    "alias": [
+      "pozo",
+      "pozo de bajada",
+      "grisu",
+      "gas"
+    ],
+    "tipo": "escenario",
+    "fijo": true,
+    "desc_base": "Un pozo estrecho que baja hacia la oscuridad. Del fondo sube grisú y un sonido lento, como de respiración."
+  },
+  {
+    "id": "sima",
+    "nombre": "la sima",
+    "alias": [
+      "sima",
+      "fondo",
+      "abismo"
+    ],
+    "tipo": "escenario",
+    "fijo": true,
+    "desc_base": "No tiene fondo, o el fondo está tan lejos que da igual. De ahí sube la respiración. De ahí sube la luz."
+  },
+  {
+    "id": "chimenea",
+    "nombre": "la chimenea vieja",
+    "alias": [
+      "chimenea",
+      "chimenea vieja",
+      "salida"
+    ],
+    "tipo": "escenario",
+    "fijo": true,
+    "desc_base": "Una chimenea antigua, estrecha, que sube hacia el monte. Por ella baja un hilo de aire frío que huele a helecho. Huele a fuera."
+  },
+  {
+    "id": "luz_verdosa",
+    "nombre": "la luz verdosa",
+    "alias": [
+      "luz verdosa",
+      "resplandor",
+      "brillo"
+    ],
+    "tipo": "escenario",
+    "fijo": true,
+    "desc_base": "La luz sale de la propia roca, verdosa, enfermiza. No da calor. Late."
+  }
 ]

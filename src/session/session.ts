@@ -2,7 +2,7 @@
 // la CLI como el Durable Object. No escribe en el estado: todo pasa por el motor.
 import type { Pack } from "../engine/pack.js";
 import { initialState, type GameState } from "../engine/state.js";
-import { apply, catalog, scope, start, storeRoomDescription } from "../engine/engine.js";
+import { ambientText, apply, catalog, scope, start, storeRoomDescription } from "../engine/engine.js";
 import { parse } from "../engine/parser.js";
 import { applyNpcReply, endDialog, npcContext, MAX_PLAYER_CHARS } from "../engine/dialog.js";
 import type { GameEvent } from "../engine/events.js";
@@ -39,7 +39,7 @@ export class GameSession {
     const text = line.trim();
     if (!text) return [];
     if (this.state.dialogo) return this.dialogTurn(text);
-    const p = parse(text, scope(this.state, this.pack), catalog(this.pack));
+    const p = parse(text, scope(this.state, this.pack), catalog(this.pack), ambientText(this.state, this.pack));
     if (!p.ok) return [p.texto];
     const r = apply(this.state, this.pack, p.cmd);
     this.state = r.state;
