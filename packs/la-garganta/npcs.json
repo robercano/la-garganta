@@ -9,11 +9,11 @@
       "vigilante"
     ],
     "arquetipo": "autoridad cansada que miente por miedo y por culpa",
-    "backstory": "Lleva treinta años en el Santa Bárbara. Su padre y su abuelo ya rezaban en esta hornacina. Esta tarde, por orden de la compañía, mandó a la cuadrilla a reconocer una galería vieja que apareció al barrenar. Oyó cómo cantaban algo que no era el rosario y no bajó a buscarlos. Cuando se fue la luz, volvió por remordimiento, y ahora no se atreve ni a subir ni a bajar.",
+    "backstory": "Lleva treinta años en el Santa Bárbara. Su padre y su abuelo ya rezaban en esta capilla. Esta tarde, por orden de la compañía, mandó a la cuadrilla a reconocer una galería vieja que apareció al barrenar. Oyó cómo cantaban algo que no era el rosario y no bajó a buscarlos. Cuando se fue la luz, volvió por remordimiento, y ahora no se atreve ni a subir ni a bajar.",
     "tono": "seco, autoritario al principio; se va quebrando; frases cortas, palabras de mina y algún giro en asturiano",
     "limites": [
       "No sabe nada de injertos ni de cómo hacerlos.",
-      "No baja de la hornacina por nada del mundo.",
+      "No sale de la capilla por nada del mundo.",
       "Nunca nombra a la entidad: la llama 'lo de abajo'."
     ],
     "confianza_inicial": 0,

@@ -121,10 +121,10 @@
   },
   {
     "id": "hornacina",
-    "nombre": "La hornacina de Santa Bárbara",
+    "nombre": "La capilla de Santa Bárbara",
     "tono": "capilla minera excavada en la roca; recogida, devota y equivocada",
     "hechos": [
-      "una imagen de Santa Bárbara preside un altar de roca",
+      "una imagen de Santa Bárbara preside el altar desde una hornacina tallada en la roca",
       "hay velas encendidas que nadie debería haber encendido",
       "las paredes están cubiertas de exvotos: piernas, manos y pulmones de cera",
       "algunas inscripciones en la roca son mucho más antiguas que la mina",
@@ -132,7 +132,7 @@
       "[oir] las velas chisporrotean y el capataz reza entre dientes",
       "[oler] huele a sebo quemado y a incienso barato"
     ],
-    "desc_base": "Una capilla excavada en la roca, como las que hay en todos los pozos. Santa Bárbara preside el altar entre velas encendidas. Las paredes están llenas de exvotos de cera: piernas, manos, pulmones. Algunos no tienen forma de nada humano.",
+    "desc_base": "Una capilla excavada en la roca, como las que hay en todos los pozos. Santa Bárbara preside el altar desde su hornacina entre velas encendidas. Las paredes están llenas de exvotos de cera: piernas, manos, pulmones. Algunos no tienen forma de nada humano.",
     "objetos": [
       "santa",
       "rosario",
@@ -203,7 +203,7 @@
       "al norte la galería se hunde bajo el agua hasta el techo",
       "hay huesos de mula en la orilla, mondados",
       "[oler] el agua huele a hierro, como la sangre",
-      "unas escaleras de mano suben hacia la hornacina",
+      "unas escaleras de mano suben hacia la capilla",
       "[oir] el eco devuelve cada goteo multiplicado"
     ],
     "desc_base": "Una sala amplia donde la galería se hunde en una laguna de agua negra. Al norte el agua llega hasta el techo. En la orilla hay huesos de mula, mondados.",

@@ -353,7 +353,7 @@ describe("cabecera de sala", () => {
     await play(g, LIGHT);
     expect(await play(g, ["este"])).toContain("Llegas al túnel de servicio.");
     expect(await play(g, ["mirar"])).toContain("Estás en el túnel de servicio.");
-    expect(await play(g, ["bajar"])).toContain("Llegas a la hornacina de Santa Bárbara.");
+    expect(await play(g, ["bajar"])).toContain("Llegas a la capilla de Santa Bárbara.");
   });
 });
 
