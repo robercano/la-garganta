@@ -9,6 +9,7 @@ export interface Candidate extends Ref {
   nombre: string;
   alias: string[];
   consumible?: boolean;
+  fijo?: boolean; // no se puede coger (decorado)
   texto?: string; // descripción: lo que nombra se resuelve a él («el ojo» de los exvotos, «el hueso» del relicario)
 }
 
@@ -152,6 +153,12 @@ function resolve(words: string[], scope: Candidate[], catalog: Candidate[], ask:
   const matches = match(phrase, scope);
   if (matches.length === 1) return { ok: true, ref: matches[0]! };
   if (matches.length > 1) {
+    // Si el verbo es de manipular, gana lo que se puede coger frente al decorado
+    // («coger membrana» con un jirón suelto delante de las paredes)
+    if (HANDLE_VERBS.has(env.verbo)) {
+      const loose = matches.filter((m) => !m.fijo);
+      if (loose.length === 1) return { ok: true, ref: loose[0]! };
+    }
     const names = matches.map((m) => m.nombre);
     return { ok: false, texto: `¿Cuál: ${names.slice(0, -1).join(", ")} o ${names.at(-1)}?` };
   }
@@ -214,6 +221,7 @@ function splitAll(words: string[], seps: string[]): string[][] {
 // ───────────── Decorado: cosas que el texto nombra pero no son objetos ─────────────
 
 let env = { ambient: "", verbo: "" };
+const HANDLE_VERBS = new Set(["coger", "tomar", "dejar", "injertar", "equipar", "consumir", "usar", "combinar"]);
 
 const ART = new Set(["el", "la", "los", "las", "un", "una", "unos", "unas"]);
 const NOT_NOUNS = new Set(["como", "pero", "para", "desde", "hacia", "entre", "sobre", "todo", "toda", "todos", "nadie", "algo", "aqui", "alli", "ahora", "solo", "muy", "mas", "tras", "que", "sin", "asi", "ahi", "aun", "ese", "esa", "eso", "este", "esta", "esto", "hay"]);

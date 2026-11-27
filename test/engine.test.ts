@@ -463,3 +463,16 @@ describe("el núcleo del nombre manda", () => {
     expect(await play(g, ["examinar altar diminuto"])).toContain("QUE NO LA DESPIERTEN");
   });
 });
+
+describe("la partida de Rob: el jirón de la Garganta", () => {
+  it("«coger membrana» e «injertar membrana» se refieren al jirón suelto, no a las paredes", async () => {
+    const g = await newGame(42);
+    await play(g, [...LIGHT, ...TO_HORNACINA, "bajar"]);
+    await fight(g, "cuelebre");
+    await play(g, ["coger pulmon", "norte", "bajar"]);
+    expect(await play(g, ["Cortar membrana"])).toContain("el jirón cae a tus pies");
+    expect(await play(g, ["mirar"])).toContain("Ves: un jirón de membrana");
+    expect(await play(g, ["coger membrana"])).toContain("Coges un jirón de membrana");
+    expect(await play(g, ["injertar membrana"])).toContain("se cose sola a tu piel");
+  });
+});

@@ -283,7 +283,7 @@
           "aparece:relicario",
           "flag:hueco_abierto"
         ],
-        "texto": "Hundes el brazo nuevo en el derrumbe y apartas las piedras como si fueran paja. Detrás hay una hornacina antigua."
+        "texto": "Hundes el brazo nuevo en el derrumbe y apartas las piedras como si fueran paja. Detrás hay una hornacina antigua, y en ella brilla un relicario de plata."
       }
     ],
     "desc_base": "Un brazo largo, con demasiadas articulaciones y uñas de piedra. Aún está tibio.",
@@ -307,12 +307,14 @@
   },
   {
     "id": "piel_entidad",
-    "nombre": "la piel de Aquello",
+    "nombre": "un jirón de membrana",
     "alias": [
-      "piel",
-      "piel de aquello",
       "jiron",
-      "jirón"
+      "jirón",
+      "membrana",
+      "jiron de membrana",
+      "piel",
+      "piel de aquello"
     ],
     "tipo": "injerto",
     "slot": "piel",
@@ -320,8 +322,8 @@
     "stats": {
       "defensa": 3
     },
-    "desc_base": "Un jirón de membrana tibia que late al ritmo de algo muy grande.",
-    "injerto_nucleo": "Te echas el jirón sobre los hombros y la piel de Aquello se cose sola a la tuya, puntada a puntada. Ya nada puede hacerte daño. Ya nada es del todo tuyo."
+    "desc_base": "Un jirón de la membrana de la sima, tibio, que late al ritmo de algo muy grande. Visto de cerca parece piel. Piel de Aquello.",
+    "injerto_nucleo": "Te echas el jirón sobre los hombros y la membrana se cose sola a tu piel, puntada a puntada. Ya nada puede hacerte daño. Ya nada es del todo tuyo."
   },
   {
     "id": "chaqueta",

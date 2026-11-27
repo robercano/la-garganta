@@ -56,6 +56,13 @@ export function lintPack(pack: Pack): LintWarning[] {
     for (const u of it.usos) for (const e of u.efectos) if (e.startsWith("dar:") && !TAKES.test(u.texto)) {
       add("dar-en-silencio", `objeto ${it.id} usos`, `«${e}» mete el objeto en el inventario sin que el texto lo diga: usa aparece: para que caiga en la sala, o dilo («coges…»)`, ign);
     }
+    // 8. Lo que aparece se llama como lo nombra el texto que lo hace aparecer (guía §4)
+    for (const u of it.usos) for (const e of u.efectos) if (e.startsWith("aparece:")) {
+      const x = e.slice(8);
+      if (!pack.hasItem(x)) continue;
+      const nuc = headNoun(pack.item(x).nombre);
+      if (nuc && !normalize(u.texto).split(" ").some((w) => w === nuc || w === `${nuc}s`)) add("aparece-sin-nombre", `objeto ${it.id} usos`, `hace aparecer «${pack.item(x).nombre}», pero el texto no dice «${nuc}»: el jugador no sabrá cómo llamarlo`, ign);
+    }
     // 4. Los alias cubren cómo se nombra el objeto en su propio texto (guía §2)
     // (las palabras del nombre no hace falta repetirlas: el parser también busca por el nombre)
     const aliasWords = new Set([it.nombre, ...it.alias].flatMap((a) => normalize(a).split(" ")));
@@ -76,6 +83,10 @@ export function lintPack(pack: Pack): LintWarning[] {
     if (!used.has(p)) add("poder-sin-uso", `objeto ${it.id}`, `da el poder «${p}», pero ninguna condición del pack lo usa: el jugador no notará nada`, it.lint_ignorar);
   }
 
+  for (const e of d.enemies) for (const b of e.botin) {
+    const nuc = headNoun(pack.item(b).nombre);
+    if (nuc && !normalize(e.muerte).split(" ").some((w) => w === nuc || w === `${nuc}s`)) add("aparece-sin-nombre", `enemigo ${e.id}`, `suelta «${pack.item(b).nombre}», pero su texto de muerte no dice «${nuc}»`);
+  }
   for (const e of d.enemies) for (const ef of e.al_morir) if (ef.startsWith("dar:")) add("dar-en-silencio", `enemigo ${e.id}`, `«${ef}» al morir: usa botín o aparece: para que caiga en la sala`);
   return w;
 }
@@ -93,4 +104,9 @@ function allConditions(pack: Pack): string[] {
   for (const it of d.items) { c.push(...it.visible_si); for (const u of it.usos) c.push(...u.si); }
   for (const n of d.npcs) { c.push(...n.se_niega_si); for (const s of n.sabe) c.push(...s.si); for (const a of n.acciones) c.push(...a.si); }
   return c;
+}
+
+/** Núcleo de un nombre: la primera palabra que no es artículo («un jirón de membrana» → «jiron»). */
+function headNoun(nombre: string): string | undefined {
+  return normalize(nombre).split(" ").find((w) => !STOP.has(w));
 }

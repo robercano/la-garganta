@@ -47,6 +47,11 @@ describe("lint de diseño", () => {
     o.texto_injerto = "Te injertas el ojo.";
     expect(rules(r)).toContain("injerto-sin-nucleo");
   });
+  it("lo que aparece no se nombra en el texto", () => {
+    const r = raw();
+    r.items.find((i: any) => i.id === "piel_entidad").nombre = "la piel de Aquello";
+    expect(rules(r)).toContain("aparece-sin-nombre");
+  });
   it("lint_ignorar acepta un caso a sabiendas", () => {
     const r = raw();
     const l = r.locations[0];

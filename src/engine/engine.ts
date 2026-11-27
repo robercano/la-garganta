@@ -67,7 +67,7 @@ export function scope(s: GameState, pack: Pack): Candidate[] {
   const t = new Turn(s, pack);
   const addItem = (id: string) => {
     const it = pack.item(id);
-    out.push({ kind: "item", id, nombre: it.nombre, alias: it.alias, consumible: it.tipo === "consumible", texto: [it.desc_base, it.examinar].filter(Boolean).join(" ") }); // lo que nombra su descripción se refiere a él
+    out.push({ kind: "item", id, nombre: it.nombre, alias: it.alias, consumible: it.tipo === "consumible", fijo: it.fijo, texto: [it.desc_base, it.examinar].filter(Boolean).join(" ") }); // lo que nombra su descripción se refiere a él
   };
   for (const id of carried(s)) addItem(id);
   for (const id of visibleItems(t)) addItem(id);
