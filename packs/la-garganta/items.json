@@ -643,9 +643,9 @@
         "con": "navaja",
         "una_vez": true,
         "efectos": [
-          "dar:ojo_topo"
+          "aparece:ojo_topo"
         ],
-        "texto": "Hundes la navaja en el paladar y haces palanca. El ojo sale con un chasquido húmedo y se queda mirándote desde la palma de tu mano."
+        "texto": "Hundes la navaja en el paladar y haces palanca. El ojo sale con un chasquido húmedo, rueda por el suelo y se queda quieto, mirándote."
       }
     ],
     "listar": true
@@ -669,9 +669,9 @@
         "con": "navaja",
         "una_vez": true,
         "efectos": [
-          "dar:brazo_cosa"
+          "aparece:brazo_cosa"
         ],
-        "texto": "Serrar el codo te lleva un rato largo. El brazo se suelta de golpe y sus dedos se cierran solos alrededor de tu muñeca, como saludando."
+        "texto": "Serrar el codo te lleva un rato largo. El brazo se suelta de golpe y cae al suelo, donde sus dedos se abren y se cierran solos, como saludando."
       }
     ],
     "listar": true
@@ -698,9 +698,9 @@
         "con": "navaja",
         "una_vez": true,
         "efectos": [
-          "dar:lengua_guestia"
+          "aparece:lengua_guestia"
         ],
-        "texto": "Le abres la tripa de un tajo largo. Entre agua negra y huesos de mula aparece algo que se mueve: una lengua humana, negra, que sigue rezando."
+        "texto": "Le abres la tripa de un tajo largo. Entre agua negra y huesos de mula cae a la orilla algo que se mueve: una lengua humana, negra, que sigue rezando."
       }
     ]
   }

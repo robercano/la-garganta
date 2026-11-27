@@ -41,7 +41,7 @@ describe("motor", () => {
     const g = await newGame(42);
     await play(g, [...LIGHT, ...TO_HORNACINA, "bajar"]);
     await fight(g, "cuelebre");
-    await play(g, ["coger pulmon", "norte", "cortar topo", "dejar navaja"]);
+    await play(g, ["coger pulmon", "norte", "cortar topo", "coger ojo", "dejar navaja"]);
     expect(await play(g, ["injertar ojo"])).toContain("algo con filo");
     await play(g, ["coger navaja", "injertar ojo"]);
     expect(g.state.injertos.ojo).toBe("ojo_topo");
@@ -242,7 +242,7 @@ describe("mapa", () => {
     const g = await newGame(42);
     await play(g, [...LIGHT, ...TO_HORNACINA, "bajar"]);
     await fight(g, "cuelebre");
-    await play(g, ["coger pulmon", "injertar pulmon", "norte", "cortar topo", "injertar ojo", "salir por la grieta"]);
+    await play(g, ["coger pulmon", "injertar pulmon", "norte", "cortar topo", "coger ojo", "injertar ojo", "salir por la grieta"]);
     expect(g.state.sala).toBe("hornacina");
     await play(g, ["entrar en la grieta"]);
     expect(g.state.sala).toBe("galerias_viejas");
@@ -376,6 +376,8 @@ describe("las piezas están escondidas", () => {
     await play(g, ["norte"]);
     expect(await play(g, ["examinar topo"])).toContain("El ojo lo tiene en el paladar");
     expect(await play(g, ["sacar el ojo"])).toContain("chasquido húmedo");
+    expect(g.state.inventario).not.toContain("ojo_topo"); // queda en el suelo: hay que cogerlo
+    await play(g, ["coger ojo"]);
     expect(g.state.inventario).toContain("ojo_topo");
     expect(await play(g, ["cortar topo"])).toBe("Ya no queda nada que sacar de ahí.");
   });
@@ -391,6 +393,7 @@ describe("las piezas están escondidas", () => {
     await play(g, ["sur"]);
     expect(await play(g, ["examinar cuelebre"])).toContain("tripa hinchada");
     expect(await play(g, ["abrir la tripa del cuelebre con la navaja"])).toContain("sigue rezando");
+    expect(await play(g, ["coger lengua"])).toContain("Coges la lengua");
     expect(g.state.inventario).toContain("lengua_guestia");
   });
 });

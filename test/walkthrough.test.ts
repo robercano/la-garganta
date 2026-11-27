@@ -22,7 +22,7 @@ describe("La Garganta: partidas completas", () => {
     const g = await newGame(42);
     await play(g, [...LIGHT, ...TO_HORNACINA, "bajar"]);
     await fight(g, "cuelebre");
-    await play(g, ["coger pulmon", "cortar cuelebre", "norte", "cortar cosa", "bajar"]);
+    await play(g, ["coger pulmon", "cortar cuelebre", "coger lengua", "norte", "cortar cosa", "coger brazo", "bajar"]);
     expect(g.state.grupo?.estado).toBe("sigue");
     await play(g, ["injertar brazo"]); // 35: siguen, con recelo
     expect(g.state.grupo?.estado).toBe("sigue_recelo");
@@ -37,7 +37,7 @@ describe("La Garganta: partidas completas", () => {
     const g = await newGame(42);
     await play(g, [...LIGHT, ...TO_HORNACINA, "bajar"]);
     await fight(g, "cuelebre");
-    await play(g, ["coger pulmon", "cortar cuelebre", "norte", "cortar topo", "injertar ojo", "cortar cosa", "injertar brazo", "injertar lengua"]);
+    await play(g, ["coger pulmon", "cortar cuelebre", "coger lengua", "norte", "cortar topo", "coger ojo", "injertar ojo", "cortar cosa", "coger brazo", "injertar brazo", "injertar lengua"]);
     expect(g.state.corrupcion).toBe(70);
     const out = await play(g, ["bajar"]);
     expect(g.state.grupo?.estado).toBe("huida");
@@ -48,7 +48,7 @@ describe("La Garganta: partidas completas", () => {
     const g = await newGame(42);
     await play(g, [...LIGHT, ...TO_HORNACINA, "bajar"]);
     await fight(g, "cuelebre");
-    await play(g, ["coger pulmon", "cortar cuelebre", "norte", "cortar topo", "injertar ojo", "cortar cosa", "injertar brazo", "injertar lengua", "bajar", "coger piel"]);
+    await play(g, ["coger pulmon", "cortar cuelebre", "coger lengua", "norte", "cortar topo", "coger ojo", "injertar ojo", "cortar cosa", "coger brazo", "injertar brazo", "injertar lengua", "bajar", "coger piel"]);
     const out = await play(g, ["injertar piel"]);
     expect(g.state.final).toBe("fusion");
     expect(out).toContain("Ya no hay un tú y una mina");
@@ -58,7 +58,7 @@ describe("La Garganta: partidas completas", () => {
     const g = await newGame(42);
     await play(g, [...LIGHT, ...TO_HORNACINA, "bajar"]);
     await fight(g, "cuelebre");
-    await play(g, ["coger pulmon", "cortar cuelebre", "norte", "cortar topo", "injertar ojo", "cortar cosa", "injertar brazo", "injertar lengua"]);
+    await play(g, ["coger pulmon", "cortar cuelebre", "coger lengua", "norte", "cortar topo", "coger ojo", "injertar ojo", "cortar cosa", "coger brazo", "injertar brazo", "injertar lengua"]);
     g.state = { ...g.state, corrupcion: 80, vida: 12 };
     const before = g.state.vida;
     const out = await play(g, ["bajar"]);
