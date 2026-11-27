@@ -118,6 +118,7 @@ function crossCheck(d: PackData): string[] {
     for (const n of l.npcs) ref(`sala ${l.id}`, npcs, n);
     for (const e of l.enemigos) ref(`sala ${l.id}`, enemies, e);
     for (const a of l.acciones) check(`sala ${l.id} acción ${a.verbo}`, [...a.si, ...a.efectos]);
+    for (const pc of l.percepciones) check(`sala ${l.id} percepción`, pc.si);
     for (const t of l.al_entrar) check(`sala ${l.id} disparador ${t.id}`, [...t.si, ...t.efectos]);
   }
   for (const n of d.npcs) {

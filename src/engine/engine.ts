@@ -406,6 +406,7 @@ function perceive(t: Turn, sense: "oir" | "oler"): string[] {
   }
   for (const n of room.npcs) if (t.s.npcs[n]?.vivo && t.pack.npc(n)[sense]) out.push(t.pack.npc(n)[sense]!);
   for (const e of room.enemigos) if (t.s.enemigos[e]?.vivo && t.pack.enemy(e)[sense]) out.push(t.pack.enemy(e)[sense]!);
+  for (const p of room.percepciones) if (p.sentido === sense && t.ok(p.si)) out.push(p.texto);
   for (const a of t.pack.quest.ambiente) if (a.sentido === sense && t.ok(a.si)) out.push(a.texto);
   return out;
 }

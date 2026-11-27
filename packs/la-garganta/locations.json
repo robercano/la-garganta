@@ -43,7 +43,16 @@
       "x": 0,
       "y": 0,
       "etiqueta": "Frente"
-    }
+    },
+    "percepciones": [
+      {
+        "sentido": "oir",
+        "si": [
+          "poder:entender"
+        ],
+        "texto": "La veta tibia murmura algo parecido a una nana. Te la cantaba alguien hace mucho, antes de que nacieras."
+      }
+    ]
   },
   {
     "id": "tunel_servicio",
@@ -99,7 +108,16 @@
       "x": 1,
       "y": 0,
       "etiqueta": "Túnel"
-    }
+    },
+    "percepciones": [
+      {
+        "sentido": "oir",
+        "si": [
+          "poder:entender"
+        ],
+        "texto": "Las piedras calientes del derrumbe susurran: «…cerrado, cerrado, para que bajes… para que bajes tú también…». No fue el monte. Fue ella."
+      }
+    ]
   },
   {
     "id": "hornacina",
@@ -165,7 +183,16 @@
       "x": 0,
       "y": 0,
       "etiqueta": "Capilla"
-    }
+    },
+    "percepciones": [
+      {
+        "sentido": "oir",
+        "si": [
+          "poder:entender"
+        ],
+        "texto": "Debajo del rezo del capataz, las inscripciones viejas rezan su propia oración. No es a Santa Bárbara: «…a la que duerme bajo el monte, a la que nos da el carbón, a la que se lleva a los nuestros…»."
+      }
+    ]
   },
   {
     "id": "pozo_inundado",
@@ -209,7 +236,23 @@
       "x": 0,
       "y": 1,
       "etiqueta": "Pozo"
-    }
+    },
+    "percepciones": [
+      {
+        "sentido": "oir",
+        "si": [
+          "!poder:entender"
+        ],
+        "texto": "Bajo el goteo, el agua parece susurrar algo que no entiendes."
+      },
+      {
+        "sentido": "oir",
+        "si": [
+          "poder:entender"
+        ],
+        "texto": "El agua habla con la voz del cuélebre muerto: «…yo le guardaba el sueño… ya no queda quien se lo guarde…»."
+      }
+    ]
   },
   {
     "id": "galerias_viejas",
@@ -266,7 +309,23 @@
       "x": 0,
       "y": 0,
       "etiqueta": "Galerías"
-    }
+    },
+    "percepciones": [
+      {
+        "sentido": "oir",
+        "si": [
+          "!poder:entender"
+        ],
+        "texto": "Las paredes lisas murmuran algo, muy bajo, como un rezo en una lengua que no conoces."
+      },
+      {
+        "sentido": "oir",
+        "si": [
+          "poder:entender"
+        ],
+        "texto": "Las paredes rezan, y ahora entiendes la oración: «…la cosecha está abajo… cuatro, vivos todavía… que baje el quinto, que baje…». El quinto eres tú."
+      }
+    ]
   },
   {
     "id": "garganta",
@@ -320,6 +379,22 @@
       "x": 0,
       "y": 0,
       "etiqueta": "Garganta"
-    }
+    },
+    "percepciones": [
+      {
+        "sentido": "oir",
+        "si": [
+          "!poder:entender"
+        ],
+        "texto": "La respiración de lo hondo arrastra palabras que no entiendes."
+      },
+      {
+        "sentido": "oir",
+        "si": [
+          "poder:entender"
+        ],
+        "texto": "La respiración de lo hondo son palabras: «…quédate… ya eres casi mío… los tuyos no te van a reconocer…»."
+      }
+    ]
   }
 ]

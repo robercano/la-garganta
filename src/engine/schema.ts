@@ -102,6 +102,8 @@ export const LocationSchema = z.object({
   npcs: z.array(Id).default([]),
   enemigos: z.array(Id).default([]),
   acciones: z.array(AccionSala).default([]),
+  // Percepciones que dependen del estado (p. ej. con la lengua injertada se entiende a las paredes)
+  percepciones: z.array(z.object({ sentido: Sentido, si: z.array(Cond).min(1), texto: z.string() })).default([]),
   al_entrar: z.array(Disparador).default([]), // se disparan una sola vez
   cambios: z.record(Id, z.string()).default({}), // flag -> frase que se añade a la descripción
   tags: z.array(z.string()).default([]),

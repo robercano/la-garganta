@@ -35,6 +35,11 @@ describe("lint de diseño", () => {
     delete r.items.find((i: any) => i.id === "lampara_xuan").al_coger;
     expect(rules(r)).toContain("fijo-sin-razon");
   });
+  it("poder que nadie comprueba", () => {
+    const r = raw();
+    r.items.find((i: any) => i.id === "lengua_guestia").poderes = ["entender", "volar"];
+    expect(rules(r)).toContain("poder-sin-uso");
+  });
   it("lint_ignorar acepta un caso a sabiendas", () => {
     const r = raw();
     const l = r.locations[0];

@@ -93,27 +93,27 @@
       {
         "dato": "Hace poco pasaron por aquí cuatro hombres cantando hacia la sima de abajo. Iban como dormidos.",
         "si": [
-          "injerto:lengua"
+          "poder:entender"
         ]
       },
       {
         "dato": "La que duerme guarda a los hombres en la sima como quien guarda la cosecha. Siguen vivos.",
         "si": [
-          "injerto:lengua",
+          "poder:entender",
           "confianza>=1"
         ]
       },
       {
         "dato": "Cuanto más de ella llevas dentro, menos te reconocen los tuyos. A él ya no lo reconoce nadie.",
         "si": [
-          "injerto:lengua",
+          "poder:entender",
           "confianza>=2"
         ]
       },
       {
         "dato": "Hay una grieta que solo ve un ojo ciego y que lleva seca hasta la capilla.",
         "si": [
-          "injerto:lengua",
+          "poder:entender",
           "confianza>=2"
         ]
       }

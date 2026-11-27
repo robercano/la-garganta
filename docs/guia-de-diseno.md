@@ -40,7 +40,8 @@ El jugador escribe lo que lee. Si una sala dice «una fiambrera vacía», alguie
 - Un hecho de sala que se oye o se huele lleva etiqueta: `"[oir] al fondo se oye gotear"`, `"[oler] huele a sebo quemado"`. El narrador lo recibe limpio y `escuchar` u `oler` lo devuelven. *(Lint: `sentido-sin-etiqueta`.)*
 - Un disparador cuyo texto es un sonido lleva `"sentido": "oir"`, para que se siga oyendo después (el canto del túnel).
 - Objetos, NPC y enemigos pueden tener `oir` y `oler` propios.
-- Lo que cambia con el estado (voces con corrupción alta) va en `quest.ambiente`, con condición.
+- Lo que cambia con el estado va con condición: en la sala, en `percepciones` (con la lengua injertada se entiende lo que rezan las paredes), o en todas, en `quest.ambiente` (voces con corrupción alta).
+- Si algo se va a entender más tarde, antes se tiene que oír sin entenderse (las paredes «murmuran en una lengua que no conoces»). El jugador nota el cambio.
 
 ## 4. El motor no actúa en silencio
 
@@ -52,6 +53,7 @@ El jugador escribe lo que lee. Si una sala dice «una fiambrera vacía», alguie
 
 - **Las mecánicas especiales se descubren jugando.** Si un verbo o una estadística forma parte del misterio (injertos, corrupción), no sale en la ayuda, en `estado` ni en la barra hasta el primer contacto. El motor lo hace con los injertos y la corrupción.
 - **El primer contacto es una escena, no una opción.** El primer injerto (el pulmón) lo fuerza la historia: al cogerlo te atrapa (`injerta_al_coger`). Ahí se anuncia el nuevo comando.
+- **Todo poder se nota en el mundo.** Si un injerto u objeto da un poder («el balbuceo de las paredes tiene gramática»), varias salas tienen que reaccionar a él: salidas, percepciones, NPC o usos con `poder:x`. Lo que se entiende debe aportar pistas o historia, no solo ambiente. *(Lint: `poder-sin-uso`.)* Un injerto solo da su poder cuando está injertado, no por llevarlo encima.
 - **Lo valioso está escondido dentro de algo,** no a la vista: un cuerpo que se examina y se corta con la navaja. *(Lint: `injerto-a-la-vista`.)*
 - **Lo más valioso cuesta más.** Va en otra sala o exige volver atrás, con **al menos dos pistas** en sitios distintos (la procesión sin lengua con «dientes como clavos de entibo» y el superviviente que balbucea «la serpe se la comió»). Las pistas reutilizan palabras exactas para que el jugador ate cabos.
 - **Hay una ruta limpia.** Se puede llegar al mejor final con lo mínimo obligatorio. Lo demás son atajos o tentaciones.

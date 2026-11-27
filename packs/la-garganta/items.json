@@ -275,7 +275,7 @@
       {
         "con": "escombros",
         "si": [
-          "injerto:brazo_cosa"
+          "poder:romper"
         ],
         "efectos": [
           "quitar:escombros",

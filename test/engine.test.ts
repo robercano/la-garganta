@@ -397,3 +397,19 @@ describe("las piezas están escondidas", () => {
     expect(g.state.inventario).toContain("lengua_guestia");
   });
 });
+
+describe("con la lengua se entiende a las paredes", () => {
+  it("antes balbucean; después de injertar la lengua, «escuchar» las entiende", async () => {
+    const g = await newGame(42);
+    await play(g, [...LIGHT, ...TO_HORNACINA, "bajar"]);
+    await fight(g, "cuelebre");
+    await play(g, ["coger pulmon", "cortar cuelebre", "coger lengua", "norte"]);
+    expect(await play(g, ["escuchar"])).toContain("una lengua que no conoces");
+    await play(g, ["injertar lengua"]);
+    const out = await play(g, ["escuchar"]);
+    expect(out).toContain("la cosecha está abajo");
+    expect(out).not.toContain("una lengua que no conoces");
+    await play(g, ["sur"]);
+    expect(await play(g, ["escuchar"])).toContain("voz del cuélebre muerto");
+  });
+});

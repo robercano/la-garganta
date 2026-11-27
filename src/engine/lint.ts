@@ -68,6 +68,27 @@ export function lintPack(pack: Pack): LintWarning[] {
     if (it.fijo && it.tipo !== "escenario" && !it.al_coger) add("fijo-sin-razon", `objeto ${it.id}`, `es fijo pero no es decorado: añade al_coger con el motivo`, ign);
   }
 
+  // 6. Todo poder que da un objeto tiene que notarse en algún sitio (guía §5)
+  const used = new Set(allConditions(pack).flatMap((c) => [...c.matchAll(/poder:([a-z0-9_]+)/g)].map((m) => m[1]!)));
+  for (const it of d.items) for (const p of it.poderes) {
+    if (!used.has(p)) add("poder-sin-uso", `objeto ${it.id}`, `da el poder «${p}», pero ninguna condición del pack lo usa: el jugador no notará nada`, it.lint_ignorar);
+  }
+
   for (const e of d.enemies) for (const ef of e.al_morir) if (ef.startsWith("dar:")) add("dar-en-silencio", `enemigo ${e.id}`, `«${ef}» al morir: usa botín o aparece: para que caiga en la sala`);
   return w;
+}
+
+/** Todas las condiciones del pack, para saber qué se comprueba en algún sitio. */
+function allConditions(pack: Pack): string[] {
+  const d = pack.data;
+  const c: string[] = [...d.quest.injertar.requiere, ...d.quest.ambiente.flatMap((a) => a.si), ...d.quest.finales.flatMap((f) => f.si)];
+  for (const l of d.locations) {
+    for (const s of Object.values(l.salidas)) if (s) c.push(...s.si, ...s.visible_si);
+    for (const a of l.acciones) c.push(...a.si);
+    for (const t of l.al_entrar) c.push(...t.si);
+    for (const p of l.percepciones) c.push(...p.si);
+  }
+  for (const it of d.items) { c.push(...it.visible_si); for (const u of it.usos) c.push(...u.si); }
+  for (const n of d.npcs) { c.push(...n.se_niega_si); for (const s of n.sabe) c.push(...s.si); for (const a of n.acciones) c.push(...a.si); }
+  return c;
 }

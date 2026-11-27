@@ -96,7 +96,7 @@ export function powers(s: GameState, pack: Pack): Set<string> {
   const equipped = new Set([...Object.values(s.equipo), ...Object.values(s.injertos)]);
   for (const id of carried(s)) {
     const it = pack.item(id);
-    if (it.poder_si === "equipado" && !equipped.has(id)) continue;
+    if ((it.poder_si === "equipado" || it.tipo === "injerto") && !equipped.has(id)) continue; // un injerto solo da su poder injertado
     for (const p of it.poderes) out.add(p);
   }
   return out;
