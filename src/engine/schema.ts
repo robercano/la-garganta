@@ -47,6 +47,7 @@ export const ItemSchema = z.object({
   oler: z.string().optional(),
   visible_si: Conds,
   tags: z.array(z.string()).default([]),
+  lint_ignorar: z.array(z.string()).default([]), // reglas del lint aceptadas a sabiendas para este objeto
 });
 
 export const RecipeSchema = z.object({
@@ -104,6 +105,7 @@ export const LocationSchema = z.object({
   al_entrar: z.array(Disparador).default([]), // se disparan una sola vez
   cambios: z.record(Id, z.string()).default({}), // flag -> frase que se añade a la descripción
   tags: z.array(z.string()).default([]),
+  lint_ignorar: z.array(z.string()).default([]),
   // Posición en el mapa: nivel (1 = el más alto) y casilla en la planta de ese nivel
   // (x crece hacia el este, y hacia el sur). La validación exige que cuadre con las salidas.
   mapa: z.object({ nivel: z.number().int().min(1), x: z.number().int().min(0), y: z.number().int().min(0), etiqueta: z.string().max(10) }).optional(),
@@ -194,9 +196,14 @@ export const QuestSchema = z.object({
   finales: z.array(z.object({ id: Id, tipo: z.enum(["victoria", "derrota", "neutral"]), si: z.array(Cond).min(1), texto: z.string() })).min(1),
 });
 
+// Partidas de ejemplo que llegan a cada final. Un test genérico las juega en cada cambio.
+// Comandos normales del jugador, más «@luchar X» (atacar hasta que acabe el combate) y «# comentario».
+export const SolucionSchema = z.object({ final: Id, semilla: z.number().int(), comandos: z.array(z.string()).min(1) });
+
 export const PackSchema = z.object({
   id: Id,
   version: z.string(),
+  soluciones: z.array(SolucionSchema).default([]),
   quest: QuestSchema,
   items: z.array(ItemSchema),
   recipes: z.array(RecipeSchema),

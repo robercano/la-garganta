@@ -48,7 +48,7 @@ describe("La Garganta: partidas completas", () => {
     const g = await newGame(42);
     await play(g, [...LIGHT, ...TO_HORNACINA, "bajar"]);
     await fight(g, "cuelebre");
-    await play(g, ["coger pulmon", "cortar cuelebre", "coger lengua", "norte", "cortar topo", "coger ojo", "injertar ojo", "cortar cosa", "coger brazo", "injertar brazo", "injertar lengua", "bajar", "coger piel"]);
+    await play(g, ["coger pulmon", "cortar cuelebre", "coger lengua", "norte", "cortar topo", "coger ojo", "injertar ojo", "cortar cosa", "coger brazo", "injertar brazo", "injertar lengua", "bajar", "cortar membrana", "coger piel"]);
     const out = await play(g, ["injertar piel"]);
     expect(g.state.final).toBe("fusion");
     expect(out).toContain("Ya no hay un tú y una mina");

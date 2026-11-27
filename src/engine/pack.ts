@@ -143,6 +143,7 @@ function crossCheck(d: PackData): string[] {
     check("quest.grupo.atacar", q.grupo.atacar.efectos);
   }
   for (const f of q.finales) check(`final ${f.id}`, f.si);
+  for (const s of d.soluciones) if (!q.finales.some((f) => f.id === s.final)) p.push(`soluciones: el final «${s.final}» no existe`);
   const mapped = d.locations.filter((l) => l.mapa);
   if (mapped.length && mapped.length !== d.locations.length) p.push("mapa: o todas las salas tienen posición o ninguna");
   const seen = new Map<string, string>();

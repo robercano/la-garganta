@@ -138,7 +138,8 @@
     "examinar": "En la base, grabado a punta de navaja: «X. FDEZ». Es la de Xuan. Nadie sale a la calle sin su lámpara: la descuentan del jornal.",
     "al_examinar": [
       "flag:pista_lampara"
-    ]
+    ],
+    "al_coger": "La levantas y vuelves a dejarla donde estaba. Si Xuan vuelve a por ella, que la encuentre donde la dejó."
   },
   {
     "id": "cuerda",
@@ -308,8 +309,9 @@
     "nombre": "la piel de Aquello",
     "alias": [
       "piel",
-      "membrana",
-      "piel de aquello"
+      "piel de aquello",
+      "jiron",
+      "jirón"
     ],
     "tipo": "injerto",
     "slot": "piel",
@@ -317,7 +319,7 @@
     "stats": {
       "defensa": 3
     },
-    "desc_base": "Una membrana tibia que se desprende de la pared de la sima. Late al ritmo de algo muy grande.",
+    "desc_base": "Un jirón de membrana tibia que late al ritmo de algo muy grande.",
     "texto_injerto": "Te la echas sobre los hombros y la piel de Aquello se cose sola a la tuya. Ya nada puede hacerte daño. Ya nada es del todo tuyo."
   },
   {
@@ -492,7 +494,12 @@
       "exvotos",
       "exvoto",
       "cera",
-      "figuras"
+      "figuras",
+      "pulmones",
+      "piernas",
+      "manos",
+      "organos",
+      "órganos"
     ],
     "tipo": "escenario",
     "fijo": true,
@@ -701,6 +708,30 @@
           "aparece:lengua_guestia"
         ],
         "texto": "Le abres la tripa de un tajo largo. Entre agua negra y huesos de mula cae a la orilla algo que se mueve: una lengua humana, negra, que sigue rezando."
+      }
+    ]
+  },
+  {
+    "id": "membrana_paredes",
+    "nombre": "la membrana de las paredes",
+    "alias": [
+      "membrana",
+      "paredes",
+      "pared",
+      "membrana tibia"
+    ],
+    "tipo": "escenario",
+    "fijo": true,
+    "desc_base": "Las paredes de la sima están forradas de una membrana tibia, rosada bajo la luz verde, que late.",
+    "examinar": "Al tocarla, la membrana se encoge y luego vuelve a buscar tu mano. Con algo de filo podrías arrancar un jirón. Llevar eso encima sería otra cosa.",
+    "usos": [
+      {
+        "con": "navaja",
+        "una_vez": true,
+        "efectos": [
+          "aparece:piel_entidad"
+        ],
+        "texto": "Cortas un jirón de membrana. Toda la sima se estremece, como un animal que nota un pinchazo, y el jirón cae a tus pies, todavía latiendo."
       }
     ]
   }

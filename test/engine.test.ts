@@ -186,7 +186,7 @@ describe("sentidos: escuchar y oler", () => {
   it("el narrador recibe los hechos sin etiqueta", () => {
     const h = pack.location("frente_trabajo").hechos.join(" ");
     expect(h).not.toContain("[oir]");
-    expect(pack.location("frente_trabajo").percepcion.oir[0]).toContain("gotear");
+    expect(pack.location("frente_trabajo").percepcion.oir.join(" ")).toContain("gotear");
   });
   it("se oye y se huele al enemigo y a los NPC presentes, también a oscuras", async () => {
     const g = await newGame();

@@ -1,0 +1,45 @@
+[
+  {
+    "final": "con_cuadrilla",
+    "semilla": 42,
+    "comandos": [
+      "# Ruta limpia: un solo injerto (el pulmón, obligatorio)",
+      "coger lampara", "coger carburo", "combinar lampara con carburo", "combinar lampara con cantimplora",
+      "coger pico", "equipar pico", "este", "coger cuerda", "bajar", "bajar",
+      "@luchar cuelebre", "coger pulmon", "norte", "bajar", "subir"
+    ]
+  },
+  {
+    "final": "solo",
+    "semilla": 42,
+    "comandos": [
+      "# Se injerta delante de la cuadrilla: 35 (recelo) y luego 60 (huyen)",
+      "coger lampara", "coger carburo", "combinar lampara con carburo", "combinar lampara con cantimplora",
+      "coger pico", "equipar pico", "este", "coger cuerda", "bajar", "bajar",
+      "@luchar cuelebre", "coger pulmon", "cortar cuelebre", "coger lengua",
+      "norte", "cortar cosa", "coger brazo", "bajar", "injertar brazo", "injertar lengua", "subir"
+    ]
+  },
+  {
+    "final": "solo_oscuro",
+    "semilla": 42,
+    "comandos": [
+      "# Llega limpio (15) y salta a 80 delante de ellos: le atacan; los mata y sale",
+      "coger lampara", "coger carburo", "combinar lampara con carburo", "combinar lampara con cantimplora",
+      "coger pico", "equipar pico", "este", "coger cuerda", "bajar", "bajar",
+      "@luchar cuelebre", "coger pulmon", "norte", "cortar topo", "coger ojo", "cortar cosa", "coger brazo", "bajar",
+      "injertar ojo", "injertar brazo", "cortar membrana", "injertar piel", "atacar cuadrilla", "subir"
+    ]
+  },
+  {
+    "final": "fusion",
+    "semilla": 42,
+    "comandos": [
+      "# Todos los injertos: 105",
+      "coger lampara", "coger carburo", "combinar lampara con carburo", "combinar lampara con cantimplora",
+      "coger pico", "equipar pico", "este", "coger cuerda", "bajar", "bajar",
+      "@luchar cuelebre", "coger pulmon", "cortar cuelebre", "injertar lengua",
+      "norte", "cortar topo", "injertar ojo", "cortar cosa", "injertar brazo", "bajar", "cortar membrana", "injertar piel"
+    ]
+  }
+]

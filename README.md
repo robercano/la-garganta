@@ -10,10 +10,15 @@ Arquitectura: ver el documento «Aventura conversacional con IA — Arquitectura
 npm install
 npm run play                 # jugar en la terminal con la IA falsa (sin tokens)
 npm run play -- --seed 42    # partida reproducible
-npm run validate             # valida el pack (Zod + referencias cruzadas)
-npm test                     # tests, incluidas partidas completas a los finales
+npm run validate             # valida el pack (Zod + referencias + mapa) y pasa el lint de diseño
+npm run validate -- --strict # igual, pero los avisos de diseño fallan (así corre la CI)
+npm test                     # tests, incluidas las soluciones de cada pack (soluciones.json)
 npm run typecheck
 ```
+
+## Diseñar una aventura
+
+Lee [`docs/guia-de-diseno.md`](docs/guia-de-diseno.md): reglas aprendidas jugando, el lint que las comprueba y una lista de comprobación para packs nuevos. Cada pack incluye `soluciones.json` con una partida por final, y un test genérico las juega.
 
 ## Estructura
 

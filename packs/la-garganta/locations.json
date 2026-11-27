@@ -5,7 +5,7 @@
     "tono": "estrecho, caluroso, recién abandonado; olor a sudor, a pólvora de barrenos y a madera de entibo",
     "hechos": [
       "la capa de carbón brilla húmeda en la pared",
-      "los cuadros de entibo recién puestos crujen",
+      "[oir] los cuadros de entibo recién puestos crujen",
       "en el suelo quedan colillas y una fiambrera vacía de la cuadrilla",
       "el cable de la luz cuelga muerto del techo",
       "[oir] al fondo se oye gotear, lento, como un reloj",
@@ -217,11 +217,10 @@
     "tono": "galerías demasiado lisas y demasiado antiguas; nadie las excavó; aire cargado de grisú",
     "hechos": [
       "las paredes son lisas como el interior de una garganta",
-      "el aire pica y huele a grisú",
+      "[oler] el aire pica y huele a grisú y a cera fría",
       "un hombre está acurrucado en un rincón, balbuceando",
       "hay restos de una procesión: cadáveres con velas apagadas en las manos",
-      "[oir] del pozo de bajada sube un silbido de gas y, debajo, algo parecido a una respiración",
-      "[oler] el aire pica de grisú y huele a cera fría"
+      "[oir] del pozo de bajada sube un silbido de gas y, debajo, algo parecido a una respiración"
     ],
     "desc_base": "Galerías que no salen en ningún plano de la compañía: lisas, curvas, como por dentro de un animal. El aire pica de grisú. Hay restos de una procesión de difuntos con velas apagadas en las manos.",
     "oscura": true,
@@ -283,7 +282,7 @@
     ],
     "desc_base": "Una sima sin fondo, bañada por una luz verdosa que sale de la propia roca. Las paredes están forradas de una membrana tibia que late. De lo hondo sube una respiración lenta, enorme. Arriba, muy arriba, una chimenea antigua.",
     "objetos": [
-      "piel_entidad",
+      "membrana_paredes",
       "sima",
       "chimenea",
       "luz_verdosa"
@@ -312,7 +311,8 @@
         "id": "respiracion",
         "si": [],
         "efectos": [],
-        "texto": "La respiración de lo hondo se detiene un instante, como si alguien hubiera notado que has llegado."
+        "texto": "La respiración de lo hondo se detiene un instante, como si alguien hubiera notado que has llegado.",
+        "sentido": "oir"
       }
     ],
     "mapa": {

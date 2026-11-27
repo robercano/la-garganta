@@ -1,6 +1,6 @@
 // Carga un pack desde una carpeta (solo Node: CLI y tests). El Worker importará
 // los JSON directamente en el bundle.
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { loadPack, type Pack } from "../engine/pack.js";
 
@@ -11,6 +11,7 @@ export function readPackDir(dir: string): unknown {
   const meta = read("pack");
   const out: Record<string, unknown> = { ...meta };
   for (const f of FILES) out[f] = read(f);
+  if (existsSync(join(dir, "soluciones.json"))) out.soluciones = read("soluciones");
   return out;
 }
 
