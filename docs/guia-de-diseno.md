@@ -91,6 +91,28 @@ El jugador escribe lo que lee. Si una sala dice «una fiambrera vacía», alguie
 - **Lint estricto:** `npm run validate -- --strict`, sin avisos. Si un aviso es un falso positivo a sabiendas, se acepta con `lint_ignorar` en ese objeto o sala, nunca desactivando la regla.
 - **Cada problema que encuentre un jugador** se convierte en algo permanente en el mismo cambio: una regla del motor si es general, una regla del lint si se puede detectar o una entrada en esta guía si es de criterio. Y un test.
 
+## 10. Lecciones de la primera partida completa (La Garganta, 27 nov 2026)
+
+Lo que hay detrás de las reglas anteriores, para aplicarlo a cualquier juego:
+
+1. **El texto es la interfaz; cada sustantivo es una promesa.** Casi todos los fallos fueron el mismo: el texto decía algo que el motor no cumplía (la fiambrera, el ojo de los exvotos, la hornacina, el hueso, el jirón, el canto). El jugador prueba las palabras que acaba de leer.
+2. **El jugador habla con sustantivos y con lo último que ha leído.** El parser busca primero en el texto que el jugador tiene delante y fija el sustantivo (núcleo) antes que los adjetivos.
+3. **El motor no actúa en silencio.** La automatización que se ve ayuda («Primero coges…»); la que no se ve parece un error.
+4. **El misterio también vive en la interfaz.** Ayuda, estado y barra tienen que callar tanto como el narrador.
+5. **Lo que se gana se nota y lo que se esconde deja rastro.** Un poder que no cambia nada parece un error; lo valioso escondido necesita pistas que repiten palabras.
+6. **La voz evoluciona con el estado.** La caída se cuenta con el tono, no con números.
+
+Sobre el proceso:
+- **La partida humana es insustituible:** en un día encontró unos quince problemas que ningún test veía. Se juega primero con la IA falsa (gratis y rápida) y después se le pone voz. Este bucle se mantiene con la IA real.
+- **Cada problema se convierte en motor, lint o guía, con test.** Al crear el lint se encontraron tres errores más que nadie había visto.
+- **Lo que se puede validar no se dibuja ni se revisa a mano** (el mapa no puede mentir porque el pack falla).
+
+Para el próximo juego, desde el primer día:
+- Escribir `soluciones.json` junto con el mapa, antes que los textos.
+- Dar ficha de decorado a cada sustantivo mientras se escribe.
+- Hacer una partida humana completa antes de conectar la IA.
+- En producción, registrar cada «No sé a qué te refieres» y cada «No entiendo eso» con la frase exacta (métrica del MVP) y convertirlos en alias o reglas.
+
 ---
 
 ## Lista de comprobación para un pack nuevo
@@ -105,4 +127,5 @@ El jugador escribe lo que lee. Si una sala dice «una fiambrera vacía», alguie
 - [ ] Hay ruta limpia al mejor final.
 - [ ] `soluciones.json` cubre todos los finales.
 - [ ] `npm run validate -- --strict` y `npm test` pasan.
-- [ ] Una persona lo ha jugado de principio a fin, y lo que dijo está incorporado.
+- [ ] `soluciones.json` escrito junto con el mapa, antes que los textos.
+- [ ] Una persona lo ha jugado de principio a fin con la IA falsa, y lo que dijo está incorporado antes de conectar la IA real.
