@@ -40,6 +40,13 @@ describe("lint de diseño", () => {
     r.items.find((i: any) => i.id === "lengua_guestia").poderes = ["entender", "volar"];
     expect(rules(r)).toContain("poder-sin-uso");
   });
+  it("injerto sin núcleo neutro", () => {
+    const r = raw();
+    const o = r.items.find((i: any) => i.id === "ojo_topo");
+    delete o.injerto_nucleo;
+    o.texto_injerto = "Te injertas el ojo.";
+    expect(rules(r)).toContain("injerto-sin-nucleo");
+  });
   it("lint_ignorar acepta un caso a sabiendas", () => {
     const r = raw();
     const l = r.locations[0];

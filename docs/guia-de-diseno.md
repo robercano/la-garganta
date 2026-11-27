@@ -78,6 +78,7 @@ El jugador escribe lo que lee. Si una sala dice «una fiambrera vacía», alguie
 - **Segunda persona,** sobria, con humor seco y oscuro.
 - **Nombres de sala con artículo y en minúscula tras él** («El frente de trabajo», «La Garganta»). El motor escribe «Llegas al frente de trabajo.» o «Estás en…».
 - **Los textos fijos de los NPC** (saludo, respuestas de reserva) suenan a su personaje. Son lo que se ve si la IA falla.
+- **La voz cambia con la corrupción.** Los injertos se escriben con `injerto_nucleo`: solo lo físico, en tono neutro. El motor lo envuelve con la voz de la fase en que está el personaje (`quest.voz_injerto`): primero repulsión, luego arrebatos sin control y, al final, una calma que suena a la propia mina. El horror va de fuera hacia dentro y el jugador nota su caída sin mirar números. Si una combinación queda floja, `texto_injerto_fase` la sustituye para esa fase. Solo las escenas forzadas (el pulmón) llevan texto propio. *(Lint: `injerto-sin-nucleo`.)*
 - **Lo grotesco se insinúa con detalle concreto,** no con adjetivos («un ojo sin pupila», «los dedos se abren y se cierran solos»).
 
 ## 9. Pruebas

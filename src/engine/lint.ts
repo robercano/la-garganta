@@ -64,6 +64,8 @@ export function lintPack(pack: Pack): LintWarning[] {
       if (/(ad|id)[oa]s?$/.test(x)) continue; // participios («forradas de membrana»), no son nombres
       if (aliasWords.has(y) && !aliasWords.has(x) && !STOP.has(x)) add("alias-incompleto", `objeto ${it.id}`, `la descripción dice «${x} de ${y}»: ¿falta el alias «${x}»?`, ign);
     }
+    // 7. Los injertos se narran con la voz de la fase de corrupción (guía §8)
+    if (it.tipo === "injerto" && !it.injerta_al_coger && !it.injerto_nucleo) add("injerto-sin-nucleo", `objeto ${it.id}`, `usa injerto_nucleo (lo físico, en neutro) para que la voz cambie con la corrupción`, ign);
     // 5. Lo fijo que no es decorado necesita una razón para no poder cogerse (guía §2)
     if (it.fijo && it.tipo !== "escenario" && !it.al_coger) add("fijo-sin-razon", `objeto ${it.id}`, `es fijo pero no es decorado: añade al_coger con el motivo`, ign);
   }

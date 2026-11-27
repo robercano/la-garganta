@@ -413,3 +413,29 @@ describe("con la lengua se entiende a las paredes", () => {
     expect(await play(g, ["escuchar"])).toContain("voz del cuélebre muerto");
   });
 });
+
+describe("la voz del injerto cambia con la corrupción", () => {
+  async function withEye(corrupcion: number) {
+    const g = await newGame(42);
+    await play(g, [...LIGHT, ...TO_HORNACINA, "bajar"]);
+    await fight(g, "cuelebre");
+    await play(g, ["coger pulmon", "norte", "cortar topo", "coger ojo"]);
+    g.state = { ...g.state, corrupcion };
+    return play(g, ["injertar ojo"]);
+  }
+  it("al principio, repulsión", async () => expect(await withEye(15)).toContain("Te tiembla la mano"));
+  it("en medio, arrebatos", async () => expect(await withEye(40)).toContain("Un arrebato se apodera de ti"));
+  it("al final, calma: la voz de la mina", async () => {
+    const out = await withEye(80);
+    expect(out).toContain("como quien pela una castaña");
+    expect(out).toContain("encajas el del topo en la cuenca");
+  });
+  it("el pulmón, que se injerta solo, mantiene su escena", async () => {
+    const g = await newGame(42);
+    await play(g, [...LIGHT, ...TO_HORNACINA, "bajar"]);
+    await fight(g, "cuelebre");
+    const out = await play(g, ["coger pulmon"]);
+    expect(out).toContain("se abre paso entre dos costillas");
+    expect(out).not.toContain("Te tiembla la mano");
+  });
+});

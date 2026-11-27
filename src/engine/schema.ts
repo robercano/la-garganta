@@ -34,6 +34,10 @@ export const ItemSchema = z.object({
   corrupcion: z.number().int().min(0).max(100).optional(), // solo injertos
   texto_injerto: z.string().optional(), // solo injertos
   injerta_al_coger: z.boolean().default(false), // solo injertos: al cogerlo se injerta solo, sin instrumento
+  // Solo injertos: lo que pasa físicamente, en tono neutro. El motor lo envuelve con la voz de la
+  // fase de corrupción (quest.voz_injerto). texto_injerto_fase sustituye el conjunto en una fase concreta.
+  injerto_nucleo: z.string().optional(),
+  texto_injerto_fase: z.record(z.string().regex(/^\d+$/), z.string()).default({}),
   efectos_consumir: Effects, // consumibles
   usos: z.array(Uso).default([]),
   desc_base: z.string(),
@@ -193,6 +197,8 @@ export const QuestSchema = z.object({
     })
     .optional(),
   niveles: z.array(z.object({ nivel: z.number().int().min(1), nombre: z.string() })).default([]),
+  // Voz con la que se narra un injerto según la corrupción ANTES de hacerlo: de la repulsión a la calma.
+  voz_injerto: z.array(z.object({ desde: z.number().int().min(0).max(100), antes: z.string(), despues: z.string() })).default([]),
   // Percepciones globales que dependen del estado (p. ej. voces en las paredes con corrupción alta)
   ambiente: z.array(z.object({ sentido: Sentido, si: z.array(Cond).min(1), texto: z.string() })).default([]),
   finales: z.array(z.object({ id: Id, tipo: z.enum(["victoria", "derrota", "neutral"]), si: z.array(Cond).min(1), texto: z.string() })).min(1),

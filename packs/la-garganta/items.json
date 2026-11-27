@@ -252,7 +252,7 @@
       "ver_oculto"
     ],
     "desc_base": "Un ojo blanco, sin pupila, del tamaño de una nuez. Todavía está húmedo y, a veces, parece que se mueve.",
-    "texto_injerto": "No te lo pienses. Te sacas el ojo izquierdo con la navaja y encajas el del topo en la cuenca. Durante un minuto solo hay dolor. Luego, la oscuridad deja de ser oscura."
+    "injerto_nucleo": "Te arrancas el ojo izquierdo con la navaja y encajas el del topo en la cuenca. Durante un minuto solo hay dolor; luego la oscuridad deja de ser oscura."
   },
   {
     "id": "brazo_cosa",
@@ -286,7 +286,7 @@
       }
     ],
     "desc_base": "Un brazo largo, con demasiadas articulaciones y uñas de piedra. Aún está tibio.",
-    "texto_injerto": "El brazo se suelda al tuyo por el codo, hueso con hueso. Cuando cierras el puño, la roca de la pared se agrieta."
+    "injerto_nucleo": "Te abres el codo y aprietas el brazo de la cosa contra la herida. Se suelda solo, hueso con hueso. Cuando cierras el puño, la roca de la pared se agrieta."
   },
   {
     "id": "lengua_guestia",
@@ -302,7 +302,7 @@
       "entender"
     ],
     "desc_base": "Una lengua humana, negra, que sigue moviéndose sola como si rezara.",
-    "texto_injerto": "Te cortas la punta de la lengua y pones la otra encima. Se enraíza. De pronto el balbuceo de las paredes tiene gramática."
+    "injerto_nucleo": "Te cortas la punta de la lengua y pones la otra encima. Se enraíza. De pronto el balbuceo de las paredes tiene gramática."
   },
   {
     "id": "piel_entidad",
@@ -320,7 +320,7 @@
       "defensa": 3
     },
     "desc_base": "Un jirón de membrana tibia que late al ritmo de algo muy grande.",
-    "texto_injerto": "Te la echas sobre los hombros y la piel de Aquello se cose sola a la tuya. Ya nada puede hacerte daño. Ya nada es del todo tuyo."
+    "injerto_nucleo": "Te echas el jirón sobre los hombros y la piel de Aquello se cose sola a la tuya, puntada a puntada. Ya nada puede hacerte daño. Ya nada es del todo tuyo."
   },
   {
     "id": "chaqueta",

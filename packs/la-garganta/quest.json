@@ -139,6 +139,23 @@
       "nombre": "la sima"
     }
   ],
+  "voz_injerto": [
+    {
+      "desde": 0,
+      "antes": "Te tiembla la mano. Te dices que es la única forma, que no hay otra.",
+      "despues": "Cuando acaba, vomitas en un rincón. Te limpias la boca con la manga y sigues."
+    },
+    {
+      "desde": 25,
+      "antes": "Un arrebato se apodera de ti y, antes de pensarlo, ya tienes la navaja en la carne.",
+      "despues": "Te ríes mientras lo haces. No sabes de qué te ríes, y eso es lo peor."
+    },
+    {
+      "desde": 75,
+      "antes": "Lo haces con calma, con cuidado, como quien pela una castaña.",
+      "despues": "Encaja mejor que lo que había antes. Siempre fue suyo el sitio; tú solo se lo guardabas."
+    }
+  ],
   "finales": [
     {
       "id": "fusion",

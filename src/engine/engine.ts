@@ -347,6 +347,16 @@ function graft(t: Turn, ref: Ref) {
   doGraft(t, it.id);
 }
 
+/** Texto del injerto con la voz de la fase de corrupción en la que está el personaje al hacerlo. */
+function graftText(t: Turn, it: Item): string {
+  if (it.injerta_al_coger && it.texto_injerto) return it.texto_injerto; // escena forzada: texto propio
+  const fases = [...t.pack.quest.voz_injerto].sort((a, b) => a.desde - b.desde);
+  const fase = fases.filter((f) => f.desde <= t.s.corrupcion).at(-1);
+  if (fase && it.texto_injerto_fase[String(fase.desde)]) return it.texto_injerto_fase[String(fase.desde)]!;
+  if (it.injerto_nucleo) return fase ? `${fase.antes} ${it.injerto_nucleo} ${fase.despues}` : it.injerto_nucleo;
+  return it.texto_injerto ?? `Te injertas ${it.nombre}.`;
+}
+
 const graftsKnown = (s: GameState) => Object.keys(s.injertos).length > 0;
 
 /** Injerta sin más comprobaciones (las hace quien llama). El primero descubre el verbo «injertar». */
@@ -356,7 +366,7 @@ function doGraft(t: Turn, id: string) {
   const first = !graftsKnown(t.s);
   t.s.inventario = t.s.inventario.filter((i) => i !== id);
   t.s.injertos[slot] = id;
-  t.say(it.texto_injerto ?? `Te injertas ${it.nombre}.`);
+  t.say(graftText(t, it));
   changeCorruption(t, it.corrupcion ?? 0);
   if (first) t.say("[Ahora sabes que tu cuerpo acepta partes ajenas. Nuevo comando: injertar X.]");
   if (t.pack.quest.grupo?.recomprobar_al_injertar) groupRecheck(t);
