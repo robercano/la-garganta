@@ -1,6 +1,6 @@
 // Juega las soluciones de un pack con la IA falsa y comprueba que cada una llega a su final.
 import type { Pack } from "../engine/pack.js";
-import { GameSession } from "./session.js";
+import { GameSession, type SessionDeps } from "./session.js";
 import { FakeNarrator, FakeNpcService } from "../ai/fake.js";
 
 export interface SolutionResult {
@@ -10,10 +10,10 @@ export interface SolutionResult {
   detalle?: string; // últimas líneas de salida si falla
 }
 
-export async function playSolutions(pack: Pack): Promise<SolutionResult[]> {
+export async function playSolutions(pack: Pack, deps: () => SessionDeps = () => ({ narrator: new FakeNarrator(), npcs: new FakeNpcService() }), onEnd?: (r: SolutionResult, log: string[]) => void): Promise<SolutionResult[]> {
   const out: SolutionResult[] = [];
   for (const sol of pack.data.soluciones) {
-    const g = GameSession.create(pack, { narrator: new FakeNarrator(), npcs: new FakeNpcService() }, sol.semilla);
+    const g = GameSession.create(pack, deps(), sol.semilla);
     const log: string[] = [...(await g.start())];
     for (const raw of sol.comandos) {
       const c = raw.trim();
@@ -29,7 +29,9 @@ export async function playSolutions(pack: Pack): Promise<SolutionResult[]> {
       log.push(`> ${c}`, ...(await g.input(c)));
     }
     const ok = g.state.final === sol.final;
-    out.push({ final: sol.final, ok, obtenido: g.state.final, detalle: ok ? undefined : log.slice(-12).join("\n") });
+    const r = { final: sol.final, ok, obtenido: g.state.final, detalle: ok ? undefined : log.slice(-12).join("\n") };
+    out.push(r);
+    onEnd?.(r, log);
   }
   return out;
 }

@@ -16,6 +16,16 @@ npm test                     # tests, incluidas las soluciones de cada pack (sol
 npm run typecheck
 ```
 
+## Jugar con Claude (Haiku)
+
+```bash
+export ANTHROPIC_API_KEY=sk-ant-...
+npm run play -- --ia claude             # narrador y NPC con claude-haiku-5-5; «coste» muestra el gasto
+npm run coste -- --ia claude            # juega todas las soluciones y mide tokens y coste por partida
+```
+
+Cada llamada queda registrada (tokens, caché, latencia, coste) en `logs/` (no se sube al repo). Los precios por modelo se configuran en `src/ai/cost.ts`; hasta entonces el coste sale como «sin precio» y solo se cuentan tokens. Si la API falla, el juego sigue con los textos fijos del pack. La web publicada sigue usando la IA falsa: la key nunca va al navegador; la IA real llegará a la web con el Worker.
+
 ## Diseñar una aventura
 
 Lee [`docs/guia-de-diseno.md`](docs/guia-de-diseno.md): reglas aprendidas jugando, el lint que las comprueba y una lista de comprobación para packs nuevos. Cada pack incluye `soluciones.json` con una partida por final, y un test genérico las juega.
