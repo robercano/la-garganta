@@ -9,7 +9,7 @@ export interface Candidate extends Ref {
   nombre: string;
   alias: string[];
   consumible?: boolean;
-  texto?: string; // descripción del decorado: lo que nombra se resuelve a él («el ojo» de los exvotos)
+  texto?: string; // descripción: lo que nombra se resuelve a él («el ojo» de los exvotos, «el hueso» del relicario)
 }
 
 export type Command =
@@ -156,12 +156,14 @@ function resolve(words: string[], scope: Candidate[], catalog: Candidate[], ask:
     return { ok: false, texto: `¿Cuál: ${names.slice(0, -1).join(", ")} o ${names.at(-1)}?` };
   }
   // Algo que se menciona en la descripción de un decorado presente es parte de ese decorado
-  const inDecor = scope.filter((c) => c.texto && ambientNoun(phrase, c.texto));
-  const exact = inDecor.filter((c) => ambientNoun(phrase, c.texto!, true));
+  // En los textos solo cuenta el núcleo (la primera palabra): «hueso diminuto» busca «hueso»
+  const nucleus = phrase.split(" ")[0]!;
+  const inDecor = scope.filter((c) => c.texto && ambientNoun(nucleus, c.texto));
+  const exact = inDecor.filter((c) => ambientNoun(nucleus, c.texto!, true));
   const pick = inDecor.length === 1 ? inDecor : exact.length === 1 ? exact : [];
   if (pick.length === 1) return { ok: true, ref: pick[0]! };
   // Lo que nombra el texto de ESTA sala manda sobre un objeto del mismo nombre que está en otra parte
-  const deco = ambientNoun(phrase, env.ambient);
+  const deco = ambientNoun(nucleus, env.ambient);
   if (deco) return { ok: false, texto: decorText(env.verbo, deco) };
   if (match(phrase, catalog).length) return { ok: false, texto: "No ves eso por aquí." };
   return { ok: false, texto: "No sé a qué te refieres." };
@@ -177,8 +179,10 @@ function match(phrase: string, cands: Candidate[]): Resolved[] {
   // Último recurso: el objeto que comparta más palabras con lo escrito
   // ("piedras de carburo" -> el bote de carburo). Si empatan, se pregunta.
   // cuenta las palabras escritas que aparecen en cualquiera de sus nombres («tripa del cuélebre» → el cuerpo)
+  // El núcleo manda: la primera palabra es el sustantivo («hueso diminuto» no es el «altar diminuto»).
+  const head = pw.find((w) => !FILLER.has(w));
   const score = (c: Candidate) => { const all = new Set(words(c).flat()); return pw.filter((w) => !FILLER.has(w) && all.has(w)).length; };
-  const scored = cands.map((c) => ({ c, n: score(c) })).filter((x) => x.n > 0);
+  const scored = cands.map((c) => ({ c, n: score(c) })).filter((x) => x.n > 0 && head && new Set(words(x.c).flat()).has(head));
   const best = Math.max(0, ...scored.map((x) => x.n));
   return dedupe(scored.filter((x) => x.n === best).map((x) => x.c));
 }

@@ -451,3 +451,15 @@ describe("lo que aparece también se puede mirar", () => {
     expect(await play(g, ["examinar hornacina"])).toContain("QUE NO LA DESPIERTEN");
   });
 });
+
+describe("el núcleo del nombre manda", () => {
+  it("«hueso» y «hueso diminuto» se refieren al relicario, no al altar diminuto ni a los huesos de mula", async () => {
+    const g = await newGame(42);
+    await play(g, [...LIGHT, ...TO_HORNACINA, "bajar"]);
+    await fight(g, "cuelebre");
+    await play(g, ["coger pulmon", "norte", "cortar cosa", "injertar brazo", "usar brazo con escombros"]);
+    expect(await play(g, ["mirar hueso diminuto"])).toContain("relicario de plata");
+    expect(await play(g, ["coger hueso"])).toContain("Coges un relicario");
+    expect(await play(g, ["examinar altar diminuto"])).toContain("QUE NO LA DESPIERTEN");
+  });
+});
