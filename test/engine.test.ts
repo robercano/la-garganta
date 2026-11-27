@@ -439,3 +439,15 @@ describe("la voz del injerto cambia con la corrupción", () => {
     expect(out).not.toContain("Te tiembla la mano");
   });
 });
+
+describe("lo que aparece también se puede mirar", () => {
+  it("«examinar hornacina» tras abrir el derrumbe con el brazo", async () => {
+    const g = await newGame(42);
+    await play(g, [...LIGHT, ...TO_HORNACINA, "bajar"]);
+    await fight(g, "cuelebre");
+    await play(g, ["coger pulmon", "norte"]);
+    expect(await play(g, ["examinar hornacina"])).not.toContain("QUE NO LA DESPIERTEN");
+    await play(g, ["cortar cosa", "injertar brazo", "usar brazo con escombros"]);
+    expect(await play(g, ["examinar hornacina"])).toContain("QUE NO LA DESPIERTEN");
+  });
+});

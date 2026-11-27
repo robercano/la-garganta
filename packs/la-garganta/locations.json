@@ -273,7 +273,8 @@
       "escombros",
       "paredes_lisas",
       "procesion",
-      "pozo_gas"
+      "pozo_gas",
+      "hornacina_antigua"
     ],
     "npcs": [
       "superviviente"
@@ -302,7 +303,7 @@
       }
     },
     "cambios": {
-      "hueco_abierto": "Donde estaba el derrumbe se abre ahora un hueco con un altar diminuto."
+      "hueco_abierto": "Donde estaba el derrumbe se abre ahora una hornacina antigua con un altar diminuto."
     },
     "mapa": {
       "nivel": 3,

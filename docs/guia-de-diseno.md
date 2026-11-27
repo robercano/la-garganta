@@ -30,6 +30,7 @@ El jugador escribe lo que lee. Si una sala dice «una fiambrera vacía», alguie
 
 - **Decorado.** Lo que se menciona en los hechos o la descripción de una sala y merece mirarse es un objeto de tipo `escenario` (fijo, con `desc_base` y, si aporta, `examinar`). No sale en «Ves:» salvo que lleve `listar: true`.
 - **Red de seguridad.** Lo que solo aparece en el texto sin ficha lo reconoce el motor como parte del sitio («Los entibos no te sirven para eso…»). Es un mínimo, no un sustituto: lo importante merece su ficha.
+- **Lo que aparece también se puede mirar.** Si un texto revela algo nuevo (un hueco tras un derrumbe, una hornacina), ese algo tiene su ficha de decorado con `visible_si` sobre el mismo flag, y la sala lo menciona en `cambios`.
 - **Lo que nombra una descripción** también se resuelve: «coger ojo» delante de los exvotos se refiere a los exvotos si su texto habla de un ojo.
 - **Alias.** Incluye cómo llama al objeto su propio texto («piedras de carburo» → alias `piedras`) y los sinónimos obvios. El nombre ya cuenta, no hace falta repetirlo. *(Lint: `alias-incompleto`.)*
 - **Lo fijo explica por qué.** Si algo no se puede coger y no es obvio, pon `al_coger` con un motivo que aporte («Lo que se le ofrece a la Santa no se toca: trae mal fario»). *(Lint: `fijo-sin-razon` para lo fijo que no es decorado.)*

@@ -160,9 +160,10 @@ function resolve(words: string[], scope: Candidate[], catalog: Candidate[], ask:
   const exact = inDecor.filter((c) => ambientNoun(phrase, c.texto!, true));
   const pick = inDecor.length === 1 ? inDecor : exact.length === 1 ? exact : [];
   if (pick.length === 1) return { ok: true, ref: pick[0]! };
-  if (match(phrase, catalog).length) return { ok: false, texto: "No ves eso por aquí." };
+  // Lo que nombra el texto de ESTA sala manda sobre un objeto del mismo nombre que está en otra parte
   const deco = ambientNoun(phrase, env.ambient);
   if (deco) return { ok: false, texto: decorText(env.verbo, deco) };
+  if (match(phrase, catalog).length) return { ok: false, texto: "No ves eso por aquí." };
   return { ok: false, texto: "No sé a qué te refieres." };
 }
 

@@ -735,5 +735,24 @@
         "texto": "Cortas un jirón de membrana. Toda la sima se estremece, como un animal que nota un pinchazo, y el jirón cae a tus pies, todavía latiendo."
       }
     ]
+  },
+  {
+    "id": "hornacina_antigua",
+    "nombre": "la hornacina antigua",
+    "alias": [
+      "hornacina",
+      "hueco",
+      "altar diminuto",
+      "altarcito",
+      "hornacina antigua"
+    ],
+    "tipo": "escenario",
+    "fijo": true,
+    "visible_si": [
+      "flag:hueco_abierto"
+    ],
+    "desc_base": "Un hueco excavado a mano detrás del derrumbe, con un altar diminuto. Alguien lo tapió a propósito hace mucho.",
+    "examinar": "En el fondo, rayada en la roca, una Santa Bárbara tosca, con la torre en la mano. Alguien le tachó la cara. Debajo, en letras torcidas: «QUE NO LA DESPIERTEN».",
+    "al_coger": "Es un hueco en la roca. No hay nada que llevarse salvo lo que tenga dentro."
   }
 ]
