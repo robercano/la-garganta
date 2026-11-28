@@ -77,6 +77,11 @@ export function lintPack(pack: Pack): LintWarning[] {
     if (it.fijo && it.tipo !== "escenario" && !it.al_coger) add("fijo-sin-razon", `objeto ${it.id}`, `es fijo pero no es decorado: añade al_coger con el motivo`, ign);
   }
 
+  // 9. Los NPC no sueltan nada a la primera (guía §5)
+  for (const n of d.npcs) for (const s of n.sabe) {
+    if (s.si.length === 0) add("npc-sin-reticencia", `npc ${n.id}`, `sabe «${s.dato.slice(0, 60)}…» sin condición: lo soltará a la primera. Ponle al menos confianza>=1`, n.lint_ignorar);
+  }
+
   // 6. Todo poder que da un objeto tiene que notarse en algún sitio (guía §5)
   const used = new Set(allConditions(pack).flatMap((c) => [...c.matchAll(/poder:([a-z0-9_]+)/g)].map((m) => m[1]!)));
   for (const it of d.items) for (const p of it.poderes) {

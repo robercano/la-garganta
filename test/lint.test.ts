@@ -52,6 +52,11 @@ describe("lint de diseño", () => {
     r.items.find((i: any) => i.id === "piel_entidad").nombre = "la piel de Aquello";
     expect(rules(r)).toContain("aparece-sin-nombre");
   });
+  it("NPC que suelta un dato sin condición", () => {
+    const r = raw();
+    r.npcs[0].sabe[0].si = [];
+    expect(rules(r)).toContain("npc-sin-reticencia");
+  });
   it("lint_ignorar acepta un caso a sabiendas", () => {
     const r = raw();
     const l = r.locations[0];

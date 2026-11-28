@@ -20,10 +20,18 @@
     "sabe": [
       {
         "dato": "La cuadrilla no subió en la jaula: él la vio bajar hacia el pozo inundado antes del corte.",
-        "si": []
+        "si": [
+          "confianza>=1"
+        ]
       },
       {
         "dato": "Él mandó a la cuadrilla a la galería vieja por orden de la compañía, y no fue a buscarlos cuando oyó los cantos.",
+        "si": [
+          "confianza>=2"
+        ]
+      },
+      {
+        "dato": "Su abuelo decía que los de las galerías viejas no se ahogaban: respiraban el agua.",
         "si": [
           "confianza>=2"
         ]
@@ -38,12 +46,6 @@
         "dato": "El rosario del altar es el de Xuan, su ahijado.",
         "si": [
           "flag:pista_rosario"
-        ]
-      },
-      {
-        "dato": "Su abuelo decía que los de las galerías viejas no se ahogaban: respiraban el agua.",
-        "si": [
-          "confianza>=1"
         ]
       }
     ],

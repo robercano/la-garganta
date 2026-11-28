@@ -142,6 +142,7 @@ export const NpcSchema = z.object({
   acciones: z.array(z.object({ id: z.string().regex(/^dar:[a-z0-9_]+$/), si: Conds, texto: z.string().optional() })).default([]),
   se_niega_si: Conds,
   texto_negativa: z.string().default("No quiere hablar contigo."),
+  lint_ignorar: z.array(z.string()).default([]),
   saludo_fijo: z.string(), // texto sin IA (IA falsa y fallback)
   oir: z.string().optional(),
   oler: z.string().optional(),
