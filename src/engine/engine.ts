@@ -15,9 +15,9 @@ export interface TurnResult {
   events: GameEvent[];
 }
 
-const FREE_VERBS = new Set(["inventario", "mapa", "estado", "ayuda", "mirar", "examinar"]);
+const FREE_VERBS = new Set(["inventario", "mapa", "salidas", "estado", "ayuda", "mirar", "examinar"]);
 // En combate se puede cambiar de arma, pero cuesta el turno: el enemigo ataca mientras tanto.
-const COMBAT_VERBS = new Set(["atacar", "huir", "consumir", "usar", "equipar", "desequipar", "inventario", "mapa", "estado", "ayuda", "mirar", "examinar"]);
+const COMBAT_VERBS = new Set(["atacar", "huir", "consumir", "usar", "equipar", "desequipar", "inventario", "mapa", "salidas", "estado", "ayuda", "mirar", "examinar"]);
 
 class Turn {
   events: GameEvent[] = [];
@@ -97,6 +97,7 @@ function run(t: Turn, cmd: Command) {
     case "mirar": return enterRoom(t, false, true);
     case "inventario": return inventory(t);
     case "mapa": return t.events.push(ev("mapa", renderMap(t.s, t.pack)));
+    case "salidas": return exits(t);
     case "estado": return status(t);
     case "ayuda": return t.say(help(t.s));
     case "examinar": return examine(t, cmd.obj);
@@ -180,6 +181,20 @@ function roomDetail(t: Turn): string {
     .map(([d]) => d);
   parts.push(exits.length ? `Salidas: ${exits.join(", ")}.` : "No ves salidas.");
   return parts.join(" ");
+}
+
+/** «salidas»: por dónde se puede ir desde aquí y adónde lleva cada salida, si ya lo sabes. */
+function exits(t: Turn) {
+  if (isDark(t)) return t.say("A oscuras no ves por dónde salir. Solo sabes por dónde has venido, y ni eso.");
+  const lines = (Object.entries(t.room.salidas) as [Direction, (typeof t.room.salidas)[Direction]][])
+    .filter(([, x]) => x && t.ok(x.visible_si))
+    .map(([dir, x]) => {
+      if (!x!.a) return `${dir}: ${t.ok(x!.si) ? "parece que por ahí se sale" : "no se puede"}`;
+      const known = t.s.salas[x!.a]?.explorada;
+      const dest = known ? t.pack.location(x!.a).nombre.replace(/^./, (c) => c.toLowerCase()) : "no sabes adónde lleva";
+      return `${dir}: ${dest}${t.ok(x!.si) ? "" : " (ahora mismo no puedes)"}`;
+    });
+  t.say(lines.length ? `Salidas:\n${lines.join("\n")}` : "No ves ninguna salida.");
 }
 
 function inventory(t: Turn) {
@@ -640,7 +655,7 @@ const DEFAULT_ACTIONS = {
 } as const;
 
 const help = (s: GameState) => [
-  "Comandos: norte/sur/este/oeste (n s e o), subir, bajar, entrar, salir, mirar, mapa, examinar X, coger X, dejar X,",
+  "Comandos: norte/sur/este/oeste (n s e o), subir, bajar, entrar, salir, mirar, salidas, mapa, examinar X, coger X, dejar X,",
   "inventario (i), estado, equipar X, desequipar X, usar X [con Y], combinar X con Y, comer/beber X,",
   `cortar X, ${graftsKnown(s) ? "injertar X, " : ""}atacar X [con Y], huir, hablar con X ("adiós" para terminar), rezar, escuchar, oler, esperar.`,
 ].join("\n");

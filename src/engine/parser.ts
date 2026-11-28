@@ -18,6 +18,7 @@ export type Command =
   | { verbo: "mirar" }
   | { verbo: "inventario" }
   | { verbo: "mapa" }
+  | { verbo: "salidas" }
   | { verbo: "estado" }
   | { verbo: "ayuda" }
   | { verbo: "huir" }
@@ -45,6 +46,7 @@ const VERBS: Record<string, string> = {
   dejar: "dejar", deja: "dejar", soltar: "dejar", suelta: "dejar", tirar: "dejar", tira: "dejar",
   inventario: "inventario", i: "inventario", inv: "inventario",
   mapa: "mapa", plano: "mapa",
+  salidas: "salidas", caminos: "salidas", direcciones: "salidas",
   estado: "estado", diagnostico: "estado",
   ayuda: "ayuda", "?": "ayuda", comandos: "ayuda",
   equipar: "equipar", equipa: "equipar", ponerse: "equipar", ponte: "equipar", poner: "equipar", empuñar: "equipar", empuña: "equipar",
@@ -91,7 +93,7 @@ export function parse(input: string, scope: Candidate[], catalog: Candidate[] = 
     case "mirar":
       if (rest.length === 0) return { ok: true, cmd: { verbo: "mirar" } };
       return one("examinar", rest, scope, catalog);
-    case "inventario": case "mapa": case "estado": case "ayuda": case "huir": case "rezar": case "escuchar": case "oler": case "esperar":
+    case "inventario": case "mapa": case "salidas": case "estado": case "ayuda": case "huir": case "rezar": case "escuchar": case "oler": case "esperar":
       return { ok: true, cmd: { verbo: verb } as Command };
     case "tomar": {
       const r = resolve(rest, scope, catalog, "¿Qué quieres tomar?");

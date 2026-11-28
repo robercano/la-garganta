@@ -476,3 +476,17 @@ describe("la partida de Rob: el jirón de la Garganta", () => {
     expect(await play(g, ["injertar membrana"])).toContain("se cose sola a tu piel");
   });
 });
+
+describe("salidas", () => {
+  it("lista las salidas, adónde llevan si ya lo sabes y cuáles están bloqueadas; no gasta turno", async () => {
+    const g = await newGame();
+    expect(await play(g, ["salidas"])).toContain("A oscuras no ves por dónde salir");
+    await play(g, [...LIGHT, "este"]);
+    const turno = g.state.turno;
+    const out = await play(g, ["salidas"]);
+    expect(out).toContain("oeste: el frente de trabajo");
+    expect(out).toContain("bajar: no sabes adónde lleva");
+    expect(out).toContain("subir: no se puede");
+    expect(g.state.turno).toBe(turno);
+  });
+});
