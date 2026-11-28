@@ -3,11 +3,11 @@
 import type { Narrator, NpcService, RoomContext, NarrationContext, DialogLine } from "./types.js";
 import type { NpcContext, NpcReply } from "../engine/dialog.js";
 import type { GameEvent } from "../engine/events.js";
-import { ClaudeClient } from "./claude.js";
+import type { LlmTransport } from "./transport.js";
 import { NARRATOR_SYSTEM, SUMMARY_SYSTEM, eventPrompt, npcSystemFixed, npcSystemState, roomPrompt } from "./prompts.js";
 
 export class ClaudeNarrator implements Narrator {
-  constructor(private readonly client: ClaudeClient) {}
+  constructor(private readonly client: LlmTransport) {}
 
   async describeRoom(room: RoomContext): Promise<string> {
     const text = await this.client.call({ tipo: "sala", systemFijo: NARRATOR_SYSTEM, messages: [{ role: "user", content: roomPrompt(room) }], maxTokens: 300 });
@@ -25,7 +25,7 @@ export class ClaudeNarrator implements Narrator {
 }
 
 export class ClaudeNpcService implements NpcService {
-  constructor(private readonly client: ClaudeClient) {}
+  constructor(private readonly client: LlmTransport) {}
 
   async reply(ctx: NpcContext, history: DialogLine[], mensaje: string): Promise<NpcReply> {
     const messages = [

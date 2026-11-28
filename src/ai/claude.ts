@@ -1,6 +1,8 @@
 // Cliente mínimo de la Messages API de Anthropic con fetch (sin SDK), para que
 // funcione igual en Node y en Cloudflare Workers. La API key solo vive en el backend.
-import { CostLog, costOf, type CallKind } from "./cost.js";
+import { CostLog, costOf } from "./cost.js";
+import type { CallInput, LlmTransport } from "./transport.js";
+export type { CallInput, ChatMessage } from "./transport.js";
 
 export const DEFAULT_MODEL = "claude-haiku-5-5";
 
@@ -13,23 +15,7 @@ export interface ClaudeOptions {
   timeoutMs?: number;
 }
 
-export interface ChatMessage {
-  role: "user" | "assistant";
-  content: string;
-}
-
-export interface CallInput {
-  tipo: CallKind;
-  /** Parte fija del prompt de sistema: se marca para la caché del proveedor. */
-  systemFijo: string;
-  /** Parte variable del sistema (estado del momento): no se cachea. */
-  systemVariable?: string;
-  messages: ChatMessage[];
-  maxTokens: number;
-  temperature?: number;
-}
-
-export class ClaudeClient {
+export class ClaudeClient implements LlmTransport {
   readonly model: string;
   readonly log: CostLog;
   private readonly f: typeof fetch;

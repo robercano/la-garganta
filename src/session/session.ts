@@ -20,7 +20,10 @@ export interface SessionDeps {
 export class GameSession {
   private history: DialogLine[] = [];
 
-  constructor(public state: GameState, private readonly pack: Pack, private readonly ai: SessionDeps) {}
+  constructor(public state: GameState, private readonly pack: Pack, private ai: SessionDeps) {}
+
+  /** Cambia el narrador y los NPC en mitad de la partida (p. ej. IA falsa ↔ real). No toca el estado. */
+  setAi(ai: SessionDeps) { this.ai = ai; }
 
   static create(pack: Pack, ai: SessionDeps, seed: number): GameSession {
     return new GameSession(initialState(pack, seed), pack, ai);

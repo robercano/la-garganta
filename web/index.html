@@ -19,6 +19,10 @@
   #out p { margin: 0 0 .85em; white-space: pre-wrap; animation: in .25s ease-out; }
   #out p.me { color: var(--me); margin-top: 1.2em; text-shadow: none; }
   #out p.sys { color: var(--sys); text-shadow: none; }
+  #out p.wait::after { content: "▌"; animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  #iabtn[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
+  #cmd:disabled { opacity: .5; }
   #out p.map { white-space: pre; overflow-x: auto; font-size: 13px; line-height: 1.25; padding: 10px 12px; border: 1px solid var(--dim); background: rgba(242,176,74,.05); }
   @keyframes in { from { opacity: 0; } to { opacity: 1; } }
   .keys { display: flex; flex-wrap: wrap; gap: 6px; padding: 6px 12px; border-top: 1px solid #3a2810; }
@@ -47,7 +51,7 @@
   <div class="keys">
     <button data-cmd="n">N</button><button data-cmd="s">S</button><button data-cmd="e">E</button><button data-cmd="o">O</button>
     <button data-cmd="subir">↑</button><button data-cmd="bajar">↓</button>
-    <button data-cmd="mirar">mirar</button><button data-cmd="i">inv</button><button data-cmd="mapa">mapa</button><button data-cmd="estado">estado</button>
+    <button data-cmd="mirar">mirar</button><button data-cmd="i">inv</button><button data-cmd="mapa">mapa</button><button id="iabtn" aria-pressed="false">IA: falsa</button><button data-cmd="estado">estado</button>
   </div>
   <div id="mapa" hidden role="dialog" aria-modal="true" aria-label="Mapa">
     <div class="mapbox">

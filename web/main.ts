@@ -1,36 +1,57 @@
 // Frontend de prueba: el motor corre en el navegador con la IA falsa (sin
 // tokens, sin backend). Cuando exista el Worker, este frontend le hablará a él.
 import { pack } from "./pack.js";
-import { GameSession } from "../src/session/session.js";
+import { GameSession, type SessionDeps } from "../src/session/session.js";
 import { FakeNarrator, FakeNpcService } from "../src/ai/fake.js";
+import { ClaudeNarrator, ClaudeNpcService } from "../src/ai/haiku.js";
+import type { GameState } from "../src/engine/state.js";
+import { getSample, SampleTransport } from "./sample.js";
 
 const SAVE_KEY = "la-garganta:partida";
+const IA_KEY = "la-garganta:ia";
 const $ = <T extends HTMLElement>(sel: string) => document.querySelector(sel) as T;
 const out = $<HTMLDivElement>("#out");
 const form = $<HTMLFormElement>("#form");
 const input = $<HTMLInputElement>("#cmd");
 const bar = $<HTMLDivElement>("#bar");
+const iaBtn = $<HTMLButtonElement>("#iabtn");
 
-interface Save { seed: number; cmds: string[] }
+// La partida se guarda como foto del estado + lo que se ve en pantalla. (Antes era
+// semilla + comandos reproducidos, pero con la IA real los diálogos no se pueden
+// reproducir igual; las partidas antiguas se siguen cargando así, con la IA falsa.)
+interface SaveV1 { seed: number; cmds: string[] }
+interface SaveV2 { v: 2; state: GameState; lines: [string, string][]; hist: string[] }
+type IaMode = "falsa" | "real";
 
 const store = {
-  load(): Save | null { try { return JSON.parse(localStorage.getItem(SAVE_KEY) ?? "null"); } catch { return null; } },
-  save(s: Save) { try { localStorage.setItem(SAVE_KEY, JSON.stringify(s)); } catch { /* sin almacenamiento: partida en memoria */ } },
+  load(): SaveV1 | SaveV2 | null { try { return JSON.parse(localStorage.getItem(SAVE_KEY) ?? "null"); } catch { return null; } },
+  save(s: SaveV2) { try { localStorage.setItem(SAVE_KEY, JSON.stringify(s)); } catch { /* sin almacenamiento: partida en memoria */ } },
   clear() { try { localStorage.removeItem(SAVE_KEY); } catch { /* nada */ } },
+  ia(): IaMode { try { return localStorage.getItem(IA_KEY) === "real" ? "real" : "falsa"; } catch { return "falsa"; } },
+  setIa(m: IaMode) { try { localStorage.setItem(IA_KEY, m); } catch { /* nada */ } },
 };
 
 let game: GameSession;
-let save: Save;
+let lines: [string, string][] = []; // [texto, clase] de lo que hay en pantalla
+let ia: IaMode = store.ia();
+let transport: SampleTransport | null = null;
+let busy = false;
 
-function print(lines: string[], cls = "") {
-  for (const l of lines) {
+function print(ls: string[], cls = "") {
+  for (const l of ls) {
+    const c = cls || (l.startsWith("MAPA") ? "map" : "");
+    lines.push([l, c]);
     const p = document.createElement("p");
-    if (cls) p.className = cls;
-    else if (l.startsWith("MAPA (")) p.className = "map";
+    if (c) p.className = c;
     p.textContent = l;
     out.appendChild(p);
   }
+  if (lines.length > 400) lines = lines.slice(-400);
   out.scrollTop = out.scrollHeight;
+}
+
+function persist() {
+  store.save({ v: 2, state: game.state, lines, hist: history.slice(-100) });
 }
 
 function status() {
@@ -41,39 +62,97 @@ function status() {
   bar.textContent = `${room} · Vida ${s.vida}/${s.vida_max}` + (known ? ` · Corrupción ${s.corrupcion} · Injertos: ${grafts}` : "");
   bar.dataset.corr = String(s.corrupcion >= 75 ? 75 : s.corrupcion >= 50 ? 50 : s.corrupcion >= 25 ? 25 : 0);
   input.placeholder = game.finished ? "escribe «reiniciar»" : game.inDialog ? "dile algo… («adiós» para terminar)" : "¿qué haces?";
+  iaBtn.textContent = ia === "real" ? "IA: real" : "IA: falsa";
+  iaBtn.setAttribute("aria-pressed", String(ia === "real"));
+}
+
+function fakeDeps(): SessionDeps { return { narrator: new FakeNarrator(), npcs: new FakeNpcService() }; }
+
+/** IA real con el puente de Claude; si esta vista no lo ofrece, vuelve a la falsa y lo dice. */
+async function aiDeps(): Promise<SessionDeps> {
+  if (ia !== "real") return fakeDeps();
+  const sample = await getSample();
+  if (!sample) {
+    ia = "falsa";
+    store.setIa(ia);
+    print(["[La IA real no está disponible en esta vista. Sigues con la IA falsa.]"], "sys");
+    return fakeDeps();
+  }
+  transport = new SampleTransport(sample, (code) => {
+    print([code === "rate_limited" ? "[La IA real está saturada ahora mismo: uso los textos fijos un rato.]" : "[Sin permiso para usar la IA real. Vuelves a la IA falsa.]"], "sys");
+    if (code === "not_granted") { ia = "falsa"; store.setIa(ia); game.setAi(fakeDeps()); status(); }
+  });
+  return { narrator: new ClaudeNarrator(transport), npcs: new ClaudeNpcService(transport) };
 }
 
 async function newGame(seed: number, replay: string[] = []) {
   out.innerHTML = "";
-  game = GameSession.create(pack, { narrator: new FakeNarrator(), npcs: new FakeNpcService() }, seed);
-  save = { seed, cmds: [] };
-  history = [...replay].filter((c, i, a) => c !== a[i - 1]); // al recargar, el historial es la partida guardada
+  lines = [];
+  history = [...replay].filter((c, i, a) => c !== a[i - 1]);
   histPos = -1;
+  // Una partida antigua (semilla + comandos) se reproduce siempre con la IA falsa
+  game = GameSession.create(pack, replay.length ? fakeDeps() : await aiDeps(), seed);
   print([`=== ${pack.quest.titulo.toUpperCase()} ===`, `Semilla ${seed} · «ayuda» para ver comandos · «reiniciar» para empezar de nuevo`], "sys");
-  print(await game.start());
-  // La partida se guarda como semilla + comandos y se reproduce: el motor es determinista.
+  await withBusy(async () => print(await game.start()));
   for (const c of replay) {
-    const res = await game.input(c);
-    save.cmds.push(c);
     print([`> ${c}`], "me");
-    print(res);
+    print(await game.input(c));
   }
-  store.save(save);
+  if (replay.length) game.setAi(await aiDeps());
+  persist();
   status();
+}
+
+async function restore(sv: SaveV2) {
+  out.innerHTML = "";
+  lines = [];
+  game = new GameSession(sv.state, pack, await aiDeps());
+  history = sv.hist ?? [];
+  for (const [t, c] of sv.lines) print([t], c);
+  status();
+}
+
+/** Mientras responde la IA: indicador y entrada bloqueada. */
+async function withBusy<T>(fn: () => Promise<T>): Promise<T> {
+  busy = true;
+  input.disabled = true;
+  const p = document.createElement("p");
+  p.className = "wait";
+  p.textContent = ia === "real" ? "…" : "";
+  out.appendChild(p);
+  out.scrollTop = out.scrollHeight;
+  try {
+    return await fn();
+  } finally {
+    p.remove();
+    busy = false;
+    input.disabled = false;
+    input.focus({ preventScroll: true });
+  }
 }
 
 async function send(cmd: string) {
   const c = cmd.trim();
-  if (!c) return;
+  if (!c || busy) return;
   if (["mapa", "plano", "m"].includes(c.toLowerCase())) return openMap();
   if (["reiniciar", "reinicio", "nueva partida"].includes(c.toLowerCase())) {
     store.clear();
     return newGame(Math.floor(Math.random() * 2 ** 31));
   }
   print([`${game.inDialog ? "»" : ">"} ${c}`], "me");
-  print(await game.input(c));
-  save.cmds.push(c);
-  store.save(save);
+  print(await withBusy(() => game.input(c)));
+  persist();
+  status();
+}
+
+async function toggleIa() {
+  if (busy) return;
+  ia = ia === "real" ? "falsa" : "real";
+  store.setIa(ia);
+  const wanted = ia;
+  game.setAi(await aiDeps());
+  if (ia === wanted) print([ia === "real" ? "[IA real activada: Claude Haiku pone la voz. Las salas ya descritas no cambian.]" : "[IA falsa activada: textos fijos, sin esperas.]"], "sys");
+  persist();
   status();
 }
 
@@ -207,8 +286,11 @@ $("#mapclose").addEventListener("click", closeMap);
 mapEl.addEventListener("click", (e) => { if (e.target === mapEl) closeMap(); });
 document.addEventListener("keydown", (e) => { if (!mapEl.hidden && e.key === "Escape") closeMap(); });
 
+iaBtn.addEventListener("click", () => void toggleIa());
+
 const urlSeed = Number(new URLSearchParams(location.search).get("seed"));
 const prev = store.load();
 if (urlSeed) void newGame(urlSeed);
-else if (prev) void newGame(prev.seed, prev.cmds);
+else if (prev && "v" in prev && prev.v === 2) void restore(prev);
+else if (prev && "cmds" in prev) void newGame(prev.seed, prev.cmds);
 else void newGame(Math.floor(Math.random() * 2 ** 31));
