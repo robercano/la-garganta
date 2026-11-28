@@ -77,6 +77,21 @@ export function lintPack(pack: Pack): LintWarning[] {
     if (it.fijo && it.tipo !== "escenario" && !it.al_coger) add("fijo-sin-razon", `objeto ${it.id}`, `es fijo pero no es decorado: añade al_coger con el motivo`, ign);
   }
 
+  // 10. Lo que llevas al empezar se cuenta en la intro, y una receta nombra lo que usa (guía §4)
+  const intro = normalize(d.quest.intro).split(" ");
+  for (const id of [...d.quest.inicio.inventario, ...Object.values(d.quest.inicio.equipo)]) {
+    if (!id || !pack.hasItem(id)) continue;
+    const nuc = headNoun(pack.item(id).nombre);
+    if (nuc && !mentions(intro, pack.item(id))) add("inicio-sin-contar", `quest.inicio`, `empiezas con «${pack.item(id).nombre}», pero la intro no lo menciona: el jugador no sabrá que lo lleva`);
+  }
+  for (const r of d.recipes) {
+    const words = normalize(r.texto).split(" ");
+    for (const e of r.entradas) {
+      const nuc = headNoun(pack.item(e).nombre);
+      if (nuc && !mentions(words, pack.item(e))) add("receta-sin-nombrar", `receta ${r.id}`, `usa «${pack.item(e).nombre}», pero su texto no dice «${nuc}»: no se entiende de dónde sale`);
+    }
+  }
+
   // 9. Los NPC no sueltan nada a la primera (guía §5)
   for (const n of d.npcs) for (const s of n.sabe) {
     if (s.si.length === 0) add("npc-sin-reticencia", `npc ${n.id}`, `sabe «${s.dato.slice(0, 60)}…» sin condición: lo soltará a la primera. Ponle al menos confianza>=1`, n.lint_ignorar);
@@ -114,4 +129,10 @@ function allConditions(pack: Pack): string[] {
 /** Núcleo de un nombre: la primera palabra que no es artículo («un jirón de membrana» → «jiron»). */
 function headNoun(nombre: string): string | undefined {
   return normalize(nombre).split(" ").find((w) => !STOP.has(w));
+}
+
+/** ¿El texto nombra el objeto por su núcleo o por alguna palabra significativa de sus alias? */
+function mentions(words: string[], it: { nombre: string; alias: string[] }): boolean {
+  const names = new Set([it.nombre, ...it.alias].flatMap((a) => normalize(a).split(" ")).filter((w) => w.length >= 4 && !STOP.has(w)));
+  return words.some((w) => names.has(w) || names.has(w.replace(/s$/, "")));
 }

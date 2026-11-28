@@ -1,5 +1,32 @@
 [
-  { "id": "cargar_lampara", "entradas": ["lampara_vacia", "carburo"], "salida": "lampara_cargada", "texto": "A tientas, desenroscas el depósito y metes las piedras de carburo. Ahora solo falta el agua." },
-  { "id": "encender_lampara", "entradas": ["lampara_cargada", "cantimplora"], "salida": "lampara_encendida", "conserva": ["cantimplora"], "texto": "Echas un chorro de agua, oyes el silbido del gas y rascas el chispero. La llama prende. El frente de trabajo aparece a tu alrededor, y estás solo." },
-  { "id": "hacer_venda", "entradas": ["trapo", "orujo"], "salida": "venda", "texto": "Empapas el pañuelo en orujo. Mejor en la herida que en el estómago." }
+  {
+    "id": "cargar_lampara",
+    "entradas": [
+      "lampara_vacia",
+      "carburo"
+    ],
+    "salida": "lampara_cargada",
+    "texto": "A tientas, desenroscas el depósito de la lámpara y metes las piedras de carburo del bote. Ahora solo falta el agua."
+  },
+  {
+    "id": "encender_lampara",
+    "entradas": [
+      "lampara_cargada",
+      "cantimplora"
+    ],
+    "salida": "lampara_encendida",
+    "conserva": [
+      "cantimplora"
+    ],
+    "texto": "Echas un chorro de agua de la cantimplora en la lámpara, oyes el silbido del gas y rascas el chispero. La llama prende. El frente de trabajo aparece a tu alrededor, y estás solo."
+  },
+  {
+    "id": "hacer_venda",
+    "entradas": [
+      "trapo",
+      "orujo"
+    ],
+    "salida": "venda",
+    "texto": "Empapas el trapo en orujo. Mejor en la herida que en el estómago."
+  }
 ]

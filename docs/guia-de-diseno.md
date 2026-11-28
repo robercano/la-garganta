@@ -49,6 +49,7 @@ El jugador escribe lo que lee. Si una sala dice «una fiambrera vacía», alguie
 
 - **Nada entra en el inventario sin decirlo.** Una pieza que se saca de algo cae en la sala (`aparece:`) y se coge a mano. `dar:` solo cuando el texto dice «coges…» o lo da un NPC. *(Lint: `dar-en-silencio`.)*
 - **Lo que aparece se llama como lo nombra el texto que lo hace aparecer.** Si el texto dice «el jirón cae a tus pies», el objeto se llama «un jirón…», no «la piel de Aquello». El nombre literario puede ir en la descripción y en los alias. *(Lint: `aparece-sin-nombre`, también para el botín de los enemigos.)*
+- **Nada sale de la nada.** Lo que el personaje lleva al empezar se cuenta en la intro, y el texto de una receta nombra lo que usa («agua de la cantimplora»). *(Lint: `inicio-sin-contar`, `receta-sin-nombrar`.)*
 - **Si hay duda entre el decorado y algo que se puede coger,** los verbos de manipular (coger, injertar, usar…) eligen lo que se puede coger. Lo hace el motor.
 - **Si el motor hace algo por su cuenta, lo anuncia:** «(Primero coges la lámpara.)», «El cuélebre aprovecha mientras cambias de arma».
 - **Cada acción imposible tiene una respuesta que orienta** («Necesita carburo», «Necesitarías algo con filo»), nunca un «no» genérico si se puede evitar. Las herramientas en sus distintos estados deberían tener `usos` que digan qué les falta.

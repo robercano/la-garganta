@@ -1,6 +1,6 @@
 {
   "titulo": "La Garganta",
-  "intro": "Pozo Santa Bárbara, valle del Nalón, noviembre de 1923. Ha sonado la sirena del relevo y la cuadrilla se ha ido yendo galería arriba, entre toses y bromas, hacia la jaula. Tú te has quedado a terminar de entibar el frente: dos cuadros más y a casa. Entonces la luz eléctrica parpadea, zumba y se muere. Tu lámpara de carburo, que llevabas medio vacía, da un último resoplido y se apaga también.",
+  "intro": "Pozo Santa Bárbara, valle del Nalón, noviembre de 1923. Ha sonado la sirena del relevo y la cuadrilla se ha ido yendo galería arriba, entre toses y bromas, hacia la jaula. Tú te has quedado a terminar de entibar el frente: dos cuadros más y a casa. Llevas lo de siempre: el casco de cuero, la navaja en el bolsillo y la cantimplora al cinto. Entonces la luz eléctrica parpadea, zumba y se muere. Tu lámpara de carburo, que llevabas medio vacía, da un último resoplido y se apaga también.",
   "inicio": {
     "sala": "frente_trabajo",
     "inventario": [

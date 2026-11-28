@@ -57,6 +57,14 @@ describe("lint de diseño", () => {
     r.npcs[0].sabe[0].si = [];
     expect(rules(r)).toContain("npc-sin-reticencia");
   });
+  it("objeto inicial que la intro no cuenta y receta que no nombra lo que usa", () => {
+    const r = raw();
+    r.quest.intro = "Se va la luz.";
+    r.recipes[1].texto = "Echas un chorro de agua y la llama prende.";
+    const rs = rules(r);
+    expect(rs).toContain("inicio-sin-contar");
+    expect(rs).toContain("receta-sin-nombrar");
+  });
   it("lint_ignorar acepta un caso a sabiendas", () => {
     const r = raw();
     const l = r.locations[0];
