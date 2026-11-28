@@ -34,13 +34,21 @@ export class GameSession {
   map(): MapData | null { return mapData(this.state, this.pack); }
   get inDialog() { return !!this.state.dialogo; }
 
-  async start(): Promise<string[]> {
+  /**
+   * onProgress recibe líneas que conviene mostrar YA, mientras se espera a la IA
+   * (frases de tránsito). Las líneas que pasan por ahí no se repiten en el resultado.
+   */
+  private onProgress?: (line: string) => void;
+
+  async start(onProgress?: (line: string) => void): Promise<string[]> {
+    this.onProgress = onProgress;
     const r = start(this.state, this.pack);
     this.state = r.state;
     return this.render(r.events);
   }
 
-  async input(line: string): Promise<string[]> {
+  async input(line: string, onProgress?: (line: string) => void): Promise<string[]> {
+    this.onProgress = onProgress;
     const text = line.trim();
     if (!text) return [];
     if (this.state.dialogo) return this.dialogTurn(text);
@@ -74,6 +82,25 @@ export class GameSession {
     return this.render(r.events);
   }
 
+  /** Mientras la IA escribe, va soltando frases de tránsito (la primera a los 0,5 s, luego cada 2 s). */
+  private coverWait(job: Promise<unknown>, lines: string[]): () => void {
+    const emit = this.onProgress;
+    if (!emit || !lines.length || (this.ai.narrator as { instant?: boolean }).instant) return () => {};
+    let i = 0;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    let done = false;
+    const next = (delay: number) => {
+      timer = setTimeout(() => {
+        if (done || i >= lines.length) return;
+        emit(lines[i++]!);
+        next(2000);
+      }, delay);
+    };
+    next(500);
+    job.finally(() => { done = true; });
+    return () => { done = true; if (timer) clearTimeout(timer); };
+  }
+
   private stage(): CorruptionStage {
     const c = this.state.corrupcion;
     return c >= 75 ? 75 : c >= 50 ? 50 : c >= 25 ? 25 : 0;
@@ -85,11 +112,17 @@ export class GameSession {
       if (e.tipo === "sala_nueva" && e.ref) {
         const room = this.pack.location(e.ref);
         let prose: string | undefined;
+        const variante = hash(`${this.state.seed}:${room.id}`);
+        const transito = shuffle(room.transito, variante).slice(0, 4);
+        const job = this.ai.narrator.describeRoom({ id: room.id, nombre: room.nombre, tono: room.tono, hechos: room.hechos, tramo: this.stage(), variante, transito });
+        const stop = this.coverWait(job, transito);
         try {
-          prose = await this.ai.narrator.describeRoom({ id: room.id, nombre: room.nombre, tono: room.tono, hechos: room.hechos, tramo: this.stage() });
+          prose = await job;
           if (!proseIsSafe(prose, this.pack, room.id)) prose = undefined;
         } catch {
           prose = undefined;
+        } finally {
+          stop();
         }
         if (prose) this.state = storeRoomDescription(this.state, room.id, prose);
         const extra = this.state.salas[room.id]!.cambios.map((f) => room.cambios[f]!);
@@ -109,3 +142,21 @@ export class GameSession {
 }
 
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
+function hash(s: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 16777619);
+  return h >>> 0;
+}
+
+/** Barajado estable: misma partida y sala, mismo orden. */
+function shuffle<T>(xs: readonly T[], seed: number): T[] {
+  const a = [...xs];
+  let x = seed || 1;
+  for (let i = a.length - 1; i > 0; i--) {
+    x = (Math.imul(x, 1103515245) + 12345) >>> 0;
+    const j = x % (i + 1);
+    [a[i], a[j]] = [a[j]!, a[i]!];
+  }
+  return a;
+}

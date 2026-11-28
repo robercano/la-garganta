@@ -106,6 +106,9 @@ export const LocationSchema = z.object({
   npcs: z.array(Id).default([]),
   enemigos: z.array(Id).default([]),
   acciones: z.array(AccionSala).default([]),
+  // Frases de tránsito al llegar: se muestran mientras la IA escribe la descripción, si tarda.
+  // Escritas a mano: sin objetos ni salidas, solo sensaciones del camino.
+  transito: z.array(z.string()).default([]),
   // Percepciones que dependen del estado (p. ej. con la lengua injertada se entiende a las paredes)
   percepciones: z.array(z.object({ sentido: Sentido, si: z.array(Cond).min(1), texto: z.string() })).default([]),
   al_entrar: z.array(Disparador).default([]), // se disparan una sola vez

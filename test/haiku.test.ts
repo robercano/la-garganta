@@ -104,3 +104,47 @@ describe("partida con Claude (fetch falso)", () => {
     expect(out).toContain(pack.npc("capataz").respuestas_fijas[0]);
   });
 });
+
+describe("espera de la IA y variedad", () => {
+  const slowNarrator = (ms: number, seen: any[] = []) => ({
+    async describeRoom(r: any) { seen.push(r); await new Promise((res) => setTimeout(res, ms)); return "Prosa de prueba sobre la roca."; },
+    async narrate(e: any) { return e.texto; },
+  });
+
+  it("si la IA tarda, salen frases de tránsito por onProgress antes de la descripción", async () => {
+    const seen: any[] = [];
+    const g = GameSession.create(pack, { narrator: slowNarrator(2700, seen), npcs: new ClaudeNpcService(new ClaudeClient({ apiKey: "k", fetch: fakeFetch(() => "{}") })) }, 5);
+    await g.start();
+    await play(g, LIGHT.slice(0, 4)); // enciende la lámpara (aún sin describir el frente)
+    const progress: string[] = [];
+    const out = await g.input("este", (l) => progress.push(l));
+    expect(progress.length).toBe(2); // a los 0,5 s y a los 2,5 s
+    for (const l of progress) expect(pack.location("tunel_servicio").transito).toContain(l);
+    expect(out.join("\n")).not.toContain(progress[0]!); // no se repiten en el resultado
+    expect(seen.at(-1).transito).toContain(progress[0]); // el narrador sabe qué se ha leído
+  }, 10_000);
+
+  it("si responde rápido, no sale ninguna frase", async () => {
+    const g = GameSession.create(pack, { narrator: slowNarrator(50), npcs: new ClaudeNpcService(new ClaudeClient({ apiKey: "k", fetch: fakeFetch(() => "{}") })) }, 5);
+    await g.start();
+    await play(g, LIGHT.slice(0, 4));
+    const progress: string[] = [];
+    await g.input("este", (l) => progress.push(l));
+    expect(progress).toEqual([]);
+  });
+
+  it("la misma sala recibe enfoques distintos en partidas distintas", async () => {
+    const enfoques = new Set<string>();
+    for (const seed of [1, 2, 3, 4, 5, 6, 7, 8]) {
+      const reqs: Req[] = [];
+      const client = new ClaudeClient({ apiKey: "k", fetch: fakeFetch(() => "Prosa.", reqs) });
+      const g = GameSession.create(pack, { narrator: new ClaudeNarrator(client), npcs: new ClaudeNpcService(client) }, seed);
+      await g.start();
+      await play(g, [...LIGHT, "este"]);
+      const room = reqs.map((r) => r.body.messages[0].content as string).find((c) => c.includes("túnel de servicio"))!;
+      expect(room).toContain("no sigas este orden");
+      enfoques.add(room.match(/Enfoque: (.*)/)![1]!);
+    }
+    expect(enfoques.size).toBeGreaterThan(2);
+  });
+});

@@ -92,6 +92,9 @@ export function lintPack(pack: Pack): LintWarning[] {
     }
   }
 
+  // 11. Cada sala tiene frases de tránsito para cubrir la espera de la IA (guía §8)
+  for (const l of d.locations) if (l.transito.length < 3) add("sala-sin-transito", `sala ${l.id}`, `tiene ${l.transito.length} frases de tránsito; pon al menos 3 para que la espera de la IA no se note`, l.lint_ignorar);
+
   // 9. Los NPC no sueltan nada a la primera (guía §5)
   for (const n of d.npcs) for (const s of n.sabe) {
     if (s.si.length === 0) add("npc-sin-reticencia", `npc ${n.id}`, `sabe «${s.dato.slice(0, 60)}…» sin condición: lo soltará a la primera. Ponle al menos confianza>=1`, n.lint_ignorar);

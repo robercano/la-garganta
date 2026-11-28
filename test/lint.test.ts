@@ -65,6 +65,11 @@ describe("lint de diseño", () => {
     expect(rs).toContain("inicio-sin-contar");
     expect(rs).toContain("receta-sin-nombrar");
   });
+  it("sala sin frases de tránsito", () => {
+    const r = raw();
+    r.locations[0].transito = ["solo una"];
+    expect(rules(r)).toContain("sala-sin-transito");
+  });
   it("lint_ignorar acepta un caso a sabiendas", () => {
     const r = raw();
     const l = r.locations[0];

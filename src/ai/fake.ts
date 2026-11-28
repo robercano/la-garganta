@@ -5,6 +5,7 @@ import type { NpcContext, NpcReply } from "../engine/dialog.js";
 import type { GameEvent } from "../engine/events.js";
 
 export class FakeNarrator implements Narrator {
+  readonly instant = true; // responde al momento: no hacen falta frases de tránsito
   constructor(private readonly descs: Record<string, string> = {}) {}
   async describeRoom(room: RoomContext): Promise<string> {
     return this.descs[room.id] ?? `${room.hechos.slice(0, 3).map(cap).join(". ")}.`;

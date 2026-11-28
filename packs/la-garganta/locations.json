@@ -52,6 +52,12 @@
         ],
         "texto": "La veta tibia murmura algo parecido a una nana. Te la cantaba alguien hace mucho, antes de que nacieras."
       }
+    ],
+    "transito": [
+      "La llama crece y las sombras retroceden hacia los rincones.",
+      "Durante un momento, el silbido del carburo es lo único que se oye.",
+      "Parpadeas hasta que los ojos se acostumbran a la luz.",
+      "Por un instante crees ver a alguien al fondo. No hay nadie."
     ]
   },
   {
@@ -117,6 +123,12 @@
         ],
         "texto": "Las piedras calientes del derrumbe susurran: «…cerrado, cerrado, para que bajes… para que bajes tú también…». No fue el monte. Fue ella."
       }
+    ],
+    "transito": [
+      "Los raíles te guían como un pasamanos frío.",
+      "El techo baja y tienes que agachar la cabeza.",
+      "Notas en la cara una corriente de aire caliente que no debería estar ahí.",
+      "Tu propia sombra se alarga por delante de ti, torcida."
     ]
   },
   {
@@ -192,6 +204,12 @@
         ],
         "texto": "Debajo del rezo del capataz, las inscripciones viejas rezan su propia oración. No es a Santa Bárbara: «…a la que duerme bajo el monte, a la que nos da el carbón, a la que se lleva a los nuestros…»."
       }
+    ],
+    "transito": [
+      "Palpas la roca mientras bajas y sientes el frío de la pared en la palma.",
+      "Al fondo ves la luz de una llama que parpadea.",
+      "Te llega un murmullo de origen humano, bajo y constante.",
+      "Huele a sebo quemado antes de que veas nada."
     ]
   },
   {
@@ -252,6 +270,12 @@
         ],
         "texto": "El agua habla con la voz del cuélebre muerto: «…yo le guardaba el sueño… ya no queda quien se lo guarde…»."
       }
+    ],
+    "transito": [
+      "Los peldaños de la escalera resbalan de verdín.",
+      "El aire se vuelve húmedo y pesado, como dentro de una boca.",
+      "Abajo, algo negro devuelve tu luz a trozos.",
+      "Cada goteo resuena el doble de lo que debería."
     ]
   },
   {
@@ -326,6 +350,12 @@
         ],
         "texto": "Las paredes rezan, y ahora entiendes la oración: «…la cosecha está abajo… cuatro, vivos todavía… que baje el quinto, que baje…». El quinto eres tú."
       }
+    ],
+    "transito": [
+      "El aire te sabe a gas y a cera.",
+      "La roca bajo tus pies se vuelve lisa, demasiado lisa.",
+      "Tus pasos no hacen eco: la galería se los traga.",
+      "A la luz de la lámpara, las paredes brillan como si sudaran."
     ]
   },
   {
@@ -396,6 +426,12 @@
         ],
         "texto": "La respiración de lo hondo son palabras: «…quédate… ya eres casi mío… los tuyos no te van a reconocer…»."
       }
+    ],
+    "transito": [
+      "El pozo de bajada se estrecha hasta rozarte los hombros.",
+      "El grisú pica en los ojos y luego, de golpe, deja de picar.",
+      "Una luz verdosa empieza a subir desde abajo.",
+      "Notas la respiración antes de oírla: un vaivén lento en el pecho de la roca."
     ]
   }
 ]

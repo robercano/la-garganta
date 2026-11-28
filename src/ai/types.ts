@@ -11,6 +11,8 @@ export interface RoomContext {
   tono: string;
   hechos: string[]; // lo único que puede describir: nada de objetos ni salidas
   tramo: CorruptionStage;
+  variante: number; // distinta en cada partida: el narrador elige enfoque con ella
+  transito: string[]; // frases que el jugador puede haber leído justo antes (no repetirlas)
 }
 
 export interface NarrationContext {

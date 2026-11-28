@@ -36,6 +36,8 @@ let lines: [string, string][] = []; // [texto, clase] de lo que hay en pantalla
 let ia: IaMode = store.ia();
 let transport: SampleTransport | null = null;
 let busy = false;
+let waitEl: HTMLParagraphElement | null = null;
+const transit = (l: string) => print([l], "transito");
 
 function print(ls: string[], cls = "") {
   for (const l of ls) {
@@ -44,7 +46,8 @@ function print(ls: string[], cls = "") {
     const p = document.createElement("p");
     if (c) p.className = c;
     p.textContent = l;
-    out.appendChild(p);
+    if (waitEl?.isConnected) out.insertBefore(p, waitEl); // el cursor de espera, siempre al final
+    else out.appendChild(p);
   }
   if (lines.length > 400) lines = lines.slice(-400);
   out.scrollTop = out.scrollHeight;
@@ -93,7 +96,7 @@ async function newGame(seed: number, replay: string[] = []) {
   // Una partida antigua (semilla + comandos) se reproduce siempre con la IA falsa
   game = GameSession.create(pack, replay.length ? fakeDeps() : await aiDeps(), seed);
   print([`=== ${pack.quest.titulo.toUpperCase()} ===`, `Semilla ${seed} · «ayuda» para ver comandos · «reiniciar» para empezar de nuevo`], "sys");
-  await withBusy(async () => print(await game.start()));
+  await withBusy(async () => print(await game.start(transit)));
   for (const c of replay) {
     print([`> ${c}`], "me");
     print(await game.input(c));
@@ -120,11 +123,13 @@ async function withBusy<T>(fn: () => Promise<T>): Promise<T> {
   p.className = "wait";
   p.textContent = ia === "real" ? "…" : "";
   out.appendChild(p);
+  waitEl = p;
   out.scrollTop = out.scrollHeight;
   try {
     return await fn();
   } finally {
     p.remove();
+    waitEl = null;
     busy = false;
     input.disabled = false;
     input.focus({ preventScroll: true });
@@ -140,7 +145,7 @@ async function send(cmd: string) {
     return newGame(Math.floor(Math.random() * 2 ** 31));
   }
   print([`${game.inDialog ? "»" : ">"} ${c}`], "me");
-  print(await withBusy(() => game.input(c)));
+  print(await withBusy(() => game.input(c, transit)));
   persist();
   status();
 }

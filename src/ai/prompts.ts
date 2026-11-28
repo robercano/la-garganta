@@ -30,14 +30,26 @@ const STAGE_VOICE: Record<CorruptionStage, string> = {
   75: "Voz serena e inquietante: lo atroz se cuenta como normal, casi con ternura. La mina y el personaje empiezan a ser lo mismo.",
 };
 
+/** Enfoques para que la misma sala no suene igual en dos partidas. */
+export const ENFOQUES = [
+  "Empieza por lo que se oye.",
+  "Empieza por un olor.",
+  "Empieza por lo que tocan tus manos o tus pies.",
+  "Empieza por la luz y las sombras que hace tu lámpara.",
+  "Empieza por un detalle pequeño que llama la atención.",
+  "Empieza por cómo reacciona el cuerpo: frío, cansancio, el pecho, la garganta.",
+];
+
 export function roomPrompt(r: RoomContext): string {
   return [
     `Describe esta sala en 3 a 5 líneas.`,
     `Sala: ${r.nombre}`,
     `Tono: ${r.tono}`,
-    `Hechos (lo único que puedes contar):`,
+    `Hechos (lo único que puedes contar; elige 2 o 3 para destacar y no sigas este orden):`,
     ...r.hechos.map((h) => `- ${h}`),
+    `Enfoque: ${ENFOQUES[Math.abs(r.variante) % ENFOQUES.length]}`,
     `Voz según el estado del personaje: ${STAGE_VOICE[r.tramo]}`,
+    ...(r.transito.length ? [`Justo antes, el jugador puede haber leído alguna de estas frases. No las repitas ni repitas sus imágenes; continúa desde ahí:`, ...r.transito.map((t) => `- ${t}`)] : []),
     `No empieces con el nombre de la sala: el juego ya escribe «Llegas a…» antes de tu texto.`,
   ].join("\n");
 }

@@ -10,7 +10,7 @@ export class ClaudeNarrator implements Narrator {
   constructor(private readonly client: LlmTransport) {}
 
   async describeRoom(room: RoomContext): Promise<string> {
-    const text = await this.client.call({ tipo: "sala", systemFijo: NARRATOR_SYSTEM, messages: [{ role: "user", content: roomPrompt(room) }], maxTokens: 300 });
+    const text = await this.client.call({ tipo: "sala", systemFijo: NARRATOR_SYSTEM, messages: [{ role: "user", content: roomPrompt(room) }], maxTokens: 300, temperature: 1 });
     return clean(text);
   }
 
